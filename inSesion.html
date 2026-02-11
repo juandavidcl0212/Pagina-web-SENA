@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<link rel="stylesheet" href="/CSS/inSesionStyle.css">
+<link rel="stylesheet" href="/CSS/styles.css">
+
+<header class="encabezado">
+    <!-- Logo a la izquierda -->
+    <img src="/Proyecto SENA/assets/fb p.png" alt="Logo fantasy box" class="fantasy box" >
+  
+    <!-- Menú o enlaces al centro -->
+    <nav class="menu">
+      <a href="index.html" class="btn-menu">Inicio</a>
+      <a href="servicios.html" class="btn-menu">Servicios</a>
+      <a href="planes.html" class="btn-menu">Planes</a>
+      <a href="contacto.html" class="btn-menu">Contacto</a>
+    </nav>
+
+<i class="fa-brands fa-instagram"></i>
+<i class="fa-brands fa-youtube"></i>
+<i class="fa-brands fa-facebook"></i>
+  </header>
+  
+<body>
+    <div class="cont">
+        <h2>Iniciar Sesion</h2>
+        <form id="loginForm">
+    <input type="email" id="loginEmail" placeholder="Correo" required><br>
+    <input type="password" id="loginPassword" placeholder="Contraseña" required><br>
+    <button type="submit">Ingresar</button>
+  </form>
+
+  <div class="cuentas">
+        <a href="Registrarse.html" class="btn-menu">¡Crear una cuenta!</a>
+      </div>
+    </div>
+
+    <script>
+    document.getElementById("loginForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+
+      const storedEmail = localStorage.getItem("userEmail");
+      const storedPassword = localStorage.getItem("userPassword");
+
+      if(email === storedEmail && password === storedPassword){
+        alert("Inicio de sesión exitoso!");
+        window.location.href = "biblioteca.html"; // Redirige a otra página
+      } else {
+        alert("Correo o contraseña incorrectos");
+      }
+    });
+  </script>
+
+</body>
+</html>
