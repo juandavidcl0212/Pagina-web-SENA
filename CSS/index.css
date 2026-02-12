@@ -4,7 +4,10 @@ body {
   background-position: center;
   color: white;
 }
-
+img{
+  display: block;
+  margin: 0 auto;
+}
 
 .naranja {
   background-color: #FFA500;
