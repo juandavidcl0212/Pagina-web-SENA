@@ -1,0 +1,4 @@
+git innit
+git add .
+git commit -m "Descripcion de los cambios"
+git push origin main

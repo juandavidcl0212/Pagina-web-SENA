@@ -1,0 +1,51 @@
+h1{
+    text-align: center;
+}
+.content{
+    margin: 20px;
+}
+.planes{
+    background-color: #1b1f3b;
+    display: flex;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 10px;
+    align-items: center;
+}
+.planes .plan1{
+    margin: 20px;
+    padding: 20px;
+    background-color: #136f63 ;
+    color: #edf7f6;
+    border-radius: 10px;
+}
+.planes .plan1 .precio1{
+    display: flex;
+}
+.planes .plan2{
+    margin: 20px;
+    padding: 20px;
+    background-color: #edf7f6;
+    color: #1b1f3b;
+    border-radius: 10px;
+}
+.planes .plan2 .precio2{
+    display: flex;
+}.planes .plan3{
+    margin: 20px;
+    padding: 20px;
+    background-color: #136f63;
+    color: #edf7f6;
+    border-radius: 10px;
+}
+.planes .plan3 .precio3{
+    display: flex;
+}
+button{
+  margin: 10px;
+  padding: 10px;
+  background-color: #ff9f1c;
+  color: #edf7f6;
+  border-radius: 10px;
+  font-family: Bahnschrift Condensed;
+}

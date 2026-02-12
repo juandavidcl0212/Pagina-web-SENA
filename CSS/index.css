@@ -1,0 +1,89 @@
+body {
+  background-image: url("../assets/imagen de fondo.jpeg"); /* Usa la imagen de fondo real aquí */
+  background-size: cover;
+  background-position: center;
+  color: white;
+}
+*{
+    align-items: center;
+}
+img{
+  align-self: center;
+}
+
+.naranja {
+  background-color: #FFA500;
+  color: white;
+}
+
+.morado {
+  background-color: #A259FF;
+  color: white;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* SECCIÓN DE INFORMACIÓN */
+.info {
+  background-color: #1b1f3b;
+  padding: 25px;
+  margin: 20px;
+  max-width: 800px;
+  border-radius: 8px;
+}
+
+.content {
+  justify-items: center;
+  padding: 20px;
+}
+
+.info h2 {
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+.info p {
+  font-size: 16px;
+  line-height: 1.6;
+}
+/* FOOTER */
+footer {
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 30px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.redes .icon {
+  margin-right: 15px;
+  font-size: 20px;
+  color: white;
+}
+
+.links a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: white;
+}
+.botones{
+    background-color: #edf7f6;
+    border-radius: 10px;
+    padding: 20px;
+}
+button{
+  margin: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #A259FF;
+  color: #1b1f3b;
+  font-weight: bold;
+}
+button:hover{
+  background-color: #1b1f3b;
+  color:#A259FF;
+  cursor: pointer;
+  transition: 0.3s;
+}
