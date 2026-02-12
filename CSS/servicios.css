@@ -4,9 +4,15 @@
     flex-wrap: wrap;
     justify-content: center;
   }
-  
-  .servicio {
+  .content{
+    padding: 20px;
+    margin: 20px;
+    justify-content: center;
     background-color: #1b1f3b;
+    border-radius: 10px;
+  }
+  .servicio {
+    background-color: #136f63;
     margin: 20px;
     padding: 25px;
     max-width: 300px;

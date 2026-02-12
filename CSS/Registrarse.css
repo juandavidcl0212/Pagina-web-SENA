@@ -1,0 +1,23 @@
+body{
+    font-family: Bahnschrift Condensed;
+    margin: 0px;
+    padding: 0px;
+    justify-items: center;
+    background-color: #1b1f3b;
+}
+div{
+    width: 30%;
+    height: 300px;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    margin: 20px;
+    display:flex;
+    background-color: #136f63;
+    border-radius: 10px;
+    align-items: center;
+    font-size: 20px;
+}
+h2{
+    color: #ff9f1c;
+}
