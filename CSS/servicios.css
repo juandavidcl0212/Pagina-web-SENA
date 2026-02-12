@@ -1,12 +1,8 @@
 /* SECCIÓN SERVICIOS */
-.info{
-  padding: 20px;
-  margin: 20px;
-}
 .servicios {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
   }
   
   .servicio {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nook - Diseña tu espacio</title>
+  <title>Nooke - Diseña tu espacio</title>
   <link rel="stylesheet" href="CSS/index.css">
   <link rel="stylesheet" href="styles.css">
   <script src="script.js"></script>
@@ -34,8 +34,12 @@
   </header>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
-<body> 
-       <img src="assets/nooke g.png" width="300">
+<body>
+
+    
+  <div class="fondo">
+       <img src="assets/nooke g.png" alt="Logo nook" class="logo-nook"  width="300">
+
     <!-- Contenido principal -->
     <div class="content">
       <div class="info">
@@ -49,8 +53,8 @@
 
       <div class="botones">
         <h1>¡DISEÑA TU ESPACIO COMO UN PROFESIONAL!</h1>
-        <button onclick="location.href='html/servicios.html'">VER SERVICIOS</button>
-        <button onclick="location.href='html/planes.html'">VER PLANES</button>
+        <button class="btn naranja">NUESTROS SERVICIOS</button>
+        <button class="btn-menu" href="HTML/planes.html">VER PLANES</button>
       </div>
     </div>
 
@@ -59,6 +63,12 @@
       <div class="redes">
         <a href="#" class="icon"><i class="fab fa-instagram"></i></a>
         <a href="#" class="icon"><i class="fab fa-facebook-f"></i></a>
+      </div>
+      <div class="links">
+        <a href="#">SOBRE NOSOTROS</a>
+
+        <button class="btn verde" onclick="abrirDiseno3D()">CREAR DISEÑO 3D</button>
+
       </div>
     </footer>
 

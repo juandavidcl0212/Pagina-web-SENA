@@ -3,13 +3,9 @@ body {
   background-size: cover;
   background-position: center;
   color: white;
+  align-content: center;
 }
-*{
-    align-items: center;
-}
-img{
-  align-self: center;
-}
+
 
 .naranja {
   background-color: #FFA500;
@@ -68,22 +64,124 @@ footer {
   text-decoration: none;
   color: white;
 }
-.botones{
-    background-color: #edf7f6;
-    border-radius: 10px;
-    padding: 20px;
+/* MODAL 3D */
+.modal-3d {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(3px);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
 }
-button{
-  margin: 10px;
-  padding: 10px;
-  border-radius: 10px;
-  background-color: #A259FF;
-  color: #1b1f3b;
-  font-weight: bold;
+
+.modal-contenido-3d {
+  background: #f9f9f9;
+  width: 420px;
+  padding: 25px;
+  border-radius: 12px;
+  color: #000;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
 }
-button:hover{
-  background-color: #1b1f3b;
-  color:#A259FF;
+
+.cerrar-3d {
+  float: right;
+  font-size: 25px;
   cursor: pointer;
-  transition: 0.3s;
 }
+
+.panel-3d h3 {
+  margin-top: 15px;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.opcion-3d {
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 12px;
+}
+
+.opcion-3d button,
+.opciones-pared button {
+  background: #4b6fff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.opciones-pared {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn.verde {
+  background-color: #FFA500;
+  color: white;
+}
+/* MODAL CUENTA */
+.modal-cuenta {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+.contenido-cuenta {
+  background: white;
+  width: 380px;
+  padding: 25px;
+  border-radius: 10px;
+  color: black;
+  position: relative;
+}
+
+.cerrar-cuenta {
+  position: absolute;
+  right: 20px;
+  top: 10px;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.formulario {
+  display: none;
+  flex-direction: column;
+}
+
+.formulario.visible {
+  display: flex;
+}
+
+.formulario input {
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid gray;
+}
+
+.formulario button {
+  padding: 12px;
+  border: none;
+  background: #4b6fff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
