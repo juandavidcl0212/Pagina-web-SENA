@@ -1,3 +1,21 @@
+<?php
+include("../conexion.php");
+
+if (isset($_POST['registrar'])) {
+    $usuario = $_POST['usuario'];
+    $clave = $_POST['clave'];
+
+    $query = "INSERT INTO usuarios (usuario, clave) VALUES ('$usuario', '$clave')";
+    $resultado = mysqli_query($enlace, $query);
+
+    if ($resultado) {
+        echo "Registro exitoso";
+    } else {
+        echo "Error en el registro: " . mysqli_error($enlace);
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +32,7 @@
   
     <!-- Menú o enlaces al centro -->
     <nav class="menu">
-      <a href="../index.html" class="btn-menu">Inicio</a>
+      <a href="../index.php" class="btn-menu">Inicio</a>
       <a href="../html/servicios.html" class="btn-menu">Servicios</a>
       <a href="../html/planes.html" class="btn-menu">Planes</a>
       <a href="../html/contacto.html" class="btn-menu">Contacto</a>
@@ -38,24 +56,8 @@
   </form>
 
   <nav class="cuentas">
-      <a href="inSesion.html" class="btn-menu">¿Ya tienes cuenta? Inicia sesión</a>
+      <a href="inSesion.php" class="btn-menu">¿Ya tienes cuenta? Inicia sesión</a>
     </nav>
   </nav>
-
-
-    <script>
-    document.getElementById("registerForm").addEventListener("submit", function(e){
-      e.preventDefault();
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      // Guardar en LocalStorage
-      localStorage.setItem("userEmail", email);
-      localStorage.setItem("userPassword", password);
-
-      alert("Registro exitoso!");
-    });
-  </script>
-
 </body>
 </html>

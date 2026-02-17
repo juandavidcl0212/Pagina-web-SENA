@@ -1,3 +1,7 @@
+<?php
+include("conexion.php");
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -21,10 +25,10 @@
     </nav>
     <nav>
       <nav class="cuentas">
-        <a href="html/Registrarse.html" class="btn-menu">¡Crear una cuenta!</a>
+        <a href="php/Registrarse.php" class="btn-menu">¡Crear una cuenta!</a>
     </nav>
     <nav>
-      <a href="html/inSesion.html" class="btn-menu">¿Ya tienes cuenta? Inicia sesión</a>
+      <a href="php/inSesion.php" class="btn-menu">¿Ya tienes cuenta? Inicia sesión</a>
     </nav>
   </nav>
 

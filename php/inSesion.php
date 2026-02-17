@@ -1,3 +1,22 @@
+<?php
+include("../conexion.php");
+
+if (isset($_POST['ingresar'])) {
+    $usuario = $_POST['usuario'];
+    $clave = $_POST['clave'];
+
+    $query = "SELECT * FROM usuarios WHERE usuario='$usuario' AND clave='$clave'";
+    $resultado = mysqli_query($enlace, $query);
+
+    if (mysqli_num_rows($resultado) > 0) {
+        echo "Bienvenido, $usuario";
+        // Aquí puedes redirigir a otra página con header("Location: inicio.php");
+    } else {
+        echo "Usuario o contraseña incorrectos";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +33,7 @@
   
     <!-- Menú o enlaces al centro -->
     <nav class="menu">
-      <a href="../index.html" class="btn-menu">Inicio</a>
+      <a href="../index.php" class="btn-menu">Inicio</a>
       <a href="../html/servicios.html" class="btn-menu">Servicios</a>
       <a href="../html/planes.html" class="btn-menu">Planes</a>
       <a href="../html/contacto.html" class="btn-menu">Contacto</a>
@@ -35,27 +54,8 @@
   </form>
 
   <nav class="cuentas">
-        <a href="Registrarse.html" class="btn-menu">¿No tienes cuenta? ¡Crear una!</a>
+        <a href="Registrarse.php" class="btn-menu">¿No tienes cuenta? ¡Crear una!</a>
   </nav>
     </div>
-
-    <script>
-    document.getElementById("loginForm").addEventListener("submit", function(e){
-      e.preventDefault();
-      const email = document.getElementById("loginEmail").value;
-      const password = document.getElementById("loginPassword").value;
-
-      const storedEmail = localStorage.getItem("userEmail");
-      const storedPassword = localStorage.getItem("userPassword");
-
-      if(email === storedEmail && password === storedPassword){
-        alert("Inicio de sesión exitoso!");
-        window.location.href = "biblioteca.html"; // Redirige a otra página
-      } else {
-        alert("Correo o contraseña incorrectos");
-      }
-    });
-  </script>
-
 </body>
 </html>
