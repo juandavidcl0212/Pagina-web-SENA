@@ -1,21 +1,24 @@
 <?php
-include("../conexion.php");
+include("../conexion.php"); // Ajusta la ruta según tu estructura
 
-if (isset($_POST['ingresar'])) {
-    $usuario = $_POST['usuario'];
-    $clave = $_POST['clave'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email    = $_POST['loginEmail'];
+    $password = $_POST['loginPassword'];
 
-    $query = "SELECT * FROM usuarios WHERE usuario='$usuario' AND clave='$clave'";
+    $query = "SELECT * FROM usuarios WHERE email='$email' AND clave='$password'";
     $resultado = mysqli_query($enlace, $query);
 
     if (mysqli_num_rows($resultado) > 0) {
-        echo "Bienvenido, $usuario";
-        // Aquí puedes redirigir a otra página con header("Location: inicio.php");
+        // Redirige a biblioteca.html si el login es correcto
+        header("Location: ../html/biblioteca.html");
+        exit;
     } else {
-        echo "Usuario o contraseña incorrectos";
+        echo "<p>Correo o contraseña incorrectos</p>";
     }
 }
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -47,9 +50,9 @@ if (isset($_POST['ingresar'])) {
 <body>
     <div class="cont">
         <h2>Iniciar Sesion</h2>
-        <form id="loginForm">
-    <input type="email" id="loginEmail" placeholder="Correo" required><br>
-    <input type="password" id="loginPassword" placeholder="Contraseña" required><br>
+       <form action="inSesion.php" method="POST">
+    <input type="email" id="loginEmail" name="loginEmail" placeholder="Correo" required><br>
+    <input type="password" id="loginPassword" name="loginPassword" placeholder="Contraseña" required><br>
     <button type="submit">Ingresar</button>
   </form>
 

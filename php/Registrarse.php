@@ -1,20 +1,35 @@
 <?php
-include("../conexion.php");
+include("../conexion.php"); // Ajusta la ruta según tu estructura
+$mensaje = "";
 
-if (isset($_POST['registrar'])) {
-    $usuario = $_POST['usuario'];
-    $clave = $_POST['clave'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $nombre   = $_POST['nombre'];
+    $apellido = $_POST['apellido'];
+    $email    = $_POST['email'];
+    $password = $_POST['password'];
 
-    $query = "INSERT INTO usuarios (usuario, clave) VALUES ('$usuario', '$clave')";
-    $resultado = mysqli_query($enlace, $query);
+    // Verificar si el correo ya existe
+    $checkQuery = "SELECT * FROM usuarios WHERE email='$email'";
+    $checkResult = mysqli_query($enlace, $checkQuery);
 
-    if ($resultado) {
-        echo "Registro exitoso";
+    if (mysqli_num_rows($checkResult) > 0) {
+        // Ya existe un usuario con ese correo
+        $mensaje = "Este correo ya está registrado. Intenta con otro.";
     } else {
-        echo "Error en el registro: " . mysqli_error($enlace);
+        // Insertar nuevo usuario
+        $query = "INSERT INTO usuarios (nombre, apellido, email, clave) 
+                  VALUES ('$nombre', '$apellido', '$email', '$password')";
+        $resultado = mysqli_query($enlace, $query);
+
+        if ($resultado) {
+            $mensaje = "Registro exitoso";
+        } else {
+            $mensaje = "Error en el registro: " . mysqli_error($enlace);
+        }
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -47,17 +62,20 @@ if (isset($_POST['registrar'])) {
 <body>
     <div class="cont">
         <h2>Registrarse</h2>
-       <form id="registerForm">
-            <input type="nombre" id="nombre" placeholder="Nombre" required><br>
-            <input type="apellido" id="apellido" placeholder="Apellido" required><br>
-            <input type="email" id="email" placeholder="Correo" required><br>
-            <input type="password" id="password" placeholder="Contraseña" required><br>
+       <form action="Registrarse.php" method="POST">
+            <input type="nombre" id="nombre" name="nombre" placeholder="Nombre" required><br>
+            <input type="apellido" id="apellido" name="apellido" placeholder="Apellido" required><br>
+            <input type="email" id="email" name="email" placeholder="Correo" required><br>
+            <input type="password" id="password" name="password" placeholder="Contraseña" required><br>
             <button type="submit">Registrarse</button>
   </form>
+  <?php if (!empty($mensaje)) { echo "<p>$mensaje</p>"; } ?>
 
   <nav class="cuentas">
       <a href="inSesion.php" class="btn-menu">¿Ya tienes cuenta? Inicia sesión</a>
     </nav>
+
+</div>
   </nav>
 </body>
 </html>
