@@ -18,7 +18,7 @@ include("conexion.php");
   
     <!-- Menú o enlaces al centro -->
     <nav class="menu">
-      <a href="index.html" class="btn-menu">Inicio</a>
+      <a href="index.php" class="btn-menu">Inicio</a>
       <a href="html/servicios.html" class="btn-menu">Servicios</a>
       <a href="html/planes.html" class="btn-menu">Planes</a>
       <a href="html/contacto.html" class="btn-menu">Contacto</a>

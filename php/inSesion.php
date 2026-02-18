@@ -9,16 +9,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $resultado = mysqli_query($enlace, $query);
 
     if (mysqli_num_rows($resultado) > 0) {
-        // Redirige a biblioteca.html si el login es correcto
-        header("Location: ../html/biblioteca.html");
-        exit;
+        $usuario = mysqli_fetch_assoc($resultado);
+
+        // Verificar rol
+        if ($usuario['rol'] === 'admin') {
+            header("Location: ../html/bibliotecaAdmin.html"); // Página para administradores
+            exit;
+        } else {
+            header("Location: ../html/biblioteca.html"); // Página para usuarios normales
+            exit;
+        }
     } else {
         echo "<p>Correo o contraseña incorrectos</p>";
     }
 }
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
