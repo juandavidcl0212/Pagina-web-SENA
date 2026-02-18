@@ -1,12 +1,10 @@
-/* ===== ESTILO GENERAL ===== */
 body {
     margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Arial, sans-serif;
     background: #1b1f3b;
     color: white;
 }
 
-/* ===== HEADER ===== */
 .top {
     text-align: center;
     background: #111;
@@ -14,28 +12,17 @@ body {
     border-bottom: 2px solid #444;
 }
 
-.top h1 {
-    margin: 0;
-}
-
-.top p {
-    margin: 5px 0 0;
-    color: #aaa;
-}
-
-/* ===== LAYOUT ===== */
 .layout {
     display: flex;
     background-color: #1b1f3b;
 }
 
-/* ===== SIDEBAR ADMIN ===== */
+/* SIDEBAR */
 .sidebar {
     width: 250px;
     background: #000;
     height: 100vh;
     padding: 20px;
-    box-shadow: 4px 0 10px rgba(0,0,0,0.5);
 }
 
 .sidebar h2 {
@@ -51,31 +38,27 @@ body {
 
 .sidebar li {
     list-style: none;
-    padding: 12px 10px;
-    margin-bottom: 8px;
+    padding: 12px;
     border-radius: 6px;
-    transition: 0.3s;
+    margin-bottom: 10px;
     cursor: pointer;
+    transition: 0.3s;
 }
 
 .sidebar li:hover {
     background: #263159;
-    padding-left: 15px;
 }
 
-/* ===== MAIN CONTENT ===== */
+/* MAIN */
 .main {
     padding: 40px;
     flex: 1;
 }
 
-.main h2 {
-    margin-top: 0;
-}
-
-/* ===== CARDS ===== */
+/* CARDS */
 .cards-container {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     margin-top: 20px;
 }
@@ -84,31 +67,55 @@ body {
     background: #263159;
     padding: 20px;
     border-radius: 10px;
-    flex: 1;
-    transition: 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    text-align: center;
+    transition: 0.3s;
 }
 
 .card:hover {
     background: #44507a;
-    transform: scale(1.03);
+    transform: scale(1.05);
 }
 
-.card h3 {
-    margin-top: 0;
+.number {
+    font-size: 28px;
+    font-weight: bold;
 }
 
-.card p {
-    color: #ccc;
+/* TABLA */
+.table-section {
+    margin-top: 40px;
 }
 
-/* ===== BOTONES ===== */
-button {
-    margin-top: 15px;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 6px;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #263159;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background: #111;
+}
+
+tr:nth-child(even) {
+    background: #2e3a6d;
+}
+
+tr:hover {
     background: #44507a;
+}
+
+button {
+    background: #44507a;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 5px;
     color: white;
     cursor: pointer;
     transition: 0.3s;
@@ -116,15 +123,5 @@ button {
 
 button:hover {
     background: #263159;
-    transform: scale(1.05);
 }
 
-/* ===== MENSAJE DE ALERTA ADMIN ===== */
-.admin-warning {
-    margin-top: 20px;
-    padding: 10px;
-    background: #111;
-    border-left: 4px solid red;
-    color: #ff6b6b;
-    font-weight: bold;
-}

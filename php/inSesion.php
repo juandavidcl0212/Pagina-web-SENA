@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Verificar rol
         if ($usuario['rol'] === 'admin') {
-            header("Location: ../html/bibliotecaAdmin.html"); // Página para administradores
+            header("Location: bibliotecaAdmin.php"); // Página para administradores
             exit;
         } else {
             header("Location: ../html/biblioteca.html"); // Página para usuarios normales

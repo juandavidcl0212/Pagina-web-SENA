@@ -69,11 +69,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="password" id="password" name="password" placeholder="Contraseña" required><br>
             <button type="submit">Registrarse</button>
   </form>
-  <?php if (!empty($mensaje)) { echo "<p>$mensaje</p>"; } ?>
+  <?php if (!empty($mensaje)) { echo "<p>$mensaje</p>"; } 
+
+
+  
+  ?>
 
   <nav class="cuentas">
       <a href="inSesion.php" class="btn-menu">¿Ya tienes cuenta? Inicia sesión</a>
     </nav>
+
 
 </div>
   </nav>

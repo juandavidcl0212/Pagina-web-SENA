@@ -7,7 +7,35 @@
     <link rel="stylesheet" href="../CSS/estilos2D.css">
     <link rel="stylesheet" href="../styles.css">
 </head>
+<header>
+    <h1>Editor de Espacios</h1>
+    <button id="btnRect">
+        <img src="../assets/square-regular.png" alt="Icono" width="20" height="20">
+    </button>
+    <button id="btnCirc">
+        <img src="../assets/circle-regular.png" alt="Icono" width="20" height="20">
+    </button>
+    <button id="btnSelect">Seleccionar</button>
+    <button id="btnDelete">Borrar</button>
+    <button id="btnCopy">Copiar</button>
+    <button id="btnCut">Cortar</button>
+    <button id="btnPaste">Pegar</button>
+  </header>
 <body>
-    <script href="../js/script2D"></script>
+
+  <main>
+    <div id="editor"></div>
+  </main>
+
+
+    <div id="controles">
+      <h2>Modificar dimensiones</h2>
+      <label>Ancho (m): <input type="number" id="ancho" value="5"></label>
+      <label>Alto (m): <input type="number" id="alto" value="3"></label>
+      <button id="btnActualizar">Actualizar</button>
+    </div>
+  </main>
+
+  <script src="../js/script2D.js"></script>
 </body>
 </html>
