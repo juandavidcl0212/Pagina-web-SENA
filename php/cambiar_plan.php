@@ -3,16 +3,19 @@ session_start();
 include("../conexion.php");
 
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
-    header("Location: ../servicios.php");
+    header("Location: ../index.php");
     exit();
 }
 
-$id = $_POST['id'];
+$id   = $_POST['id'];
 $plan = $_POST['plan'];
 
-$sql = "UPDATE usuarios SET plan='$plan' WHERE id='$id'";
-$conn->query($sql);
+$stmt = mysqli_prepare($enlace, "UPDATE usuarios SET plan = ? WHERE id = ?");
+mysqli_stmt_bind_param($stmt, "si", $plan, $id);
+mysqli_stmt_execute($stmt);
+mysqli_stmt_close($stmt);
 
-header("Location: usuarios_admin.php");
+header("Location: ../bibliotecaAdmin.php");
 exit();
 ?>
+

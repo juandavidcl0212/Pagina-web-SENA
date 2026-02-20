@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("../conexion.php"); // Ajusta la ruta a tu conexión
+include("../conexion.php");
 
 // 🔒 Verificar que sea admin
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
@@ -9,7 +9,7 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
 }
 
 // Obtener usuarios de la base de datos
-$resultado = $conn->query("SELECT * FROM usuarios ORDER BY id DESC");
+$resultado = mysqli_query($enlace, "SELECT * FROM usuarios ORDER BY id DESC");
 ?>
 
 <!DOCTYPE html>
@@ -20,9 +20,7 @@ $resultado = $conn->query("SELECT * FROM usuarios ORDER BY id DESC");
     <link rel="stylesheet" href="../CSS/admin.css">
     <link rel="stylesheet" href="../styles.css">
 </head>
-
 <body>
-
 <header class="topbar">
     <h1>Panel Administrador</h1>
     <div class="admin-info">
@@ -32,8 +30,6 @@ $resultado = $conn->query("SELECT * FROM usuarios ORDER BY id DESC");
 </header>
 
 <div class="container">
-
-    <!-- SIDEBAR -->
     <aside class="sidebar">
         <h2>Nook Studio</h2>
         <ul>
@@ -45,48 +41,27 @@ $resultado = $conn->query("SELECT * FROM usuarios ORDER BY id DESC");
         </ul>
     </aside>
 
-    <!-- CONTENIDO PRINCIPAL -->
     <main class="main">
-
-        <!-- TARJETAS -->
         <section class="stats">
             <div class="card">
                 <h3>Usuarios</h3>
-                <p class="number"><?php echo $resultado->num_rows; ?></p>
+                <p class="number"><?php echo mysqli_num_rows($resultado); ?></p>
             </div>
-
-            <div class="card">
-                <h3>Proyectos</h3>
-                <p class="number">48</p>
-            </div>
-
-            <div class="card">
-                <h3>Ventas</h3>
-                <p class="number">$3,450</p>
-            </div>
-
-            <div class="card">
-                <h3>Mensajes</h3>
-                <p class="number">12</p>
-            </div>
+            <div class="card"><h3>Proyectos</h3><p class="number">48</p></div>
+            <div class="card"><h3>Ventas</h3><p class="number">$3,450</p></div>
+            <div class="card"><h3>Mensajes</h3><p class="number">12</p></div>
         </section>
 
-        <!-- TABLA DE USUARIOS -->
         <section class="table-section">
             <h2>Últimos Usuarios Registrados</h2>
-
             <table>
                 <thead>
                     <tr>
-                        <th>Nombre</th>
-                        <th>Email</th>
-                        <th>Plan</th>
-                        <th>Último Login</th>
-                        <th>Cambiar Plan</th>
+                        <th>Nombre</th><th>Email</th><th>Plan</th><th>Último Login</th><th>Cambiar Plan</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while($row = $resultado->fetch_assoc()) { ?>
+                    <?php while($row = mysqli_fetch_assoc($resultado)) { ?>
                     <tr>
                         <td><?php echo $row['nombre']; ?></td>
                         <td><?php echo $row['email']; ?></td>
@@ -101,8 +76,6 @@ $resultado = $conn->query("SELECT * FROM usuarios ORDER BY id DESC");
                                     <option value="pro" <?php if($row['plan']=='pro') echo 'selected'; ?>>Pro</option>
                                 </select>
                                 <button type="submit">Actualizar</button>
-                                
-
                             </form>
                         </td>
                     </tr>
@@ -110,10 +83,7 @@ $resultado = $conn->query("SELECT * FROM usuarios ORDER BY id DESC");
                 </tbody>
             </table>
         </section>
-
     </main>
-
 </div>
-
 </body>
 </html>

@@ -35,4 +35,5 @@ header {
 .shape {
   position: absolute;
   cursor: move;
+  all: unset;
 }

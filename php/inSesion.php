@@ -1,69 +1,77 @@
 <?php
-include("../conexion.php"); // Ajusta la ruta según tu estructura
+session_start();
+include("../conexion.php");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email    = $_POST['loginEmail'];
     $password = $_POST['loginPassword'];
 
-    $query = "SELECT * FROM usuarios WHERE email='$email' AND clave='$password'";
-    $resultado = mysqli_query($enlace, $query);
+    // Buscar usuario por email
+    $stmt = mysqli_prepare($enlace, "SELECT * FROM usuarios WHERE email = ?");
+    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_execute($stmt);
+    $resultado = mysqli_stmt_get_result($stmt);
 
-    if (mysqli_num_rows($resultado) > 0) {
+    if ($resultado && mysqli_num_rows($resultado) > 0) {
         $usuario = mysqli_fetch_assoc($resultado);
 
-        // Verificar rol
-        if ($usuario['rol'] === 'admin') {
-            header("Location: bibliotecaAdmin.php"); // Página para administradores
-            exit;
+        // Verificar contraseña con password_verify
+        if (password_verify($password, $usuario['clave'])) {
+            // Guardar datos en sesión
+            $_SESSION['rol']    = $usuario['rol'];
+            $_SESSION['nombre'] = $usuario['nombre'];
+
+            // Redirigir según rol
+            if ($usuario['rol'] === 'admin') {
+                header("Location: bibliotecaAdmin.php");
+                exit;
+            } else {
+                header("Location: ../html/biblioteca.html");
+                exit;
+            }
         } else {
-            header("Location: ../html/biblioteca.html"); // Página para usuarios normales
-            exit;
+            echo "<p>Contraseña incorrecta</p>";
         }
     } else {
-        echo "<p>Correo o contraseña incorrectos</p>";
+        echo "<p>Correo no encontrado</p>";
     }
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Iniciar Sesión</title>
+    <link rel="stylesheet" href="../CSS/inSesionStyle.css">
+    <link rel="stylesheet" href="../styles.css">
 </head>
-<link rel="stylesheet" href="../CSS/inSesionStyle.css">
-<link rel="stylesheet" href="../styles.css">
-
+<body>
   <header class="encabezado">
-    <!-- Logo a la izquierda -->
-    <img src="../assets/fb p.png" alt="Logo fantasy box" class="fantasy box" >
-  
-    <!-- Menú o enlaces al centro -->
+    <img src="../assets/fb p.png" alt="Logo fantasy box" class="fantasy box">
     <nav class="menu">
       <a href="../index.php" class="btn-menu">Inicio</a>
       <a href="../html/servicios.html" class="btn-menu">Servicios</a>
       <a href="../html/planes.html" class="btn-menu">Planes</a>
       <a href="../html/contacto.html" class="btn-menu">Contacto</a>
     </nav>
-
-<i class="fa-brands fa-instagram"></i>
-<i class="fa-brands fa-youtube"></i>
-<i class="fa-brands fa-facebook"></i>
+    <i class="fa-brands fa-instagram"></i>
+    <i class="fa-brands fa-youtube"></i>
+    <i class="fa-brands fa-facebook"></i>
   </header>
-  
-<body>
-    <div class="cont">
-        <h2>Iniciar Sesion</h2>
-       <form action="inSesion.php" method="POST">
-    <input type="email" id="loginEmail" name="loginEmail" placeholder="Correo" required><br>
-    <input type="password" id="loginPassword" name="loginPassword" placeholder="Contraseña" required><br>
-    <button type="submit">Ingresar</button>
-  </form>
 
-  <nav class="cuentas">
-        <a href="Registrarse.php" class="btn-menu">¿No tienes cuenta? ¡Crear una!</a>
-  </nav>
-    </div>
+  <div class="cont">
+    <h2>Iniciar Sesión</h2>
+    <form action="inSesion.php" method="POST">
+      <input type="email" id="loginEmail" name="loginEmail" placeholder="Correo" required><br>
+      <input type="password" id="loginPassword" name="loginPassword" placeholder="Contraseña" required><br>
+      <button type="submit">Ingresar</button>
+    </form>
+
+    <nav class="cuentas">
+      <a href="Registrarse.php" class="btn-menu">¿No tienes cuenta? ¡Crear una!</a>
+    </nav>
+  </div>
 </body>
 </html>
