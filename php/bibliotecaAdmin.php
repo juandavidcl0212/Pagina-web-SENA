@@ -1,17 +1,3 @@
-<?php
-session_start();
-include("../conexion.php");
-
-// 🔒 Verificar que sea admin
-if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
-    header("Location: ../index.php");
-    exit();
-}
-
-// Obtener usuarios de la base de datos
-$resultado = mysqli_query($enlace, "SELECT * FROM usuarios ORDER BY id DESC");
-?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -25,7 +11,7 @@ $resultado = mysqli_query($enlace, "SELECT * FROM usuarios ORDER BY id DESC");
     <h1>Panel Administrador</h1>
     <div class="admin-info">
         <span><?php echo $_SESSION['nombre']; ?> (Admin)</span>
-        <button onclick="location.href='../logout.php'">Cerrar Sesión</button>
+        <button onclick="location.href='../index.php'">Cerrar Sesión</button>
     </div>
 </header>
 

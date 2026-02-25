@@ -1,39 +1,26 @@
 <?php
-session_start();
-include("../conexion.php");
+include("../conexion.php"); // Ajusta la ruta según tu estructura
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email    = $_POST['loginEmail'];
     $password = $_POST['loginPassword'];
 
-    // Buscar usuario por email
-    $stmt = mysqli_prepare($enlace, "SELECT * FROM usuarios WHERE email = ?");
-    mysqli_stmt_bind_param($stmt, "s", $email);
-    mysqli_stmt_execute($stmt);
-    $resultado = mysqli_stmt_get_result($stmt);
+    $query = "SELECT * FROM usuarios WHERE email='$email' AND clave='$password'";
+    $resultado = mysqli_query($enlace, $query);
 
-    if ($resultado && mysqli_num_rows($resultado) > 0) {
+    if (mysqli_num_rows($resultado) > 0) {
         $usuario = mysqli_fetch_assoc($resultado);
 
-        // Verificar contraseña con password_verify
-        if (password_verify($password, $usuario['clave'])) {
-            // Guardar datos en sesión
-            $_SESSION['rol']    = $usuario['rol'];
-            $_SESSION['nombre'] = $usuario['nombre'];
-
-            // Redirigir según rol
-            if ($usuario['rol'] === 'admin') {
-                header("Location: bibliotecaAdmin.php");
-                exit;
-            } else {
-                header("Location: ../html/biblioteca.html");
-                exit;
-            }
+        // Verificar rol
+        if ($usuario['rol'] === 'admin') {
+            header("Location: ../php/bibliotecaAdmin.php"); // Página para administradores
+            exit;
         } else {
-            echo "<p>Contraseña incorrecta</p>";
+            header("Location: ../html/biblioteca.html"); // Página para usuarios normales
+            exit;
         }
     } else {
-        echo "<p>Correo no encontrado</p>";
+        echo "<p>Correo o contraseña incorrectos</p>";
     }
 }
 ?>
