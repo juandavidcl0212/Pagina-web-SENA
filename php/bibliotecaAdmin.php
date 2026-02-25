@@ -9,16 +9,17 @@
 <body>
 <header class="topbar">
     <h1>Panel Administrador</h1>
-    <div class="admin-info">
-        <span><?php echo $_SESSION['nombre']; ?> (Admin)</span>
+    <nav class="admin-info">
+  
         <button onclick="location.href='../index.php'">Cerrar Sesión</button>
-    </div>
+</nav>
 </header>
 
 <div class="container">
     <aside class="sidebar">
         <h2>Nook Studio</h2>
         <ul>
+        <li><a href="../html/planes.html" class="btn-menu">Planes</a></li>
             <li>📊 Dashboard</li>
             <li>👥 Usuarios</li>
             <li>📁 Proyectos</li>
@@ -31,7 +32,7 @@
         <section class="stats">
             <div class="card">
                 <h3>Usuarios</h3>
-                <p class="number"><?php echo mysqli_num_rows($resultado); ?></p>
+              
             </div>
             <div class="card"><h3>Proyectos</h3><p class="number">48</p></div>
             <div class="card"><h3>Ventas</h3><p class="number">$3,450</p></div>
@@ -46,27 +47,7 @@
                         <th>Nombre</th><th>Email</th><th>Plan</th><th>Último Login</th><th>Cambiar Plan</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <?php while($row = mysqli_fetch_assoc($resultado)) { ?>
-                    <tr>
-                        <td><?php echo $row['nombre']; ?></td>
-                        <td><?php echo $row['email']; ?></td>
-                        <td><?php echo $row['plan']; ?></td>
-                        <td><?php echo $row['ultimo_login']; ?></td>
-                        <td>
-                            <form method="POST" action="cambiar_plan.php">
-                                <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                <select name="plan">
-                                    <option value="gratis" <?php if($row['plan']=='gratis') echo 'selected'; ?>>Gratis</option>
-                                    <option value="premium" <?php if($row['plan']=='premium') echo 'selected'; ?>>Premium</option>
-                                    <option value="pro" <?php if($row['plan']=='pro') echo 'selected'; ?>>Pro</option>
-                                </select>
-                                <button type="submit">Actualizar</button>
-                            </form>
-                        </td>
-                    </tr>
-                    <?php } ?>
-                </tbody>
+              
             </table>
         </section>
     </main>

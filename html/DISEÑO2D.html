@@ -6,26 +6,36 @@
     <title>Crea tu Diseño</title>
     <link rel="stylesheet" href="../CSS/estilos2D.css">
     <link rel="stylesheet" href="../styles.css">
+    <style>
+      body { margin: 0; font-family: sans-serif; }
+    #toolbar {
+      padding: 10px;
+      background: #f0f0f0;
+      display: flex;
+      gap: 10px;
+    }
+      canvas {
+      border: 1px solid #ccc;
+      cursor: crosshair;
+    }
+    </style>
 </head>
-<header>
-    <h1>Editor de Espacios</h1>
-    <button id="btnRect">
+<header></header>
+<body>
+<div id="toolbar">
+  <button id="btnRect">
         <img src="../assets/square-regular.png" alt="Icono" width="20" height="20">
     </button>
     <button id="btnCirc">
         <img src="../assets/circle-regular.png" alt="Icono" width="20" height="20">
     </button>
-    <button id="btnDelete">Borrar</button>
-    <button id="btnCopy">Copiar</button>
-    <button id="btnCut">Cortar</button>
-    <button id="btnPaste">Pegar</button>
-  </header>
-<body>
+  <button id="btnCut">Cortar</button>
+  <button id="btnCopy">Copiar</button>
+  <button id="btnPaste">Pegar</button>
+  <button id="btnDelete">Eliminar</button>
+</div>
 
-  <main>
-    <div id="editor"></div>
-  </main>
-
+<canvas id="canvas" width="1000" height="600"></canvas>
 
     <div id="controles">
       <h2>Modificar dimensiones</h2>

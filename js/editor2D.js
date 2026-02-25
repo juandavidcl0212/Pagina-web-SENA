@@ -1,135 +1,178 @@
-const editor = document.getElementById("editor");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
 const btnRect = document.getElementById("btnRect");
 const btnCirc = document.getElementById("btnCirc");
-const btnDelete = document.getElementById("btnDelete");
+const btnCut = document.getElementById("btnCut");
 const btnCopy = document.getElementById("btnCopy");
 const btnPaste = document.getElementById("btnPaste");
-const btnCut = document.getElementById("btnCut");
+const btnDelete = document.getElementById("btnDelete");
 
 let mode = null;
-let drawing = false;
-let startX = 0, startY = 0;
-let currentShape = null;
-let selectedShape = null;
-let copiedShape = null;
-
+let shapes = [];
+let selected = null;
+let copied = null;
 let history = [];
 let redoStack = [];
 
 function saveState() {
-  history.push(editor.innerHTML);
+  history.push(JSON.stringify(shapes));
+  if (history.length > 50) history.shift();
   redoStack = [];
 }
 
 function restoreState(state) {
-  editor.innerHTML = state;
-  selectedShape = null;
+  shapes = JSON.parse(state);
+  selected = null;
+  draw();
 }
 
-// Cambiar modo
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  shapes.forEach(shape => {
+    ctx.beginPath();
+    ctx.fillStyle = shape.color;
+    if (shape.type === "rect") {
+      ctx.fillRect(shape.x, shape.y, shape.w, shape.h);
+    } else if (shape.type === "circ") {
+      ctx.ellipse(shape.x + shape.w / 2, shape.y + shape.h / 2, shape.w / 2, shape.h / 2, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (shape === selected) {
+      ctx.strokeStyle = "black";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  });
+}
+
 btnRect.onclick = () => mode = "rect";
 btnCirc.onclick = () => mode = "circ";
 
-// Dibujar figuras
-editor.addEventListener("mousedown", (e) => {
-  // Evitar dibujar si se hace clic sobre una figura existente
-  if ((mode === "rect" || mode === "circ") && !e.target.classList.contains("shape")) {
-    drawing = true;
-    startX = e.offsetX;
-    startY = e.offsetY;
+let isDrawing = false;
+let startX, startY;
 
-    currentShape = document.createElement("section");
-    currentShape.classList.add("shape");
-    currentShape.style.left = `${startX}px`;
-    currentShape.style.top = `${startY}px`;
-    currentShape.style.width = "0px";
-    currentShape.style.height = "0px";
-    currentShape.style.position = "absolute";
-    currentShape.style.backgroundColor = mode === "rect" ? "rgba(0,128,255,0.5)" : "rgba(255,100,100,0.5)";
-    if (mode === "circ") currentShape.style.borderRadius = "50%";
+canvas.addEventListener("mousedown", (e) => {
+  const { offsetX, offsetY } = e;
+  const clicked = getShapeAt(offsetX, offsetY);
 
-    editor.appendChild(currentShape);
-    saveState();
-  }
-});
+  if (mode && !clicked) {
+    isDrawing = true;
+    startX = offsetX;
+    startY = offsetY;
+    selected = null;
+  } else if (clicked) {
+    selected = clicked;
+    startX = offsetX - clicked.x;
+    startY = offsetY - clicked.y;
 
-editor.addEventListener("mousemove", (e) => {
-  if (drawing && currentShape) {
-    const width = e.offsetX - startX;
-    const height = e.offsetY - startY;
-    currentShape.style.width = `${width}px`;
-    currentShape.style.height = `${height}px`;
-  }
-});
-
-editor.addEventListener("mouseup", () => {
-  drawing = false;
-  currentShape = null;
-});
-
-// Selección directa y movimiento
-editor.addEventListener("mousedown", (e) => {
-  if (e.target.classList.contains("shape")) {
-    selectedShape?.classList.remove("selected");
-    selectedShape = e.target;
-    selectedShape.classList.add("selected");
-
-    const offsetX = e.offsetX - selectedShape.offsetLeft;
-    const offsetY = e.offsetY - selectedShape.offsetTop;
-
-    function mover(ev) {
-      selectedShape.style.left = `${ev.offsetX - offsetX}px`;
-      selectedShape.style.top = `${ev.offsetY - offsetY}px`;
+    function move(ev) {
+      clicked.x = ev.offsetX - startX;
+      clicked.y = ev.offsetY - startY;
+      draw();
     }
 
-    function soltar() {
-      editor.removeEventListener("mousemove", mover);
-      editor.removeEventListener("mouseup", soltar);
+    function stop() {
+      canvas.removeEventListener("mousemove", move);
+      canvas.removeEventListener("mouseup", stop);
       saveState();
     }
 
-    editor.addEventListener("mousemove", mover);
-    editor.addEventListener("mouseup", soltar);
+    canvas.addEventListener("mousemove", move);
+    canvas.addEventListener("mouseup", stop);
+  }
+
+  draw();
+});
+
+canvas.addEventListener("mousemove", (e) => {
+  if (isDrawing) {
+    const w = e.offsetX - startX;
+    const h = e.offsetY - startY;
+    draw();
+    ctx.beginPath();
+    ctx.fillStyle = mode === "rect" ? "rgba(0,128,255,0.5)" : "rgba(255,100,100,0.5)";
+    if (mode === "rect") {
+      ctx.fillRect(startX, startY, w, h);
+    } else {
+      ctx.ellipse(startX + w / 2, startY + h / 2, Math.abs(w / 2), Math.abs(h / 2), 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
   }
 });
 
+canvas.addEventListener("mouseup", (e) => {
+  if (isDrawing) {
+    const w = e.offsetX - startX;
+    const h = e.offsetY - startY;
+    shapes.push({
+      type: mode,
+      x: startX,
+      y: startY,
+      w,
+      h,
+      color: mode === "rect" ? "rgba(0,128,255,0.5)" : "rgba(255,100,100,0.5)"
+    });
+    isDrawing = false;
+    saveState();
+    draw();
+  }
+});
+
+function getShapeAt(x, y) {
+  for (let i = shapes.length - 1; i >= 0; i--) {
+    const s = shapes[i];
+    if (s.type === "rect" &&
+        x >= s.x && x <= s.x + s.w &&
+        y >= s.y && y <= s.y + s.h) return s;
+    if (s.type === "circ") {
+      const dx = x - (s.x + s.w / 2);
+      const dy = y - (s.y + s.h / 2);
+      const rx = s.w / 2;
+      const ry = s.h / 2;
+      if ((dx * dx) / (rx * rx) + (dy * dy) / (ry * ry) <= 1) return s;
+    }
+  }
+  return null;
+}
+
 // Acciones
 btnDelete.onclick = () => {
-  if (selectedShape) {
-    selectedShape.remove();
-    selectedShape = null;
+  if (selected) {
+    shapes = shapes.filter(s => s !== selected);
+    selected = null;
     saveState();
+    draw();
   }
 };
 
 btnCopy.onclick = () => {
-  if (selectedShape) {
-    copiedShape = selectedShape.cloneNode(true);
-  }
+  if (selected) copied = { ...selected };
 };
 
 btnPaste.onclick = () => {
-  if (copiedShape) {
-    const nueva = copiedShape.cloneNode(true);
-    nueva.style.left = `${parseInt(copiedShape.style.left) + 20}px`;
-    nueva.style.top = `${parseInt(copiedShape.style.top) + 20}px`;
-    editor.appendChild(nueva);
+  if (copied) {
+    const nueva = { ...copied, x: copied.x + 20, y: copied.y + 20 };
+    shapes.push(nueva);
+    selected = nueva;
     saveState();
+    draw();
   }
 };
 
 btnCut.onclick = () => {
-  if (selectedShape) {
-    copiedShape = selectedShape.cloneNode(true);
-    selectedShape.remove();
-    selectedShape = null;
+  if (selected) {
+    copied = { ...selected };
+    shapes = shapes.filter(s => s !== selected);
+    selected = null;
     saveState();
+    draw();
   }
 };
 
 // Atajos de teclado
 document.addEventListener("keydown", (e) => {
-  if (e.ctrlKey && e.key === "z") {
+  if (e.ctrlKey && e.key.toLowerCase() === "z") {
     e.preventDefault();
     if (history.length > 1) {
       redoStack.push(history.pop());
@@ -137,7 +180,7 @@ document.addEventListener("keydown", (e) => {
     }
   }
 
-if (e.ctrlKey && e.key.toLowerCase() === "y") {
+  if (e.ctrlKey && e.key.toLowerCase() === "y") {
     e.preventDefault();
     if (redoStack.length > 0) {
       const state = redoStack.pop();
@@ -166,6 +209,9 @@ if (e.ctrlKey && e.key.toLowerCase() === "y") {
     btnDelete.click();
   }
 });
+
+// Inicializar
 window.addEventListener("DOMContentLoaded", () => {
-  saveState(); // Guarda el estado inicial vacío
+  saveState();
+  draw();
 });
