@@ -21,10 +21,10 @@
         <ul>
         <li><a href="../html/planes.html" class="btn-menu">Planes</a></li>
             <li>📊 Dashboard</li>
-            <li>👥 Usuarios</li>
-            <li>📁 Proyectos</li>
-            <li>🛋 Materiales</li>
-            <li>⚙ Configuración</li>
+            <li><a href="../admibtn/usuario.php" class="btn-menu">👥 Usuarios</li>
+            <li><a href="../admibtn/proyectos.php" class="btn-menu">📁 Proyectos</li>
+            <li><a href="../admibtn/materiales.php" class="btn-menu">🛋 Materiales</li>
+            <li><a href="../admibtn/configuracion.php" class="btn-menu">⚙ Configuración</li>
         </ul>
     </aside>
 

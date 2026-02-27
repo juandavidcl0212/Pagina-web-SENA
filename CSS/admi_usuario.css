@@ -1,0 +1,68 @@
+/* Colores base */
+:root {
+    --fondo-oscuro: #1b1f3b;
+    --acento-verde: #136f63;
+    --fondo-claro: #edf7f6;
+    --violeta: #9067c6;
+    --naranja: #ff9f1c;
+  }
+  
+  /* Estilo general */
+  body {
+    background-color: var(--fondo-oscuro);
+    color: var(--fondo-claro);
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 20px;
+  }
+  
+  /* Títulos */
+  h1, h2 {
+    color: var(--violeta);
+  }
+  
+  /* Tabla */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: var(--fondo-claro);
+    color: var(--fondo-oscuro);
+  }
+  
+  th, td {
+    padding: 10px;
+    border: 1px solid var(--violeta);
+    text-align: left;
+  }
+  
+  th {
+    background-color: var(--violeta);
+    color: white;
+  }
+  
+  /* Botones */
+  button {
+    background-color: var(--naranja);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px 0;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: var(--acento-verde);
+  }
+  
+  /* Gráfica */
+  .grafico {
+    background-color: var(--fondo-claro);
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 30px;
+  }
+  

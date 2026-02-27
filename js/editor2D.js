@@ -27,6 +27,7 @@ function restoreState(state) {
   draw();
 }
 
+//funcion para dibujar
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   shapes.forEach(shape => {
@@ -51,39 +52,32 @@ btnCirc.onclick = () => mode = "circ";
 
 let isDrawing = false;
 let startX, startY;
+let isDragging = false;
+let dragOffsetX = 0;
+let dragOffsetY = 0;
 
+//funciones para crear figura y moverla
 canvas.addEventListener("mousedown", (e) => {
   const { offsetX, offsetY } = e;
   const clicked = getShapeAt(offsetX, offsetY);
 
   if (mode && !clicked) {
+    // Iniciar dibujo
     isDrawing = true;
     startX = offsetX;
     startY = offsetY;
     selected = null;
-  } else if (clicked) {
+  } else if (!mode && clicked) {
+    // Iniciar movimiento
     selected = clicked;
-    startX = offsetX - clicked.x;
-    startY = offsetY - clicked.y;
-
-    function move(ev) {
-      clicked.x = ev.offsetX - startX;
-      clicked.y = ev.offsetY - startY;
-      draw();
-    }
-
-    function stop() {
-      canvas.removeEventListener("mousemove", move);
-      canvas.removeEventListener("mouseup", stop);
-      saveState();
-    }
-
-    canvas.addEventListener("mousemove", move);
-    canvas.addEventListener("mouseup", stop);
+    dragOffsetX = offsetX - selected.x;
+    dragOffsetY = offsetY - selected.y;
+    isDragging = true;
   }
 
   draw();
 });
+
 
 canvas.addEventListener("mousemove", (e) => {
   if (isDrawing) {
@@ -95,16 +89,28 @@ canvas.addEventListener("mousemove", (e) => {
     if (mode === "rect") {
       ctx.fillRect(startX, startY, w, h);
     } else {
-      ctx.ellipse(startX + w / 2, startY + h / 2, Math.abs(w / 2), Math.abs(h / 2), 0, 0, Math.PI * 2);
-      ctx.fill();
+    ctx.ellipse(
+      startX + w / 2,
+      startY + h / 2,
+     Math.abs(w / 2),
+      Math.abs(h / 2),
+      0,
+      0,
+     Math.PI * 2
+    );
+    ctx.fill();
     }
   }
 });
 
+
+
 canvas.addEventListener("mouseup", (e) => {
+  const { offsetX, offsetY } = e;
+
   if (isDrawing) {
-    const w = e.offsetX - startX;
-    const h = e.offsetY - startY;
+    const w = offsetX - startX;
+    const h = offsetY - startY;
     shapes.push({
       type: mode,
       x: startX,
@@ -117,7 +123,13 @@ canvas.addEventListener("mouseup", (e) => {
     saveState();
     draw();
   }
+
+  if (isDragging) {
+    isDragging = false;
+    saveState();
+  }
 });
+
 
 function getShapeAt(x, y) {
   for (let i = shapes.length - 1; i >= 0; i--) {
