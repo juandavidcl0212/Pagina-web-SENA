@@ -1,50 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crea tu Diseño</title>
-    <link rel="stylesheet" href="../CSS/estilos2D.css">
-    <link rel="stylesheet" href="../styles.css">
-    <style>
-      body { margin: 0; font-family: sans-serif; }
-    #toolbar {
-      padding: 10px;
-      background: #f0f0f0;
-      display: flex;
-      gap: 10px;
-    }
-      canvas {
-      border: 1px solid #ccc;
-      cursor: crosshair;
-    }
-    </style>
+    <title>Decorador 2D</title>
+    <link rel="stylesheet" href="../CSS/styleEditor.css">
 </head>
-<header></header>
 <body>
-<div id="toolbar">
-  <button id="btnRect">
-        <img src="../assets/square-regular.png" alt="Icono" width="20" height="20">
-    </button>
-    <button id="btnCirc">
-        <img src="../assets/circle-regular.png" alt="Icono" width="20" height="20">
-    </button>
-  <button id="btnCut">Cortar</button>
-  <button id="btnCopy">Copiar</button>
-  <button id="btnPaste">Pegar</button>
-  <button id="btnDelete">Eliminar</button>
-</div>
+    <h1>🎨 Decorador de Interiores 2D</h1>
+    <nav class="barra-superior">
+    <button onclick="toggleGrid()">🟦 Activar / Desactivar Cuadrícula</button>
+    <button onclick="guardarDiseno()">💾 Guardar Diseño</button>
+    <button onclick="cargarDiseno()">📂 Cargar Diseño</button>
+    <button onclick="traerAlFrente()">⬆ Traer al Frente</button>
+    <button onclick="enviarAlFondo()">⬇ Enviar al Fondo</button>
+    </nav>
 
-<canvas id="canvas" width="1000" height="600"></canvas>
+    <nav class="contenedor">
+        
+        <!-- Contenedor para el área de diseño (el espacio donde se colocan los muebles) -->
+        <div id="espacio" class="espacio">
+            <p class="texto">Haz clic en un elemento y colócalo aquí</p>
+        </div>
 
-    <div id="controles">
-      <h2>Modificar dimensiones</h2>
-      <label>Ancho (m): <input type="number" id="ancho" value="5"></label>
-      <label>Alto (m): <input type="number" id="alto" value="3"></label>
-      <button id="btnActualizar">Actualizar</button>
-    </div>
-  </main>
+        <!-- Panel de elementos (donde están los botones para crear los muebles) -->
+        <div class="panel">
+            <h2>Elementos</h2>
+            <button onclick="crearElemento('sofa')">Sofá</button>
+            <button onclick="crearElemento('cama')">Cama</button>
+            <button onclick="crearElemento('mesa')">Mesa</button>
+            <button onclick="crearElemento('planta')">Planta</button>
+            <button onclick="crearElemento('silla')">Silla</button>
+            <button onclick="crearElemento('alfombra')">Alfombra</button>
+            <button onclick="crearElemento('reloj')">Reloj</button>
+            <button onclick="crearElemento('estante')">Estante</button>
+            <button onclick="crearElemento('cuadro')">Cuadro</button>
+            <button onclick="crearElemento('cortina')">Cortina</button>
+            <button onclick="crearElemento('mesanoche')">Mesa de Noche</button>
+            <button onclick="crearElemento('pared')">Pared</button>
+            <button onclick="crearElemento('ventana')">Ventana</button>
+        </div>
 
-  <script src="../js/editor2D.js"></script>
+    </nav>
+
+    <script src="../js/2Deditor.js"></script>
 </body>
 </html>

@@ -20,7 +20,7 @@ include("conexion.php");
     <nav class="menu">
       <a href="index.php" class="btn-menu">Inicio</a>
       <a href="html/servicios.html" class="btn-menu">Servicios</a>
-      <a href="html/planes.html" class="btn-menu">Planes</a>
+      <a href="php/planes.php" class="btn-menu">Planes</a>
       <a href="html/contacto.html" class="btn-menu">Contacto</a>
     </nav>
     <nav>
@@ -41,7 +41,7 @@ include("conexion.php");
        <img src="assets/nooke g.png" class="nooke-logo">
 
     <!-- Contenido principal -->
-    <div class="content">
+    <nav class="content">
       <div class="info">
         <h2>¿DE QUÉ TRATA?</h2>
         <p>
@@ -56,7 +56,7 @@ include("conexion.php");
         <button onclick="location.href='html/servicios.html'">VER SERVICIOS</button>
         <button onclick="location.href='html/planes.html'">VER PLANES</button>
       </div>
-    </div>
+</nav>
 
     <!-- Redes sociales -->
     <footer>

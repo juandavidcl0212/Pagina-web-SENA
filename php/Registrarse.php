@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("../conexion.php"); // Asegúrate de que $conn esté definido en este archivo
+include("../conexion.php"); // asegúrate que $conn esté definido
 
 $mensaje = "";
 
@@ -15,6 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $mensaje = "El correo no es válido.";
     } else {
+        // Verificar si el correo ya existe
         $stmt = $conn->prepare("SELECT id FROM usuarios WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -23,6 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($stmt->num_rows > 0) {
             $mensaje = "Este correo ya está registrado. Intenta con otro.";
         } else {
+            // Guardar usuario nuevo
             $claveHash = password_hash($password, PASSWORD_DEFAULT);
             $stmt = $conn->prepare("INSERT INTO usuarios (nombre, apellido, email, clave) VALUES (?, ?, ?, ?)");
             $stmt->bind_param("ssss", $nombre, $apellido, $email, $claveHash);
@@ -54,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <nav class="menu">
         <a href="../index.php" class="btn-menu">Inicio</a>
         <a href="../html/servicios.html" class="btn-menu">Servicios</a>
-        <a href="../html/planes.html" class="btn-menu">Planes</a>
+        <a href="../php/planes.php" class="btn-menu">Planes</a>
         <a href="../html/contacto.html" class="btn-menu">Contacto</a>
     </nav>
     <nav>

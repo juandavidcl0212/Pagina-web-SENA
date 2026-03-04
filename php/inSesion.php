@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <nav class="menu">
       <a href="../index.php" class="btn-menu">Inicio</a>
       <a href="../html/servicios.html" class="btn-menu">Servicios</a>
-      <a href="../html/planes.html" class="btn-menu">Planes</a>
+      <a href="../php/planes.php" class="btn-menu">Planes</a>
       <a href="../html/contacto.html" class="btn-menu">Contacto</a>
     </nav>
     <i class="fa-brands fa-instagram"></i>

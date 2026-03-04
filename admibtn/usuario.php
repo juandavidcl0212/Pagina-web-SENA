@@ -19,7 +19,7 @@ $totales = [];
 
 while ($fila = mysqli_fetch_assoc($datos)) {
   $meses[] = $fila['mes'];
-  $totales[] = $fila['total'];
+  $totales[] = (int)$fila['total']; // 🔑 Forzar a entero
 }
 
 // Usuarios nuevos este mes
@@ -30,7 +30,7 @@ $sqlNuevos = "
     AND YEAR(fecha_registro) = YEAR(CURDATE())
 ";
 $resNuevos = mysqli_query($enlace, $sqlNuevos);
-$nuevos = mysqli_fetch_assoc($resNuevos)['nuevos'];
+$nuevos = (int)mysqli_fetch_assoc($resNuevos)['nuevos']; // 🔑 Forzar a entero
 ?>
 
 <!DOCTYPE html>
@@ -42,7 +42,6 @@ $nuevos = mysqli_fetch_assoc($resNuevos)['nuevos'];
   <link rel="stylesheet" href="../styles.css">
   <link rel="stylesheet" href="../CSS/admi_usuario.css">
   <style>
-
     body { font-family: Arial, sans-serif; padding: 20px; }
     table { border-collapse: collapse; width: 100%; margin-top: 20px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
@@ -70,9 +69,9 @@ $nuevos = mysqli_fetch_assoc($resNuevos)['nuevos'];
     </tr>
     <?php while ($u = mysqli_fetch_assoc($usuarios)): ?>
       <tr>
-        <td><?= $u['id'] ?></td>
-        <td><?= $u['nombre'] ?></td>
-        <td><?= $u['email'] ?></td>
+        <td><?= (int)$u['id'] ?></td> <!-- 🔑 ID como entero -->
+        <td><?= htmlspecialchars($u['nombre']) ?></td>
+        <td><?= htmlspecialchars($u['email']) ?></td>
         <td><?= $u['fecha_registro'] ?></td>
       </tr>
     <?php endwhile; ?>
@@ -86,14 +85,22 @@ $nuevos = mysqli_fetch_assoc($resNuevos)['nuevos'];
         labels: <?= json_encode($meses) ?>,
         datasets: [{
           label: 'Usuarios registrados por mes',
-          data: <?= json_encode($totales) ?>,
+          data: <?= json_encode($totales, JSON_NUMERIC_CHECK) ?>, // 🔑 Forzar números en JSON
           backgroundColor: 'rgba(75, 192, 192, 0.6)'
         }]
       },
       options: {
         responsive: true,
         scales: {
-          y: { beginAtZero: true }
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1, // 🔑 Mostrar solo enteros
+              callback: function(value) {
+                return Number.isInteger(value) ? value : null;
+              }
+            }
+          }
         }
       }
     });
