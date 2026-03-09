@@ -171,23 +171,27 @@ function enviarAlFondo() {
 }
 
 /* ===================== GUARDAR DISEÑO ===================== */
-function guardarDiseno() {
-    const elementos = document.querySelectorAll(".mueble");
-    const datos = [];
+function guardarProyectoBD() {
+  const espacio = document.getElementById("espacio");
+  const objetos = espacio.querySelectorAll(".objeto");
 
-    elementos.forEach(el => {
-        datos.push({
-            tipo: [...el.classList].find(c => c !== "mueble"),
-            left: el.style.left,
-            top: el.style.top,
-            zIndex: el.style.zIndex
-        });
+  let data = [];
+  objetos.forEach(obj => {
+    data.push({
+      left: obj.style.left,
+      top: obj.style.top,
+      contenido: obj.textContent
     });
+  });
 
-    localStorage.setItem("disenoInterior", JSON.stringify(datos));
-    alert("Diseño guardado 💾");
+  fetch("../php/guardar_proyecto.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nombre: "Proyecto 1", data: data })
+  })
+  .then(res => res.text())
+  .then(msg => alert(msg));
 }
-
 /* ===================== CARGAR DISEÑO ===================== */
 function cargarDiseno() {
     const datos = JSON.parse(localStorage.getItem("disenoInterior"));
