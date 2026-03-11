@@ -171,27 +171,38 @@ function enviarAlFondo() {
 }
 
 /* ===================== GUARDAR DISEÑO ===================== */
-function guardarProyectoBD() {
-  const espacio = document.getElementById("espacio");
-  const objetos = espacio.querySelectorAll(".objeto");
+function guardarProyecto() {
+  document.getElementById("modalGuardar").style.display = "block";
+}
 
-  let data = [];
-  objetos.forEach(obj => {
-    data.push({
-      left: obj.style.left,
-      top: obj.style.top,
-      contenido: obj.textContent
+function cerrarModal() {
+  document.getElementById("modalGuardar").style.display = "none";
+}
+
+function confirmarGuardar() {
+  const nombre = document.getElementById("nombreProyecto").value;
+  if(!nombre) {
+    alert("Debes poner un nombre.");
+    return;
+  }
+
+  const espacio = document.getElementById("espacio"); // tu contenedor del plano
+  html2canvas(espacio).then(canvas => {
+    const imagen = canvas.toDataURL("image/png");
+
+    fetch("../php/guardar_proyecto.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nombre: nombre, imagen: imagen })
+    })
+    .then(res => res.text())
+    .then(msg => {
+      alert(msg);
+      cerrarModal();
     });
   });
-
-  fetch("../php/guardar_proyecto.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ nombre: "Proyecto 1", data: data })
-  })
-  .then(res => res.text())
-  .then(msg => alert(msg));
 }
+
 /* ===================== CARGAR DISEÑO ===================== */
 function cargarDiseno() {
     const datos = JSON.parse(localStorage.getItem("disenoInterior"));

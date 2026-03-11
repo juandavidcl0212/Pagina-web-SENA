@@ -10,8 +10,17 @@
     <h1>🎨 Decorador de Interiores 2D</h1>
     <nav class="barra-superior">
     <button onclick="toggleGrid()">🟦 Activar / Desactivar Cuadrícula</button>
-    <button onclick="guardarDiseno()">💾 Guardar Diseño</button>
-    <button onclick="cargarDiseno()">📂 Cargar Diseño</button>
+    <button onclick="guardarProyecto()">💾 Guardar Diseño</button>
+    <!-- Modal simple -->
+<div id="modalGuardar" class="modalGuardar" style="display:none; position:fixed; top:30%; left:40%; background:#fff; padding:20px; border:1px solid #ccc;">
+>
+  <h3>Nombre del proyecto</h3>
+  <input type="text" id="nombreProyecto">
+  <button onclick="confirmarGuardar()">Confirmar</button>
+  <button onclick="cerrarModal()">Cancelar</button>
+</div>
+
+    <button onclick="cargarProyecto()">📂 Cargar Diseño</button>
     <button onclick="traerAlFrente()">⬆ Traer al Frente</button>
     <button onclick="enviarAlFondo()">⬇ Enviar al Fondo</button>
     </nav>

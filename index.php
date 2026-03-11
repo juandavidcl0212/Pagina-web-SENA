@@ -1,5 +1,6 @@
 <?php
 include("conexion.php");
+session_start();
 ?>
 
 <!DOCTYPE html>
@@ -17,20 +18,44 @@ include("conexion.php");
     <img src="assets/fb p.png" alt="Logo fantasy box" class="fantasy box" >
   
     <!-- Menú o enlaces al centro -->
-    <nav class="menu">
-      <a href="index.php" class="btn-menu">Inicio</a>
-      <a href="html/servicios.html" class="btn-menu">Servicios</a>
-      <a href="php/planes.php" class="btn-menu">Planes</a>
-      <a href="html/contacto.html" class="btn-menu">Contacto</a>
-    </nav>
     <nav>
-      <nav class="cuentas">
-        <a href="php/Registrarse.php" class="btn-menu">¡Crear una cuenta!</a>
-    </nav>
-    <nav>
-      <a href="php/inSesion.php" class="btn-menu">¿Ya tienes cuenta? Inicia sesión</a>
-    </nav>
+    <a href="index.php">Inicio</a>
+    <a href="servicios.php">Servicios</a>
+    <a href="planes.php">Planes</a>
+    <a href="contacto.php">Contacto</a>
+
+    <div class="cuenta">
+      <?php if(!isset($_SESSION['id_usuario'])): ?>
+        <!-- Usuario NO ha iniciado sesión -->
+        <nav class="cuentas">
+          <a href="../php/Registrarse.php" class="btn-menu">¡Crear una cuenta!</a>
+        </nav>
+        <nav>
+          <a href="../php/inSesion.php" class="btn-menu">¿Ya tienes cuenta? Inicia sesión</a>
+        </nav>
+      <?php else: ?>
+        <!-- Usuario SÍ ha iniciado sesión -->
+        <img src="<?php echo isset($_SESSION['foto']) && $_SESSION['foto'] !== '' 
+              ? '../uploads/' . $_SESSION['foto'] 
+              : '../assets/default.png'; ?>" 
+     alt="Perfil" class="avatar" onclick="toggleMenu()">
+
+
+        <!-- Ventana emergente -->
+        <div id="menuPopup" class="menu-popup">
+          <form method="POST" action="../php/subir_foto.php" enctype="multipart/form-data">
+            <input type="file" name="foto" accept="image/*">
+            <button type="submit">Actualizar Foto</button>
+          </form>
+          <button onclick="location.href='../php/mis_proyectos.php'">Mis Proyectos</button>
+          <button onclick="location.href='../php/logout.php'">Cerrar Sesión</button>
+        </div>
+      <?php endif; ?>
+    </div>
   </nav>
+
+  </nav>
+
 
 <i class="fa-brands fa-instagram"></i>
 <i class="fa-brands fa-youtube"></i>
@@ -65,7 +90,7 @@ include("conexion.php");
         <a href="#" class="icon"><i class="fab fa-facebook-f"></i></a>
       </nav>
       <nav class="links">
-
+<script src="../script.js"></script>
       </nav>
     </footer>
 

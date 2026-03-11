@@ -1,3 +1,18 @@
+
+     <?php session_start(); ?>
+<section class="perfil">
+  <h3>Editar Foto de Perfil</h3>
+
+  <!-- Mostrar foto actual -->
+  <img src="../uploads/<?php echo $_SESSION['foto'] ?? 'default.png'; ?>" 
+       alt="Foto de perfil" class="avatar">
+
+  <!-- Formulario para subir nueva foto -->
+  <form method="POST" action="../php/subir_foto.php" enctype="multipart/form-data">
+    <input type="file" name="foto" accept="image/*">
+    <button type="submit">Actualizar Foto</button>
+  </form>
+</section>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -31,6 +46,22 @@
         </aside>
 
         <main class="main">
+
+            <section class="perfil">
+                <h3>Editar Perfil</h3>
+              
+                <!-- Mostrar foto actual -->
+                <img src="../uploads/<?php echo $_SESSION['foto'] ?? 'default.png'; ?>" 
+                     alt="Foto de perfil" class="avatar">
+              
+                <!-- Formulario para subir nueva foto -->
+                <form method="POST" action="../php/subir_foto.php" enctype="multipart/form-data">
+                  <label for="foto">Subir nueva foto:</label>
+                  <input type="file" name="foto" id="foto" accept="image/*">
+                  <button type="submit">Actualizar Foto</button>
+                </form>
+              </section>
+              
             <h2>Bienvenido a tu panel</h2>
             <p>Explora ideas, diseña ambientes y administra tus proyectos.</p>
 

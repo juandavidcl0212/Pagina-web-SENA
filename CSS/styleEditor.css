@@ -128,3 +128,12 @@ h2 { font-size: 1.5rem; }
 .ventana { position:relative; width:100px; height:80px; border:4px solid #555; background:linear-gradient(145deg,#d0ecff,#a8d8ff); box-shadow:inset 0 0 10px rgba(0,0,0,0.2);}
 .ventana::before{ content:""; position:absolute; width:4px; height:100%; left:50%; transform:translateX(-50%); background:#555;}
 .ventana::after{ content:""; position:absolute; width:100%; height:4px; top:50%; transform:translateY(-50%); background:#555;}
+
+.modalGuardar{
+    display:none;
+    position:fixed; 
+    top:30%; left:40%; 
+    background:#fff; 
+    padding:20px; 
+    border:1px solid #ccc;
+}

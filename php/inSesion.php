@@ -1,24 +1,33 @@
 <?php
+session_start();
 include("../conexion.php"); // Ajusta la ruta según tu estructura
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email    = $_POST['loginEmail'];
-    $password = $_POST['loginPassword'];
+if (isset($_POST['ingresar'])) {
 
-    $query = "SELECT * FROM usuarios WHERE email='$email' AND clave='$password'";
-    $resultado = mysqli_query($enlace, $query);
+  $email    = $_POST['loginEmail'];
+  $password = password_hash($_POST['loginPassword'], PASSWORD_DEFAULT);
+
+  $resultado= $conn->query("SELECT * FROM usuarios WHERE email ='$email'");
 
     if (mysqli_num_rows($resultado) > 0) {
         $usuario = mysqli_fetch_assoc($resultado);
 
+        // Guardar en sesión
+        $_SESSION['id_usuario'] = $usuario['id'];
+        $_SESSION['rol'] = $usuario['rol'];
+        $_SESSION['foto'] = $usuario['foto'] ?? "default.png";
+
+
         // Verificar rol
         if ($usuario['rol'] === 'admin') {
-            header("Location: ../php/bibliotecaAdmin.php"); // Página para administradores
+            header("Location: bibliotecaAdmin.php"); // Página para administradores
             exit;
+            
         } else {
-            header("Location: ../html/biblioteca.html"); // Página para usuarios normales
+            header("Location: biblioteca.php"); // Página para usuarios normales
             exit;
         }
+       
     } else {
         echo "<p>Correo o contraseña incorrectos</p>";
     }
@@ -53,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <form action="inSesion.php" method="POST">
       <input type="email" id="loginEmail" name="loginEmail" placeholder="Correo" required><br>
       <input type="password" id="loginPassword" name="loginPassword" placeholder="Contraseña" required><br>
-      <button type="submit">Ingresar</button>
+      <button type="submit" name="ingresar">Ingresar</button>
     </form>
 
     <nav class="cuentas">
