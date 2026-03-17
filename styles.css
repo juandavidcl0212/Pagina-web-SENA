@@ -101,7 +101,7 @@
   /* MENÚ */
   .menu {
     display: flex;
-    gap: 20px;
+
   }
   
   .menu a {

@@ -1,5 +1,9 @@
+<?php session_start();
 
-     <?php session_start(); ?>
+?>
+<img src="../uploads/<?php echo $_SESSION['foto'] ?? 'default.png'; ?>" 
+     alt="Perfil" class="avatar" onclick="location.href='../php/editar_perfil.php'">
+
 <section class="perfil">
   <h3>Editar Foto de Perfil</h3>
 

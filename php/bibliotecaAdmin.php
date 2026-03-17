@@ -1,4 +1,12 @@
 <?php
+session_start();
+
+?>
+
+<img src="../uploads/<?php echo $_SESSION['foto'] ?? '..assets/default.png'; ?>" 
+     alt="Perfil" class="avatar" onclick="location.href='../php/editar_perfil.php'">
+
+<?php
 // Conexión a la base de datos
 $conn = new mysqli("localhost", "root", "", "prueba_db");
 
@@ -48,6 +56,8 @@ if ($conn->connect_error) {
 <li><a href="../admibtn/materiales.php" class="btn-menu">🛋 Materiales</a></li>
 
 <li><a href="../admibtn/configuracion.php" class="btn-menu">⚙ Configuración</a></li>
+
+<li><a href="../index.php" class="btn-menu">Volver al Inicio</a></li>
 
 </ul>
 

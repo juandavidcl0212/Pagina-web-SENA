@@ -1,38 +1,44 @@
 <?php
 session_start();
-include("../conexion.php"); // Ajusta la ruta según tu estructura
+$conn = new mysqli("localhost", "root", "", "prueba_db");
 
-if (isset($_POST['ingresar'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
 
-  $email    = $_POST['loginEmail'];
-  $password = password_hash($_POST['loginPassword'], PASSWORD_DEFAULT);
+    // Buscar usuario en la base de datos
+    $stmt = $conn->prepare("SELECT id, nombre, password, rol, foto FROM usuarios WHERE email=?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-  $resultado= $conn->query("SELECT * FROM usuarios WHERE email ='$email'");
+    if ($result->num_rows === 1) {
+        $usuario = $result->fetch_assoc();
 
-    if (mysqli_num_rows($resultado) > 0) {
-        $usuario = mysqli_fetch_assoc($resultado);
+        // Verificar contraseña
+        if (password_verify($password, $usuario['password'])) {
+            // Guardar datos en la sesión
+            $_SESSION['id_usuario'] = $usuario['id'];
+            $_SESSION['nombre'] = $usuario['nombre'];
+            $_SESSION['rol'] = $usuario['rol'];
+            $_SESSION['foto'] = $usuario['foto']; // Aquí se carga automáticamente la foto
 
-        // Guardar en sesión
-        $_SESSION['id_usuario'] = $usuario['id'];
-        $_SESSION['rol'] = $usuario['rol'];
-        $_SESSION['foto'] = $usuario['foto'] ?? "default.png";
-
-
-        // Verificar rol
-        if ($usuario['rol'] === 'admin') {
-            header("Location: bibliotecaAdmin.php"); // Página para administradores
-            exit;
-            
+            // Redirigir según rol
+            if ($usuario['rol'] === 'admin') {
+                header("Location: bibliotecaAdmin.php");
+            } else {
+                header("Location: biblioteca.php");
+            }
+            exit();
         } else {
-            header("Location: biblioteca.php"); // Página para usuarios normales
-            exit;
+            echo "Contraseña incorrecta.";
         }
-       
     } else {
-        echo "<p>Correo o contraseña incorrectos</p>";
+        echo "Usuario no encontrado.";
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
