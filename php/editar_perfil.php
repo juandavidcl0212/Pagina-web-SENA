@@ -11,6 +11,7 @@ if(!isset($_SESSION['id_usuario'])) {
   <meta charset="UTF-8">
   <title>Editar Perfil</title>
   <link rel="stylesheet" href="../CSS/dashboard.css">
+  <link rel="stylesheet" href="../styles.css">
   <style>
     .perfil-container {
       max-width: 400px;
@@ -35,13 +36,20 @@ if(!isset($_SESSION['id_usuario'])) {
     <img src="../uploads/<?php echo $_SESSION['foto'] ?? 'default.png'; ?>" 
          alt="Foto actual" class="avatar">
 
-    <form method="POST" action="subir_foto.php" enctype="multipart/form-data">
-      <input type="file" name="foto" accept="image/*" required>
-      <button type="submit">Actualizar Foto</button>
-    </form>
+    <form method="POST" action="php/subir_foto.php" enctype="multipart/form-data">
+            <input type="file" name="foto" accept="image/*">
+            <button type="submit">Actualizar Foto</button>
+          </form>
     <br>
-    <a href="biblioteca.php">Volver a Biblioteca</a>
-    <a href="bibliotecaAdmin.php">Volver a Biblioteca Admin</a>
+    
+    <?php if(isset($_SESSION['rol'])): ?>
+  <?php if($_SESSION['rol'] === 'admin'): ?>
+    <a href="bibliotecaAdmin.php" class="btn-menu">Volver a Biblioteca Admin</a>
+  <?php else: ?>
+    <a href="biblioteca.php" class="btn-menu">Volver a Biblioteca</a>
+  <?php endif; ?>
+
+<?php endif; ?>
   </div>
 </body>
 </html>

@@ -25,11 +25,11 @@ if (isset($_SESSION['id_usuario']) && isset($_SESSION['ultima_pagina'])) {
     <img src="assets/fb p.png" alt="Logo fantasy box" class="fantasy box">
 
     <!-- Menú o enlaces al centro -->
-    <nav>
-      <a href="index.php">Inicio</a>
-      <a href="servicios.php">Servicios</a>
-      <a href="planes.php">Planes</a>
-      <a href="contacto.php">Contacto</a>
+    <nav class="menu">
+      <a href="index.php" class="btn-menu">Inicio</a>
+      <a href="html/servicios.html" class="btn-menu">Servicios</a>
+      <a href="php/planes.php" class="btn-menu">Planes</a>
+      <a href="html/contacto.html" class="btn-menu">Contacto</a>
     </nav>
 
     <div class="cuenta">
@@ -48,23 +48,20 @@ if (isset($_SESSION['id_usuario']) && isset($_SESSION['ultima_pagina'])) {
               : 'assets/default.png'; ?>" 
              alt="Perfil" class="avatar" onclick="toggleMenu()">
 
-        <!-- Botón para volver a la última página -->
-        <?php if(isset($_SESSION['rol'])): ?>
-  <?php if($_SESSION['rol'] === 'admin'): ?>
-    <a href="php/bibliotecaAdmin.php" class="btn-menu">Volver a Administrador</a>
-  <?php else: ?>
-    <a href="php/biblioteca.php" class="btn-menu">Volver a Biblioteca</a>
-  <?php endif; ?>
-<?php endif; ?>
-
 
         <!-- Ventana emergente -->
         <div id="menuPopup" class="menu-popup">
-          <form method="POST" action="php/subir_foto.php" enctype="multipart/form-data">
-            <input type="file" name="foto" accept="image/*">
-            <button type="submit">Actualizar Foto</button>
-          </form>
-        
+          
+        <!-- Botón para volver a la última página -->
+        <?php if(isset($_SESSION['rol'])): ?>
+  <?php if($_SESSION['rol'] === 'admin'): ?>
+    <button onclick="location.href='php/bibliotecaAdmin.php'">Volver al Inicio de Administrador</button>
+  <?php else: ?>
+    <button onclick="location.href='php/biblioteca.php'">Volver al Inicio</button>
+  <?php endif; ?>
+<?php endif; ?>
+
+          <button onclick="location.href='php/editar_perfil.php'">Editar Perfil</button>
           <button onclick="location.href='index.php'">Cerrar Sesión</button>
         </div>
       <?php endif; ?>
@@ -87,7 +84,7 @@ if (isset($_SESSION['id_usuario']) && isset($_SESSION['ultima_pagina'])) {
     <div class="botones">
       <h1>¡DISEÑA TU ESPACIO COMO UN PROFESIONAL!</h1>
       <button onclick="location.href='html/servicios.html'">VER SERVICIOS</button>
-      <button onclick="location.href='html/planes.html'">VER PLANES</button>
+      <button onclick="location.href='php/planes.php'">VER PLANES</button>
     </div>
   </nav>
 

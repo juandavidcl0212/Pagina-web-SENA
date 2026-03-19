@@ -1,45 +1,42 @@
 <?php
 session_start();
-$conn = new mysqli("localhost", "root", "", "prueba_db");
+include("../conexion.php");
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    // Buscar usuario en la base de datos
-    $stmt = $conn->prepare("SELECT id, nombre, password, rol, foto FROM usuarios WHERE email=?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $email    = $_POST['loginEmail'];
+    $password = $_POST['loginPassword'];
 
-    if ($result->num_rows === 1) {
-        $usuario = $result->fetch_assoc();
+    $stmt = mysqli_prepare($enlace, "SELECT * FROM usuarios WHERE email = ?");
+    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_execute($stmt);
+    $resultado = mysqli_stmt_get_result($stmt);
 
-        // Verificar contraseña
-        if (password_verify($password, $usuario['password'])) {
-            // Guardar datos en la sesión
+    if ($resultado && mysqli_num_rows($resultado) > 0) {
+        $usuario = mysqli_fetch_assoc($resultado);
+
+        if (password_verify($password, $usuario['clave'])) {
+
             $_SESSION['id_usuario'] = $usuario['id'];
-            $_SESSION['nombre'] = $usuario['nombre'];
             $_SESSION['rol'] = $usuario['rol'];
-            $_SESSION['foto'] = $usuario['foto']; // Aquí se carga automáticamente la foto
+            $_SESSION['nombre'] = $usuario['nombre'];
 
-            // Redirigir según rol
             if ($usuario['rol'] === 'admin') {
                 header("Location: bibliotecaAdmin.php");
             } else {
                 header("Location: biblioteca.php");
             }
-            exit();
+            exit;
+
         } else {
-            echo "Contraseña incorrecta.";
+            echo "<p>Contraseña incorrecta</p>";
         }
+
     } else {
-        echo "Usuario no encontrado.";
+        echo "<p>Correo no encontrado</p>";
     }
 }
 ?>
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -55,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <nav class="menu">
       <a href="../index.php" class="btn-menu">Inicio</a>
       <a href="../html/servicios.html" class="btn-menu">Servicios</a>
-      <a href="../php/planes.php" class="btn-menu">Planes</a>
+      <a href="../html/planes.html" class="btn-menu">Planes</a>
       <a href="../html/contacto.html" class="btn-menu">Contacto</a>
     </nav>
     <i class="fa-brands fa-instagram"></i>
@@ -68,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form action="inSesion.php" method="POST">
       <input type="email" id="loginEmail" name="loginEmail" placeholder="Correo" required><br>
       <input type="password" id="loginPassword" name="loginPassword" placeholder="Contraseña" required><br>
-      <button type="submit" name="ingresar">Ingresar</button>
+      <button type="submit">Ingresar</button>
     </form>
 
     <nav class="cuentas">
