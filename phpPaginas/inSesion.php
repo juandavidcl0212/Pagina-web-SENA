@@ -50,15 +50,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <header class="encabezado">
     <img src="../assets/fb p.png" alt="Logo fantasy box" class="fantasy box">
     <nav class="menu">
-      <a href="../index.php" class="btn-menu">Inicio</a>
-      <a href="../html/servicios.html" class="btn-menu">Servicios</a>
-      <a href="../html/planes.html" class="btn-menu">Planes</a>
-      <a href="../html/contacto.html" class="btn-menu">Contacto</a>
+        <a href="../index.php" class="btn-menu">Inicio</a>
+        <a href="../phpPaginas/servicios.php" class="btn-menu">Servicios</a>
+        <a href="../phpPaginas/planes.php" class="btn-menu">Planes</a>
+        <a href="../phpPaginas/contacto.php" class="btn-menu">Contacto</a>
     </nav>
-    <i class="fa-brands fa-instagram"></i>
-    <i class="fa-brands fa-youtube"></i>
-    <i class="fa-brands fa-facebook"></i>
-  </header>
+    <nav>
+        <i class="fa-brands fa-instagram"></i>
+        <i class="fa-brands fa-youtube"></i>
+        <i class="fa-brands fa-facebook"></i>
+    </nav>
+</header>
 
   <div class="cont">
     <h2>Iniciar Sesión</h2>

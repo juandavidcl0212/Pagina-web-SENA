@@ -27,19 +27,19 @@ if (isset($_SESSION['id_usuario']) && isset($_SESSION['ultima_pagina'])) {
     <!-- Menú o enlaces al centro -->
     <nav class="menu">
       <a href="index.php" class="btn-menu">Inicio</a>
-      <a href="html/servicios.html" class="btn-menu">Servicios</a>
-      <a href="php/planes.php" class="btn-menu">Planes</a>
-      <a href="html/contacto.html" class="btn-menu">Contacto</a>
+      <a href="phpPaginas/servicios.php" class="btn-menu">Servicios</a>
+      <a href="phpPaginas/planes.php" class="btn-menu">Planes</a>
+      <a href="phpPaginas/contacto.php" class="btn-menu">Contacto</a>
     </nav>
 
     <div class="cuenta">
       <?php if(!isset($_SESSION['id_usuario'])): ?>
         <!-- Usuario NO ha iniciado sesión -->
         <nav class="cuentas">
-          <a href="php/Registrarse.php" class="btn-menu">¡Crear una cuenta!</a>
+          <a href="phpPaginas/Registrarse.php" class="btn-menu">¡Crear una cuenta!</a>
         </nav>
         <nav>
-          <a href="php/inSesion.php" class="btn-menu">¿Ya tienes cuenta? Inicia sesión</a>
+          <a href="phpPaginas/inSesion.php" class="btn-menu">¿Ya tienes cuenta? Inicia sesión</a>
         </nav>
       <?php else: ?>
         <!-- Usuario SÍ ha iniciado sesión -->
@@ -50,22 +50,24 @@ if (isset($_SESSION['id_usuario']) && isset($_SESSION['ultima_pagina'])) {
 
 
         <!-- Ventana emergente -->
-        <div id="menuPopup" class="menu-popup">
+        <nav id="menuPopup" class="menu-popup">
           
         <!-- Botón para volver a la última página -->
         <?php if(isset($_SESSION['rol'])): ?>
   <?php if($_SESSION['rol'] === 'admin'): ?>
-    <button onclick="location.href='php/bibliotecaAdmin.php'">Volver al Inicio de Administrador</button>
+    <button onclick="location.href='phpPaginas/bibliotecaAdmin.php'">Volver a la Biblioteca de Administrador</button>
   <?php else: ?>
-    <button onclick="location.href='php/biblioteca.php'">Volver al Inicio</button>
+    <button onclick="location.href='phpPaginas/biblioteca.php'">Volver a la Biblioteca</button>
   <?php endif; ?>
 <?php endif; ?>
 
-          <button onclick="location.href='php/editar_perfil.php'">Editar Perfil</button>
-          <button onclick="location.href='index.php'">Cerrar Sesión</button>
-        </div>
+          <button onclick="location.href='phpPaginas/editar_perfil.php'">Editar Perfil</button>
+          <button onclick="location.href='phpFunciones/logout.php'">Cerrar Sesión</button>
+  </nav>
       <?php endif; ?>
     </div>
+
+    <script src="script.js"></script>
   </header>
 
   <img src="assets/nooke g.png" class="nooke-logo">
@@ -83,8 +85,8 @@ if (isset($_SESSION['id_usuario']) && isset($_SESSION['ultima_pagina'])) {
 
     <div class="botones">
       <h1>¡DISEÑA TU ESPACIO COMO UN PROFESIONAL!</h1>
-      <button onclick="location.href='html/servicios.html'">VER SERVICIOS</button>
-      <button onclick="location.href='php/planes.php'">VER PLANES</button>
+      <button onclick="location.href='phpPaginas/servicios.php'">VER SERVICIOS</button>
+      <button onclick="location.href='phpPaginas/planes.php'">VER PLANES</button>
     </div>
   </nav>
 
@@ -95,7 +97,6 @@ if (isset($_SESSION['id_usuario']) && isset($_SESSION['ultima_pagina'])) {
       <a href="#" class="icon"><i class="fab fa-facebook-f"></i></a>
     </nav>
     <nav class="links">
-      <script src="script.js"></script>
     </nav>
   </footer>
 </body>

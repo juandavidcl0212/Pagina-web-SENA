@@ -1,57 +1,54 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Decorador 2D</title>
-    <link rel="stylesheet" href="../CSS/styleEditor.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decorador 2D</title>
+  <link rel="stylesheet" href="../CSS/styleEditor.css">
 </head>
 <body>
-    <h1>🎨 Decorador de Interiores 2D</h1>
-    <nav class="barra-superior">
+  <h1>🎨 Decorador de Interiores 2D</h1>
+
+  <!-- Barra superior -->
+  <nav class="barra-superior">
     <button onclick="toggleGrid()">🟦 Activar / Desactivar Cuadrícula</button>
     <button onclick="guardarProyecto()">💾 Guardar Diseño</button>
-    <!-- Modal simple -->
-<div id="modalGuardar" class="modalGuardar" style="display:none; position:fixed; top:30%; left:40%; background:#fff; padding:20px; border:1px solid #ccc;">
->
-  <h3>Nombre del proyecto</h3>
-  <input type="text" id="nombreProyecto">
-  <button onclick="confirmarGuardar()">Confirmar</button>
-  <button onclick="cerrarModal()">Cancelar</button>
-</div>
-
     <button onclick="cargarProyecto()">📂 Cargar Diseño</button>
     <button onclick="traerAlFrente()">⬆ Traer al Frente</button>
     <button onclick="enviarAlFondo()">⬇ Enviar al Fondo</button>
-    </nav>
+  </nav>
 
-    <nav class="contenedor">
-        
-        <!-- Contenedor para el área de diseño (el espacio donde se colocan los muebles) -->
-        <div id="espacio" class="espacio">
-            <p class="texto">Haz clic en un elemento y colócalo aquí</p>
-        </div>
+  <!-- Selección de espacio y temática -->
+  <div class="selecciones">
+    <label for="espacioSelect">Escoge el espacio:</label>
+    <select id="espacioSelect">
+      <option value="salon">Salón</option>
+      <option value="sala">Sala</option>
+      <option value="oficina">Oficina</option>
+      <option value="comedor">Comedor</option>
+    </select>
 
-        <!-- Panel de elementos (donde están los botones para crear los muebles) -->
-        <div class="panel">
-            <h2>Elementos</h2>
-            <button onclick="crearElemento('sofa')">Sofá</button>
-            <button onclick="crearElemento('cama')">Cama</button>
-            <button onclick="crearElemento('mesa')">Mesa</button>
-            <button onclick="crearElemento('planta')">Planta</button>
-            <button onclick="crearElemento('silla')">Silla</button>
-            <button onclick="crearElemento('alfombra')">Alfombra</button>
-            <button onclick="crearElemento('reloj')">Reloj</button>
-            <button onclick="crearElemento('estante')">Estante</button>
-            <button onclick="crearElemento('cuadro')">Cuadro</button>
-            <button onclick="crearElemento('cortina')">Cortina</button>
-            <button onclick="crearElemento('mesanoche')">Mesa de Noche</button>
-            <button onclick="crearElemento('pared')">Pared</button>
-            <button onclick="crearElemento('ventana')">Ventana</button>
-        </div>
+    <label for="tematicaSelect">Escoge la temática:</label>
+    <select id="tematicaSelect" onchange="mostrarObjetos()">
+      <option value="navidad">Navideña</option>
+      <option value="halloween">Halloween</option>
+      <option value="cumple">Cumpleaños</option>
+      <option value="sanvalentin">San Valentín</option>
+      <option value="otros">Otros</option>
+    </select>
+  </div>
 
-    </nav>
+  <nav class="contenedor">
+    <!-- Área de diseño -->
+    <div id="espacio" class="espacio">
+      <p class="texto">Haz clic en un objeto y colócalo aquí</p>
+    </div>
 
-    <script src="../js/2Deditor.js"></script>
+    <!-- Panel de objetos -->
+    <div class="panel">
+      <h2>Objetos</h2>
+      <div id="listaObjetos"></div>
+    </div>
+  </nav>
 </body>
 </html>

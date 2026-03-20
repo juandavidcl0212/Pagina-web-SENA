@@ -158,16 +158,30 @@
 }
 
 .menu-popup {
-  display: none;
+  display: none;              /* Oculto por defecto */
+  opacity: 0;                 /* Transparente */
+  transform: scale(0.9);      /* Un poco más pequeño */
+  transition: opacity 0.3s ease, transform 0.3s ease;
   position: absolute;
   top: 60px;
   right: 20px;
   background: #fff;
   border: 1px solid #ccc;
-  padding: 10px;
+  padding: 15px;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 100;
+  width: 250px;  
+  max-width: 90%;
 }
+
+/* Clase que activa la animación */
+.menu-popup.show {
+  display: block;
+  opacity: 1;
+  transform: scale(1);
+}
+
 
     .menu-popup button {
       display: block;

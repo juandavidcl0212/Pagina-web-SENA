@@ -55,9 +55,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <img src="../assets/fb p.png" alt="Logo fantasy box" class="fantasy box">
     <nav class="menu">
         <a href="../index.php" class="btn-menu">Inicio</a>
-        <a href="../html/servicios.html" class="btn-menu">Servicios</a>
-        <a href="../php/planes.php" class="btn-menu">Planes</a>
-        <a href="../html/contacto.html" class="btn-menu">Contacto</a>
+        <a href="../phpPaginas/servicios.php" class="btn-menu">Servicios</a>
+        <a href="../phpPaginas/planes.php" class="btn-menu">Planes</a>
+        <a href="../phpPaginas/contacto.php" class="btn-menu">Contacto</a>
     </nav>
     <nav>
         <i class="fa-brands fa-instagram"></i>

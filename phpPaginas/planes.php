@@ -20,30 +20,56 @@ $result = $conn->query("SELECT * FROM membresias");
     <link rel="stylesheet" href="../CSS/style planes.css">
     <link rel="stylesheet" href="../styles.css">
     
-  <header class="encabezado">
+    <header class="encabezado">
     <!-- Logo a la izquierda -->
-    <img src="../assets/fb p.png" alt="Logo fantasy box" class="fantasy box" >
-  
+    <img src="../assets/fb p.png" alt="Logo fantasy box" class="fantasy box">
+
     <!-- Menú o enlaces al centro -->
     <nav class="menu">
       <a href="../index.php" class="btn-menu">Inicio</a>
-      <a href="../html/servicios.html" class="btn-menu">Servicios</a>
-      <a href="../html/planes.html" class="btn-menu">Planes</a>
-      <a href="../html/contacto.html" class="btn-menu">Contacto</a>
+      <a href="../phpPaginas/servicios.php" class="btn-menu">Servicios</a>
+      <a href="../phpPaginas/planes.php" class="btn-menu">Planes</a>
+      <a href="../phpPaginas/contacto.php" class="btn-menu">Contacto</a>
     </nav>
-    <nav>
-      <nav class="cuentas">
-        <a href="../php/Registrarse.php" class="btn-menu">¡Crear una cuenta!</a>
-    </nav>
-    <nav>
-      <a href="../php/inSesion.php" class="btn-menu">¿Ya tienes cuenta? Inicia sesión</a>
-    </nav>
-  </nav>
 
-<i class="fa-brands fa-instagram"></i>
-<i class="fa-brands fa-youtube"></i>
-<i class="fa-brands fa-facebook"></i>
+    <div class="cuenta">
+      <?php if(!isset($_SESSION['id_usuario'])): ?>
+        <!-- Usuario NO ha iniciado sesión -->
+        <nav class="cuentas">
+          <a href="../phpPaginas/Registrarse.php" class="btn-menu">¡Crear una cuenta!</a>
+        </nav>
+        <nav>
+          <a href="../phpPaginas/inSesion.php" class="btn-menu">¿Ya tienes cuenta? Inicia sesión</a>
+        </nav>
+      <?php else: ?>
+        <!-- Usuario SÍ ha iniciado sesión -->
+        <img src="<?php echo isset($_SESSION['foto']) && $_SESSION['foto'] !== '' 
+              ? '../uploads/' . $_SESSION['foto'] 
+              : '../assets/default.png'; ?>" 
+             alt="Perfil" class="avatar" onclick="toggleMenu()">
+
+
+        <!-- Ventana emergente -->
+        <div id="menuPopup" class="menu-popup">
+          
+        <!-- Botón para volver a la última página -->
+        <?php if(isset($_SESSION['rol'])): ?>
+  <?php if($_SESSION['rol'] === 'admin'): ?>
+    <button onclick="location.href='phpPaginas/bibliotecaAdmin.php'">Volver a la Biblioteca de Administrador</button>
+  <?php else: ?>
+    <button onclick="location.href='phpPaginas/biblioteca.php'">Volver a la Biblioteca</button>
+  <?php endif; ?>
+<?php endif; ?>
+
+          <button onclick="location.href='../phpPaginas/editar_perfil.php'">Editar Perfil</button>
+          <button onclick="location.href='../phpFunciones/logout.php'">Cerrar Sesión</button>
+        </div>
+      <?php endif; ?>
+    </div>
+
+    <script src="../script.js"></script>
   </header>
+
 </head>
 <body>
     <nav class="content">
@@ -91,8 +117,8 @@ $result = $conn->query("SELECT * FROM membresias");
     </div>
     </div>
     </nav>
-    <script src="js\script.js"></script>
-    <form method="POST" action="actualizar_precio.php">
+    <script src="../js/script.js"></script>
+    <form method="POST" action="../phpFunciones/actualizar_precio.php">
     <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
     <input type="text" name="precio" value="<?php echo $row['precio']; ?>">
     <button type="submit">Guardar</button>

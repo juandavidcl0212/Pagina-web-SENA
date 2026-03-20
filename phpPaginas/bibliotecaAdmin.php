@@ -22,14 +22,14 @@ if ($conn->connect_error) {
     <header class="topbar">
     <h1>Panel Administrador</h1>
     <nav class="admin-info">
-        <button onclick="location.href='../index.php'">Cerrar Sesión</button>
+        <button onclick="location.href='../phpPaginas/logout.php'">Cerrar Sesión</button>
     </nav>
     </header>
         <nav class="container">
             <aside class="sidebar">
             <h2>Nook Studio</h2>
                 <ul>
-                    <li><a href="../php/planes.php" class="btn-menu">Planes</a></li>
+                    <li><a href="../phpPaginas/planes.php" class="btn-menu">Planes</a></li>
                     <li>📊 Dashboard</li>
                     <li><a href="../admibtn/usuario.php" class="btn-menu">👥 Usuarios</a></li>
                     <li><a href="../admibtn/proyectos.php" class="btn-menu">📁 Proyectos</a></li>
@@ -82,7 +82,7 @@ if ($conn->connect_error) {
                 <td><?php echo htmlspecialchars($row['nombre']); ?></td>
                 <td><?php echo htmlspecialchars($row['descripcion']); ?></td>
                 <td>
-                <form method="POST" action="actualizar_precio.php">
+                <form method="POST" action="../phpPaginas/actualizar_precio.php">
                     <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
                     <input 
                         step="0.01"
