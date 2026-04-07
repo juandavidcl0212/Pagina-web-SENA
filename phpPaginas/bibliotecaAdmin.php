@@ -19,12 +19,48 @@ if ($conn->connect_error) {
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-    <header class="topbar">
-    <h1>Panel Administrador</h1>
-    <nav class="admin-info">
-        <button onclick="location.href='../phpPaginas/logout.php'">Cerrar Sesión</button>
-    </nav>
-    </header>
+    <header class="encabezado">
+    <!-- Logo a la izquierda -->
+    <img src="../assets/fb p.png" alt="Logo fantasy box" class="fantasy box">
+
+
+    <div class="cuenta">
+      <?php if(!isset($_SESSION['id_usuario'])): ?>
+        <!-- Usuario NO ha iniciado sesión -->
+        <nav class="cuentas">
+          <a href="phpPaginas/Registrarse.php" class="btn-menu">¡Crear una cuenta!</a>
+        </nav>
+        <nav>
+          <a href="phpPaginas/inSesion.php" class="btn-menu">¿Ya tienes cuenta? Inicia sesión</a>
+        </nav>
+      <?php else: ?>
+        <!-- Usuario SÍ ha iniciado sesión -->
+        <img src="<?php echo isset($_SESSION['foto']) && $_SESSION['foto'] !== '' 
+              ? '../uploads/' . $_SESSION['foto'] 
+              : '../assets/default.png'; ?>" 
+             alt="Perfil" class="avatar" onclick="toggleMenu()">
+
+
+        <!-- Ventana emergente -->
+        <nav id="menuPopup" class="menu-popup">
+          
+        <!-- Botón para volver a la última página -->
+        <?php if(isset($_SESSION['rol'])): ?>
+  <?php if($_SESSION['rol'] === 'admin'): ?>
+    <button onclick="location.href='../phpPaginas/bibliotecaAdmin.php'">Volver a la Biblioteca de Administrador</button>
+  <?php else: ?>
+    <button onclick="location.href='../phpPaginas/biblioteca.php'">Volver a la Biblioteca</button>
+  <?php endif; ?>
+<?php endif; ?>
+
+          <button onclick="location.href='../phpPaginas/editar_perfil.php'">Editar Perfil</button>
+          <button onclick="location.href='../phpFunciones/logout.php'">Cerrar Sesión</button>
+  </nav>
+      <?php endif; ?>
+    </div>
+
+    <script src="../script.js"></script>
+  </header>
         <nav class="container">
             <aside class="sidebar">
             <h2>Nook Studio</h2>

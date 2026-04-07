@@ -20,6 +20,7 @@ if (isset($_SESSION['id_usuario']) && isset($_SESSION['ultima_pagina'])) {
   <script src="script.js"></script>
 </head>
 <body>
+  
   <header class="encabezado">
     <!-- Logo a la izquierda -->
     <img src="assets/fb p.png" alt="Logo fantasy box" class="fantasy box">

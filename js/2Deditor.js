@@ -237,3 +237,8 @@ function mostrarMedidor() {
     medidor.textContent = "1m";
     espacio.appendChild(medidor);
 }
+
+function mostrarObjetos() {
+  const menu = document.getElementById("menuPopup");
+  menu.classList.toggle("show");
+}

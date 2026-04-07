@@ -33,23 +33,27 @@ if(!isset($_SESSION['id_usuario'])) {
 <body>
   <div class="perfil-container">
     <h2>Editar Foto de Perfil</h2>
-    <img src="../uploads/<?php echo $_SESSION['foto'] ?? 'default.png'; ?>" 
+    <!-- Mostrar foto actual -->
+    <img src="../assets/<?php echo (isset($_SESSION['foto']) && $_SESSION['foto'] !== '') 
+        ? $_SESSION['foto'] 
+        : 'default.png'; ?>" 
          alt="Foto actual" class="avatar">
 
-    <form method="POST" action="php/subir_foto.php" enctype="multipart/form-data">
-            <input type="file" name="foto" accept="image/*">
-            <button type="submit">Actualizar Foto</button>
-          </form>
+    <!-- Formulario para subir nueva foto -->
+    <form method="POST" action="../phpFunciones/subir_foto.php" enctype="multipart/form-data">
+      <input type="file" name="foto" accept="image/*" required>
+      <button type="submit">Actualizar Foto</button>
+    </form>
     <br>
     
     <?php if(isset($_SESSION['rol'])): ?>
-  <?php if($_SESSION['rol'] === 'admin'): ?>
-    <a href="bibliotecaAdmin.php" class="btn-menu">Volver a Biblioteca Admin</a>
-  <?php else: ?>
-    <a href="biblioteca.php" class="btn-menu">Volver a Biblioteca</a>
-  <?php endif; ?>
-
-<?php endif; ?>
+      <?php if($_SESSION['rol'] === 'admin'): ?>
+        <a href="bibliotecaAdmin.php" class="btn-menu">Volver a Biblioteca Admin</a>
+      <?php else: ?>
+        <a href="biblioteca.php" class="btn-menu">Volver a Biblioteca</a>
+      <?php endif; ?>
+    <?php endif; ?>
   </div>
 </body>
 </html>
+../
