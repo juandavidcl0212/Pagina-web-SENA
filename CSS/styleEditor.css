@@ -82,3 +82,41 @@ h2 { font-size: 1.5rem; }
     padding:20px; 
     border:1px solid #ccc;
 }
+/* Estilo del desplegable */
+    .panel {
+      position: relative;
+      display: inline-block;
+    }
+    .panel button {
+      padding: 10px;
+      background: #6a7fbb;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .panel button:hover { background: #5a6c99; }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: #fff;
+      min-width: 200px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 100;
+      padding: 10px;
+    }
+    .dropdown-content button {
+      display: block;
+      width: 100%;
+      margin: 5px 0;
+      background: #eee;
+      color: #333;
+    }
+    .dropdown-content button:hover {
+      background: #ddd;
+    }
+    .show { display: block; }

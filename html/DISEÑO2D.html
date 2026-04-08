@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Decorador 2D</title>
   <link rel="stylesheet" href="../CSS/styleEditor.css">
+  <style>
+    
+  </style>
 </head>
 <body>
   <h1>🎨 Decorador de Interiores 2D</h1>
@@ -44,11 +47,12 @@
       <p class="texto">Haz clic en un objeto y colócalo aquí</p>
     </div>
 
-    <!-- Panel de objetos -->
+    <!-- Panel desplegable de objetos -->
     <div class="panel">
-      <h2>Objetos</h2>
-      <div id="listaObjetos"></div>
+      <button onclick="toggleDropdown()">Objetos ▼</button>
+      <div id="listaObjetos" class="dropdown-content"></div>
     </div>
   </nav>
+  <script src="../js/2Deditor.js"></script>
 </body>
 </html>

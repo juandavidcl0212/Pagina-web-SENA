@@ -78,7 +78,7 @@ $result = $conn->query("SELECT * FROM membresias");
         <div class="plan1">
             <h2>Personal</h2>
             <div class="precio1">
-                <h3>$30 USD</h3>
+            <h3>$30 </h3> 
                 <p>/mes</p>
             </div>
             <ul>
@@ -91,7 +91,7 @@ $result = $conn->query("SELECT * FROM membresias");
         <div class="plan2">
             <h2>Familiar</h2>
             <div class="precio2">
-                <h3>$90 USD</h3>
+                <h3>$90 </h3>
                 <p>/mes</p>
             </div>
             <ul>
@@ -104,7 +104,7 @@ $result = $conn->query("SELECT * FROM membresias");
         <div class="plan3">
             <h2>Institucional</h2>
             <div class="precio3">
-                <h3>$250 USD</h3>
+                <h3>$250 </h3>
                 <p>/mes</p>
             </div>
             <ul>
@@ -122,6 +122,7 @@ $result = $conn->query("SELECT * FROM membresias");
     <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
     <input type="text" name="precio" value="<?php echo $row['precio']; ?>">
     <button type="submit">Guardar</button>
+    </form>
 </body>
 </html>
        
@@ -132,27 +133,29 @@ $result = $conn->query("SELECT * FROM membresias");
 </body>
 </html>
 
-<?php
+<?php if(isset($_SESSION['rol']) && $_SESSION['rol'] === 'admin'): ?>
+  <div class="editar-precio">
+    <h3>Editar precio de planes</h3>
+    <form method="POST" action="../phpFunciones/actualizar_precio.php">
+      <label for="plan">Selecciona el plan:</label>
+      <select name="id" id="plan">
+        <option value="1">Personal</option>
+        <option value="2">Familiar</option>
+        <option value="3">Institucional</option>
+      </select>
 
-$conn = new mysqli("localhost", "root", "", "membresias");
+      <label for="precio">Nuevo precio:</label>
+      <input type="text" name="precio" id="precio" placeholder="Ej: 100">
 
-$result = $conn->query("SELECT * FROM membresias");
-
-while($row = $result->fetch_assoc()) 
-
-echo "<h2>".$row['nombre']."</h2>";
-
-echo "<p>Precio: $".$row['precio']."</p>";
-
-if(isset($_SESSION['rol']) && $_SESSION['rol'] === 'admin')  ?>
-    <form method="POST" action="actualizar_precio.php" style="display:inline;">
-        <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-        <input type="text" name="precio" value="<?php echo $row['precio']; ?>">
-        <button type="submit" title="Editar precio">
-            <i class="fas fa-edit"></i> Guardar
-        </button>
+      <button type="submit">Guardar</button>
     </form>
+  </div>
+<?php endif; ?>
 
 
 
-?>
+
+ 
+
+
+

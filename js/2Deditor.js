@@ -238,7 +238,79 @@ function mostrarMedidor() {
     espacio.appendChild(medidor);
 }
 
-function mostrarObjetos() {
-  const menu = document.getElementById("menuPopup");
-  menu.classList.toggle("show");
-}
+// Objetos por temática
+    const objetosPorTematica = {
+      navidad: [
+        {nombre: "Árbol de Navidad", img: "../assets/objetos/arbol-navidad.png"},
+        {nombre: "Regalo", img: "../assets/objetos/regalo.png"},
+        {nombre: "Guirnaldas", img: ""},
+        {nombre: "Muñecos de nieve", img: "../assets/objetos/muñeco-nieve.png"},
+        {nombre: "Esferas de nieve", img: "../assets/objetos/esfera-nieve.png"},
+        {nombre: "Decoracion de puerta", img: ""}
+      ],
+      halloween: [
+        {nombre: "Calabaza", img: "../assets/objetos/calabaza.png"},
+        {nombre: "Fantasma", img: "../assets/objetos/fantasma.png"},
+        {nombre: "Murcielagos", img: ""},
+        {nombre: "Arañas", img: ""},
+        {nombre: "Telarañas", img: ""},
+        {nombre: "Sangre falsa", img: ""},
+        {nombre: "Decoracion de puerta", img: ""}
+      ],
+      cumple: [
+        {nombre: "Letreros de cumpleaños", img: "../assets/objetos/pastel.png"},
+        {nombre: "Globos", img: "../assets/objetos/globos.png"},
+        {nombre: "Mesas", img: ""},
+        {nombre: "Manteles", img: ""},
+        {nombre: "Cortina", img: ""},
+        {nombre: "Globos de numeros", img: ""},
+      ],
+      sanvalentin: [
+        {nombre: "Globos de corazon", img: "../assets/objetos/corazon.png"},
+        {nombre: "Manteles", img: "../assets/objetos/rosa.png"},
+        {nombre: "Adornos colgantes", img: ""}
+      ],
+      otros: [
+        {nombre: "Planta", img: "../assets/objetos/planta.png"},
+        {nombre: "Luces", img: "../assets/objetos/cuadro.png"},
+        {nombre: "Adornos de escritorio", img: ""},
+        {nombre: "Reloj", img: ""},
+        {nombre: "Cuadro", img: ""},
+        {nombre: "Tapete", img: ""}
+      ]
+    };
+
+    // Mostrar objetos según temática
+    function mostrarObjetos() {
+      const tematica = document.getElementById("tematicaSelect").value;
+      const lista = document.getElementById("listaObjetos");
+      lista.innerHTML = "";
+
+      objetosPorTematica[tematica].forEach(obj => {
+        const btn = document.createElement("button");
+        btn.textContent = obj.nombre;
+        btn.onclick = () => colocarObjeto(obj.img);
+        lista.appendChild(btn);
+      });
+    }
+
+    // Colocar objeto en el área de diseño
+    function colocarObjeto(imgSrc) {
+      const espacio = document.getElementById("espacio");
+      const nuevo = document.createElement("img");
+      nuevo.src = imgSrc;
+      nuevo.style.position = "absolute";
+      nuevo.style.left = "50px";
+      nuevo.style.top = "50px";
+      nuevo.style.width = "100px";
+      nuevo.style.cursor = "move";
+      espacio.appendChild(nuevo);
+    }
+
+    // Mostrar/ocultar desplegable
+    function toggleDropdown() {
+      document.getElementById("listaObjetos").classList.toggle("show");
+    }
+
+    // Inicializar con temática por defecto
+    mostrarObjetos();
