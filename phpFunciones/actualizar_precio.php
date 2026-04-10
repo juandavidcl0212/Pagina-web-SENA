@@ -19,6 +19,7 @@ if (!is_numeric($precio)) {
 }
 
 // Usar prepared statement
+
 $stmt = $conn->prepare("UPDATE membresias SET precio=? WHERE id=?");
 $stmt->bind_param("di", $precio, $id);
 

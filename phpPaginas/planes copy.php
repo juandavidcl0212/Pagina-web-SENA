@@ -71,13 +71,14 @@
         font-size: 14px;
     }
 </style>
+<link rel="stylesheet" href="../styles.css">
 </head>
 
 <body>
 
 <h1>PLANES</h1>
 
-<div class="controls">
+<nav class="controls">
     <select id="planSelect">
         <option value="0">Personal</option>
         <option value="1">Familiar</option>
@@ -86,8 +87,36 @@
 
     <input type="number" id="newPrice" placeholder="Nuevo precio">
 
-    <button onclick="cambiarPrecio()">Cambiar Precio</button>
-</div>
+
+
+   
+
+    <form method="POST" action="../phpFunciones/actualizar_precio.php">
+    <input type="hidden" name="id" id="planId">
+    <input type="hidden" name="precio" id="precioFinal">
+    <button type="button" onclick="prepararEnvio()">Guardar</button>
+</form>
+
+<script>
+function prepararEnvio(){
+    let planIndex = document.getElementById("planSelect").value;
+    let nuevoPrecio = document.getElementById("newPrice").value;
+
+    if(nuevoPrecio === "" || nuevoPrecio <= 0){
+        alert("Ingresa un precio válido");
+        return;
+    }
+
+    document.getElementById("planId").value = parseInt(planIndex) + 1;
+    document.getElementById("precioFinal").value = nuevoPrecio;
+
+    // 🔥 ahora sí envía el formulario manualmente
+    document.querySelector("form").submit();
+}
+</script>
+
+
+</nav>
 
 <div class="container">
 
