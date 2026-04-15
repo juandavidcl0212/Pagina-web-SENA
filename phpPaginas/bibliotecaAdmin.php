@@ -74,72 +74,74 @@ if ($conn->connect_error) {
                 </ul>
             </aside>
             <main class="main">
-                <section class="stats">
-
-                    <div class="card">
-                        <h3>Usuarios</h3>
-                    </div>
-
-                    <div class="card">
-                        <h3>Proyectos</h3>
-                        <p class="number">48</p>
-                    </div>
-
-                    <div class="card">
-                        <h3>Ventas</h3>
-                        <p class="number">$3,450</p>
-                    </div>
-
-                    <div class="card">
-                        <h3>Mensajes</h3>
-                        <p class="number">12</p>
-                    </div>
-                </section>
-
-            <section class="table-section">
-                <h2>Planes de Membresía</h2>
-                <table>
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th>Precio</th>
-                        <th>Actualizar</th>
-                    </tr>
-                </thead>
-                <tbody>
-            <?php
+    <section class="table-section">
+        <h2>Estadísticas</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Usuarios</th>
+                    <th>Proyectos</th>
+                    <th>Ventas</th>
+                    <th>Mensajes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>120</td> <!-- aquí puedes poner dinámico con PHP -->
+                    <td>48</td>
+                    <td>$3,450</td>
+                    <td>12</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+/
+    <section class="table-section">
+        <h2>Planes de Membresía</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Precio</th>
+                    <th>Actualizar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                // Consulta de planes
                 $result = $conn->query("SELECT * FROM membresias");
-                if($result->num_rows > 0){
-                while($row = $result->fetch_assoc()){
-            ?>
-            <tr>
-                <td><?php echo htmlspecialchars($row['nombre']); ?></td>
-                <td><?php echo htmlspecialchars($row['descripcion']); ?></td>
-                <td>
-                <form method="POST" action="../phpPaginas/actualizar_precio.php">
-                    <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                    <input 
-                        step="0.01"
-                        name="precio"
-                        value="<?php echo $row['precio']; ?>"
-                        required
-                    >
-                    <button type="submit">Actualizar</button>
-                </form>
-                </td>
-                <td>$<?php echo $row['precio']; ?></td>
-            </tr>
-            <?php
-            }
-            }
-            ?>
-                </tbody>
-                </table>
-                </section>
-                </main>
-            </nav>
-    </body>
+                if($result && $result->num_rows > 0){
+                    while($row = $result->fetch_assoc()){
+                ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($row['nombre']); ?></td>
+                    <td><?php echo htmlspecialchars($row['descripcion']); ?></td>
+                    <td>$<?php echo htmlspecialchars($row['precio']); ?></td>
+                    <td>
+                        <form method="POST" action="../phpPaginas/actualizar_precio.php">
+                            <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                            <input 
+                                type="number"
+                                step="0.01"
+                                name="precio"
+                                value="<?php echo $row['precio']; ?>"
+                                required
+                            >
+                            <button type="submit">Actualizar</button>
+                        </form>
+                    </td>
+                </tr>
+                <?php
+                    }
+                }
+                ?>
+            </tbody>
+        </table>
+    </section>
+</main>
+</nav>
+</body>
 </html>
 <?php
 $conn->close();

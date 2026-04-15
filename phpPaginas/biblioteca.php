@@ -86,12 +86,13 @@
                 <nav class="card">
                     <h3>Nuevo Proyecto</h3>
                     <p>Crea un diseño desde cero.</p>
-                    <button onclick="location.href='../html/DISEÑO2D.html'">CREAR DISEÑO 3D</button>
+                    <button onclick="location.href='../html/DISEÑO2D.html'">CREAR DISEÑO 2D</button>
                 </nav>
 
                 <nav class="card">
-                    <h3>Inspiración</h3>
+                    <h3>Diseño 3d</h3>
                     <p>Explora estilos y decoraciones.</p>
+                    <button onclick="location.href='../diseño/pagina3d.php'">CREAR DISEÑO 3D</button>
                 </nav>
 
                 <nav class="card">

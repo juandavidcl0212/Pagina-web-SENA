@@ -4,244 +4,10 @@ let gridActivo = false;
 let elementoSeleccionado = null;
 let zIndexGlobal = 1;
 
-/* ===================== CREAR ELEMENTOS ===================== */
-function crearElemento(tipo) {
-    const elemento = document.createElement("nav");
-    elemento.classList.add("mueble", tipo);
-
-    // Asignar tamaño inicial según el tipo
-    switch(tipo){
-        case "sofa": elemento.style.width="150px"; elemento.style.height="80px"; break;
-        case "cama": elemento.style.width="160px"; elemento.style.height="100px"; break;
-        case "silla": elemento.style.width="40px"; elemento.style.height="80px"; break;
-        case "mesa": elemento.style.width="110px"; elemento.style.height="110px"; break;
-        case "mesanoche": elemento.style.width="60px"; elemento.style.height="60px"; break;
-        case "planta": elemento.style.width="60px"; elemento.style.height="100px"; break;
-        case "alfombra": elemento.style.width="150px"; elemento.style.height="100px"; break;
-        case "reloj": elemento.style.width="40px"; elemento.style.height="40px"; break;
-        case "estante": elemento.style.width="120px"; elemento.style.height="50px"; break;
-        case "cuadro": elemento.style.width="80px"; elemento.style.height="60px"; break;
-        case "cortina": elemento.style.width="80px"; elemento.style.height="150px"; break;
-        case "ventana": elemento.style.width="100px"; elemento.style.height="80px"; break;
-        case "pared": elemento.style.width="200px"; elemento.style.height="20px"; break;
-    }
-
-    // Crear hijos según tipo
-    switch(tipo) {
-        case "sofa":
-            elemento.innerHTML = `
-                <div class="sofa-base"></div>
-                <div class="sofa-respaldo"></div>
-                <div class="sofa-cojin" style="left:20px;"></div>
-                <div class="sofa-cojin" style="right:20px;"></div>
-            `;
-            break;
-
-        case "cama":
-            elemento.innerHTML = `
-                <div class="cama-base"></div>
-                <div class="cama-almohada"></div>
-            `;
-            break;
-
-        case "silla":
-            elemento.innerHTML = `
-                <div class="silla-asiento"></div>
-                <div class="silla-respaldo"></div>
-                <div class="silla-pata1"></div>
-                <div class="silla-pata2"></div>
-            `;
-            break;
-
-        case "mesa":
-            elemento.innerHTML = `<div class="mesa-tabla"></div>`;
-            break;
-
-        case "planta":
-            elemento.innerHTML = `
-                <div class="planta-hojas"></div>
-                <div class="planta-maceta"></div>
-            `;
-            break;
-
-        case "mesanoche":
-            elemento.innerHTML = `
-                <div class="mesanoche-superficie"></div>
-                <div class="mesanoche-pata1"></div>
-                <div class="mesanoche-pata2"></div>
-            `;
-            break;
-
-        case "alfombra":
-        case "reloj":
-        case "estante":
-        case "cuadro":
-        case "cortina":
-        case "ventana":
-        case "pared":
-            elemento.innerHTML = `<div class="${tipo}"></div>`;
-            break;
-    }
-
-    // Posición absoluta dentro del contenedor
-  elemento.style.position = "absolute";
-
-  // Coordenadas iniciales aleatorias dentro del espacio
-  const espacioRect = espacio.getBoundingClientRect();
-  const x = Math.floor(Math.random() * (espacioRect.width - 80));
-  const y = Math.floor(Math.random() * (espacioRect.height - 80));
-  elemento.style.left = x + "px";
-  elemento.style.top = y + "px";
-
-    // Botón eliminar
-    const btnEliminar = document.createElement("button");
-    btnEliminar.textContent="✖";
-    btnEliminar.classList.add("btn-eliminar");
-    btnEliminar.onclick = () => elemento.remove();
-    elemento.appendChild(btnEliminar);
-
-    // Agregar al espacio y hacerlo arrastrable
-    espacio.appendChild(elemento);
-    hacerArrastrable(elemento);
-}
-
-/* ===================== ARRASTRAR + SNAP GRID ===================== */
-function hacerArrastrable(elemento) {
-    let isDragging = false;
-    let dragOffsetX = 0;
-    let dragOffsetY = 0;
-
-    elemento.addEventListener("mousedown", (e) => {
-        if (e.target.classList.contains("btn-eliminar")) return;
-
-        elementoSeleccionado = elemento;
-        elemento.style.zIndex = zIndexGlobal++;
-        elemento.classList.add("color-activo");
-
-        const espacioRect = espacio.getBoundingClientRect();
-        dragOffsetX = e.clientX - espacioRect.left - parseInt(elemento.style.left);
-        dragOffsetY = e.clientY - espacioRect.top - parseInt(elemento.style.top);
-
-        isDragging = true;
-    });
-
-    document.addEventListener("mousemove", (e) => {
-        if (!isDragging) return;
-
-        const espacioRect = espacio.getBoundingClientRect();
-        let x = e.clientX - espacioRect.left - dragOffsetX;
-        let y = e.clientY - espacioRect.top - dragOffsetY;
-
-        if (gridActivo) {
-            const gridSize = 25;
-            x = Math.round(x / gridSize) * gridSize;
-            y = Math.round(y / gridSize) * gridSize;
-        }
-
-        x = Math.max(0, Math.min(espacioRect.width - elemento.offsetWidth, x));
-        y = Math.max(0, Math.min(espacioRect.height - elemento.offsetHeight, y));
-
-        elemento.style.left = x + "px";
-        elemento.style.top = y + "px";
-    });
-
-    document.addEventListener("mouseup", () => {
-        if (isDragging) {
-            isDragging = false;
-            if (elementoSeleccionado) {
-                elementoSeleccionado.classList.remove("color-activo");
-            }
-        }
-    });
-}
-
-/* ===================== CUADRÍCULA ===================== */
-function toggleGrid() {
-    gridActivo = !gridActivo;
-    espacio.classList.toggle("grid-activa");
-}
-
-/* ===================== SISTEMA DE CAPAS ===================== */
-function traerAlFrente() {
-    if (elementoSeleccionado) elementoSeleccionado.style.zIndex = zIndexGlobal++;
-}
-
-function enviarAlFondo() {
-    if (elementoSeleccionado) elementoSeleccionado.style.zIndex = 1;
-}
-
-/* ===================== GUARDAR DISEÑO ===================== */
-function guardarProyecto() {
-  document.getElementById("modalGuardar").style.display = "block";
-}
-
-function cerrarModal() {
-  document.getElementById("modalGuardar").style.display = "none";
-}
-
-function confirmarGuardar() {
-  const nombre = document.getElementById("nombreProyecto").value;
-  if(!nombre) {
-    alert("Debes poner un nombre.");
-    return;
-  }
-
-  const espacio = document.getElementById("espacio"); // tu contenedor del plano
-  html2canvas(espacio).then(canvas => {
-    const imagen = canvas.toDataURL("image/png");
-
-    fetch("../php/guardar_proyecto.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nombre: nombre, imagen: imagen })
-    })
-    .then(res => res.text())
-    .then(msg => {
-      alert(msg);
-      cerrarModal();
-    });
-  });
-}
-
-/* ===================== CARGAR DISEÑO ===================== */
-function cargarDiseno() {
-    const datos = JSON.parse(localStorage.getItem("disenoInterior"));
-    if (!datos) return alert("No hay diseño guardado");
-
-    espacio.innerHTML = "";
-
-    datos.forEach(d => {
-        crearElemento(d.tipo);
-        const ultimo = espacio.lastChild;
-        ultimo.style.left = d.left;
-        ultimo.style.top = d.top;
-        ultimo.style.zIndex = d.zIndex;
-    });
-}
-
-/* ===================== CAMBIAR COLOR DE MUEBLES ===================== */
-function cambiarColorElemento(color) {
-    if (elementoSeleccionado) {
-        const hijos = elementoSeleccionado.querySelectorAll("div");
-        hijos.forEach(hijo => hijo.style.background = color);
-    }
-}
-
-/* ===================== MEDIDOR EN METROS ===================== */
-function mostrarMedidor() {
-    const medidor = document.createElement("div");
-    medidor.classList.add("medidor");
-    medidor.style.width = "100px";
-    medidor.style.left = "50px";
-    medidor.style.top = "50px";
-    medidor.textContent = "1m";
-    espacio.appendChild(medidor);
-}
-
 // Objetos por temática
     const objetosPorTematica = {
       navidad: [
-        {nombre: "Árbol de Navidad", img: "../assets/objetos/arbol-navidad.png"},
+        {id: "arbol-navidad", nombre: "Árbol de Navidad", img: "../assets/objetos/arbol-navidad.png", ancho: 120, alto: 180, posX: 100, posY: 150},
         {nombre: "Regalo", img: "../assets/objetos/regalo.png"},
         {nombre: "Guirnaldas", img: ""},
         {nombre: "Muñecos de nieve", img: "../assets/objetos/muñeco-nieve.png"},
@@ -280,37 +46,107 @@ function mostrarMedidor() {
       ]
     };
 
-    // Mostrar objetos según temática
-    function mostrarObjetos() {
-      const tematica = document.getElementById("tematicaSelect").value;
-      const lista = document.getElementById("listaObjetos");
-      lista.innerHTML = "";
+// Mostrar objetos según temática
+function mostrarObjetos() {
+  const tematica = document.getElementById("tematicaSelect").value;
+  const lista = document.getElementById("listaObjetos");
+  lista.innerHTML = "";
 
-      objetosPorTematica[tematica].forEach(obj => {
-        const btn = document.createElement("button");
-        btn.textContent = obj.nombre;
-        btn.onclick = () => colocarObjeto(obj.img);
-        lista.appendChild(btn);
-      });
+  objetosPorTematica[tematica].forEach(obj => {
+    const btn = document.createElement("button");
+    btn.textContent = obj.nombre;
+    btn.onclick = () => colocarObjeto(obj.img);
+    lista.appendChild(btn);
+  });
+}
+
+// Colocar objeto en el espacio de diseño
+function colocarObjeto(obj) {
+    let existente = document.getElementById(obj.id);
+    if (existente) {
+        // Si ya existe, actualizamos sus parámetros
+        existente.style.width = obj.ancho + "px";
+        existente.style.height = obj.alto + "px";
+        existente.style.left = obj.posX + "px";
+        existente.style.top = obj.posY + "px";
+        return;
     }
 
-    // Colocar objeto en el área de diseño
-    function colocarObjeto(imgSrc) {
-      const espacio = document.getElementById("espacio");
-      const nuevo = document.createElement("img");
-      nuevo.src = imgSrc;
-      nuevo.style.position = "absolute";
-      nuevo.style.left = "50px";
-      nuevo.style.top = "50px";
-      nuevo.style.width = "100px";
-      nuevo.style.cursor = "move";
-      espacio.appendChild(nuevo);
-    }
+    document.getElementById("espacio").appendChild(nuevo);
 
-    // Mostrar/ocultar desplegable
+    // Hacerlo arrastrable
+    hacerArrastrable(nuevo);
+}
+
+
+// Inicializar con temática por defecto
+mostrarObjetos();
     function toggleDropdown() {
-      document.getElementById("listaObjetos").classList.toggle("show");
-    }
+  const menu = document.getElementById("listaObjetos");
+  menu.classList.toggle("show");
+}
 
-    // Inicializar con temática por defecto
-    mostrarObjetos();
+
+
+/* ===================== ARRASTRAR + SNAP GRID ===================== */
+function hacerArrastrable(elemento) {
+    let isDragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    // Al presionar el mouse sobre el objeto
+    elemento.addEventListener("mousedown", (e) => {
+        if (e.target.classList.contains("btn-eliminar")) return; // no arrastrar si se hace clic en eliminar
+
+        isDragging = true;
+        elementoSeleccionado = elemento;
+        elemento.style.zIndex = ++zIndexGlobal;
+
+        // Calcular diferencia entre posición del mouse y el objeto
+        const rect = elemento.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+
+        // Evitar que el navegador seleccione texto
+        e.preventDefault();
+    });
+
+    // Movimiento mientras se arrastra
+    document.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+
+        const espacioRect = espacio.getBoundingClientRect();
+        let x = e.clientX - espacioRect.left - offsetX;
+        let y = e.clientY - espacioRect.top - offsetY;
+
+        // Ajustar a cuadrícula si está activa
+        if (gridActivo) {
+            const gridSize = 25;
+            x = Math.round(x / gridSize) * gridSize;
+            y = Math.round(y / gridSize) * gridSize;
+        }
+
+        // Limitar dentro del área
+        x = Math.max(0, Math.min(espacioRect.width - elemento.offsetWidth, x));
+        y = Math.max(0, Math.min(espacioRect.height - elemento.offsetHeight, y));
+
+        elemento.style.left = x + "px";
+        elemento.style.top = y + "px";
+    });
+
+    // Al soltar el mouse
+    document.addEventListener("mouseup", () => {
+        if (isDragging) {
+            isDragging = false;
+            if (elementoSeleccionado) {
+                elementoSeleccionado.classList.remove("color-activo");
+            }
+        }
+    });
+}
+
+/* ===================== CUADRÍCULA ===================== */
+function toggleGrid() {
+    gridActivo = !gridActivo;
+    espacio.classList.toggle("grid-activa");
+}

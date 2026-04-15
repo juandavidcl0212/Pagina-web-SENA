@@ -1,0 +1,16 @@
+#espacio3D canvas {
+    position: absolute;
+    top: 0;
+    left: 250px; /* deja espacio para la barra lateral */
+    z-index: 0;  /* el canvas queda detrás */
+}
+
+.sidebar {
+    position: relative;
+    z-index: 2; /* la barra siempre encima */
+}
+
+.btn-volver {
+    position: absolute;
+    z-index: 3; /* el botón encima de todo */
+}
