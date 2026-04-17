@@ -24,7 +24,7 @@ session_start();
       <a href="../phpPaginas/contacto.php" class="btn-menu">Contacto</a>
     </nav>
 
-    <div class="cuenta">
+    <nav class="cuenta">
       <?php if(!isset($_SESSION['id_usuario'])): ?>
         <!-- Usuario NO ha iniciado sesión -->
         <nav class="cuentas">
@@ -57,7 +57,7 @@ session_start();
           <button onclick="location.href='../phpFunciones/logout.php'">Cerrar Sesión</button>
         </div>
       <?php endif; ?>
-    </div>
+    </nav>
 
     <script src="../script.js"></script>
   </header>

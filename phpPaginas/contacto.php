@@ -22,7 +22,7 @@ session_start();
       <a href="../phpPaginas/contacto.php" class="btn-menu">Contacto</a>
     </nav>
 
-    <div class="cuenta">
+    <nav class="cuenta">
       <?php if(!isset($_SESSION['id_usuario'])): ?>
         <!-- Usuario NO ha iniciado sesión -->
         <nav class="cuentas">
@@ -45,9 +45,9 @@ session_start();
         <!-- Botón para volver a la última página -->
         <?php if(isset($_SESSION['rol'])): ?>
   <?php if($_SESSION['rol'] === 'admin'): ?>
-    <button onclick="location.href='phpPaginas/bibliotecaAdmin.php'">Volver a la Biblioteca de Administrador</button>
+    <button onclick="location.href='../phpPaginas/bibliotecaAdmin.php'">Volver a la Biblioteca de Administrador</button>
   <?php else: ?>
-    <button onclick="location.href='phpPaginas/biblioteca.php'">Volver a la Biblioteca</button>
+    <button onclick="location.href='../phpPaginas/biblioteca.php'">Volver a la Biblioteca</button>
   <?php endif; ?>
 <?php endif; ?>
 
@@ -55,7 +55,7 @@ session_start();
           <button onclick="location.href='../phpFunciones/logout.php'">Cerrar Sesión</button>
         </div>
       <?php endif; ?>
-    </div>
+    </nav>
 
     <script src="../script.js"></script>
   </header>

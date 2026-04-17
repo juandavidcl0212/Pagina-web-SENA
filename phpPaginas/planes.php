@@ -40,7 +40,7 @@ $conn->close();
         <a href="../phpPaginas/contacto.php" class="btn-menu">Contacto</a>
     </nav>
 
-    <div class="cuenta">
+    <nav class="cuenta">
         <?php if(!isset($_SESSION['id_usuario'])): ?>
             <nav class="cuentas">
                 <a href="../phpPaginas/Registrarse.php" class="btn-menu">¡Crear una cuenta!</a>
@@ -57,6 +57,7 @@ $conn->close();
             <div id="menuPopup" class="menu-popup">
                 <?php if(isset($_SESSION['rol'])): ?>
                     <?php if($_SESSION['rol'] === 'admin'): ?>
+                        <button onclick="location.href='../phpPaginas/planes copy.php'">Regresar a planes (Administrador)</button>
                         <button onclick="location.href='../phpPaginas/bibliotecaAdmin.php'">Volver a Biblioteca Administrador</button>
                     <?php else: ?>
                         <button onclick="location.href='../phpPaginas/biblioteca.php'">Volver a Biblioteca</button>
@@ -67,17 +68,7 @@ $conn->close();
                 <button onclick="location.href='../phpFunciones/logout.php'">Cerrar Sesión</button>
             </div>
         <?php endif; ?>
-
-        <?php if(isset($_SESSION['rol']) && $_SESSION['rol'] === 'admin'): ?>
-    <div style="text-align:center; margin:20px;">
-        <a href="../phpPaginas/planes copy.php">
-            <button style="padding:10px 15px; background:#1f7a6b; color:white; border:none; border-radius:5px; cursor:pointer;">
-                regresar a planes (Admin)
-            </button>
-        </a>
-    </div>
-<?php endif; ?>
-    </div>
+    </nav>
 </header>
 
 <h1 style="text-align:center;">PLANES</h1>

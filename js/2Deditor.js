@@ -61,22 +61,46 @@ function mostrarObjetos() {
 }
 
 // Colocar objeto en el espacio de diseño
-function colocarObjeto(obj) {
-    let existente = document.getElementById(obj.id);
-    if (existente) {
-        // Si ya existe, actualizamos sus parámetros
-        existente.style.width = obj.ancho + "px";
-        existente.style.height = obj.alto + "px";
-        existente.style.left = obj.posX + "px";
-        existente.style.top = obj.posY + "px";
-        return;
-    }
 
-    document.getElementById("espacio").appendChild(nuevo);
+// Función para colocar objetos en la interfaz 2D
+function colocarObjeto2D(obj) {
+    const contenedor = document.getElementById("espacio"); // contenedor principal en HTML
 
-    // Hacerlo arrastrable
-    hacerArrastrable(nuevo);
+    // Generar posición aleatoria dentro del contenedor
+    const maxX = contenedor.offsetWidth - obj.ancho;
+    const maxY = contenedor.offsetHeight - obj.alto;
+    const posX = Math.floor(Math.random() * maxX);
+    const posY = Math.floor(Math.random() * maxY);
+
+    // Crear elemento imagen
+    const img = document.createElement("img");
+    img.src = obj.img;
+    img.alt = obj.nombre;
+    img.style.width = obj.ancho + "px";
+    img.style.height = obj.alto + "px";
+    img.style.position = "absolute";
+    img.style.left = posX + "px";
+    img.style.top = posY + "px";
+
+    // Insertar en el contenedor
+    contenedor.appendChild(img);
 }
+
+// Generar lista en la barra lateral
+function cargarObjetos2D() {
+    for (const categoria in objetosPorTematica) {
+        const contenedor = document.getElementById(categoria);
+        objetosPorTematica[categoria].forEach(obj => {
+            const div = document.createElement("div");
+            div.className = "objeto";
+            div.innerHTML = `<img src="${obj.img}" width="40" height="40"><span>${obj.nombre}</span>`;
+            div.onclick = () => colocarObjeto2D(obj);
+            contenedor.appendChild(div);
+        });
+    }
+}
+cargarObjetos2D();
+
 
 
 // Inicializar con temática por defecto
