@@ -15,8 +15,8 @@ if (isset($_SESSION['id_usuario']) && isset($_SESSION['ultima_pagina'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nooke - Diseña tu espacio</title>
+  <link rel="stylesheet" href="estilo1_inicio.css">
   <link rel="stylesheet" href="CSS/index.css">
-  <link rel="stylesheet" href="styles.css">
   <script src="script.js"></script>
 </head>
 <body>

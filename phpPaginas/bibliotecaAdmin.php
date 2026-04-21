@@ -86,50 +86,7 @@ if ($conn->connect_error) {
             </tbody>
         </table>
     </section>
-/
-    <section class="table-section">
-        <h2>Planes de Membresía</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Precio</th>
-                    <th>Actualizar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                // Consulta de planes
-                $result = $conn->query("SELECT * FROM membresias");
-                if($result && $result->num_rows > 0){
-                    while($row = $result->fetch_assoc()){
-                ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($row['nombre']); ?></td>
-                    <td><?php echo htmlspecialchars($row['descripcion']); ?></td>
-                    <td>$<?php echo htmlspecialchars($row['precio']); ?></td>
-                    <td>
-                        <form method="POST" action="../phpPaginas/actualizar_precio.php">
-                            <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                            <input 
-                                type="number"
-                                step="0.01"
-                                name="precio"
-                                value="<?php echo $row['precio']; ?>"
-                                required
-                            >
-                            <button type="submit">Actualizar</button>
-                        </form>
-                    </td>
-                </tr>
-                <?php
-                    }
-                }
-                ?>
-            </tbody>
-        </table>
-    </section>
+
 </main>
 </nav>
 </body>

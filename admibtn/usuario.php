@@ -39,15 +39,8 @@ $nuevos = (int)mysqli_fetch_assoc($resNuevos)['nuevos']; // 🔑 Forzar a entero
   <meta charset="UTF-8">
   <title>Panel de Usuarios</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="../CSS/usuario.css">
   <link rel="stylesheet" href="../styles.css">
-  <link rel="stylesheet" href="../CSS/admi_usuario.css">
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #f2f2f2; }
-    .grafico { max-width: 700px; margin-top: 40px; }
-  </style>
 </head>
 <body>
 
