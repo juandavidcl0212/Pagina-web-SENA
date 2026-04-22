@@ -99,5 +99,100 @@ $nuevos = (int)mysqli_fetch_assoc($resNuevos)['nuevos']; // 🔑 Forzar a entero
     });
   </script>
 
+  <style>
+  body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #EDF7F6;
+  color: #1B1F3B;
+}
+
+/* Título */
+h1 {
+  text-align: center;
+  background: #1B1F3B;
+  color: white;
+  padding: 20px;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+/* Subtítulos */
+h2 {
+  margin-top: 40px;
+  text-align: center;
+  color: #136F63;
+}
+
+/* Texto resumen */
+p {
+  text-align: center;
+  font-size: 18px;
+  margin: 20px;
+}
+
+/* Contenedor gráfico */
+.grafico {
+  width: 80%;
+  margin: 30px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Tabla */
+table {
+  width: 90%;
+  margin: 30px auto;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Encabezado */
+th {
+  background: #136F63;
+  color: white;
+  padding: 12px;
+}
+
+/* Filas */
+td {
+  padding: 12px;
+  text-align: center;
+}
+
+/* Alternar colores */
+tr:nth-child(even) {
+  background: #EDF7F6;
+}
+
+/* Hover */
+tr:hover {
+  background: #9067C6;
+  color: white;
+  transition: 0.3s;
+}
+
+/* Botones (si agregas después) */
+button {
+  background: #FF9F1C;
+  border: none;
+  padding: 10px 15px;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #1B1F3B;
+}
+ </style>
+
+
 </body>
 </html>

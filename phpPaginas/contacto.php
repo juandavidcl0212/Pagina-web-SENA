@@ -6,10 +6,14 @@ session_start();
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Contacto | Decoraciones de Interiores</title>
+  <title>Contacto | Decoraciones</title>
   <link rel="stylesheet" href="../styles.css">
-  <link rel="stylesheet" href="../CSS/contacto.CSS">
+  <link rel="stylesheet" href="../CSS/contacto.css">
+</head>
 
+<body>
+
+<!-- ENCABEZADO -->
   <header class="encabezado">
     <!-- Logo a la izquierda -->
     <img src="../assets/fb p.png" alt="Logo fantasy box" class="fantasy box">
@@ -59,40 +63,80 @@ session_start();
 
     <script src="../script.js"></script>
   </header>
-<body>
 
-  <section class="info">
-    <h1>Contáctanos</h1>
-    <p>
-      ¿Tienes un proyecto en mente? Nos encantaría ayudarte a transformar tus espacios
-      con diseño, estilo y personalidad.
-    </p>
+<section class="info">
 
-    <form class="form-contacto">
-      <label>Nombre</label>
-      <input type="text" placeholder="Tu nombre" required>
- 
+  <h1>Contáctanos</h1>
+  <p>Cuéntanos tu idea y te ayudamos a diseñar tu espacio ideal.</p>
 
-      <label>Correo electrónico</label>
-      <input type="email" placeholder="tu@email.com" required>
+  <form class="form-contacto" id="formContacto">
 
-      
+    <label>Nombre</label>
+    <input type="text" id="nombre" required>
 
-      <label>Mensaje</label>
-      <textarea placeholder="Cuéntanos sobre tu proyecto" rows="5" required></textarea>
+    <label>Correo electrónico</label>
+    <input type="email" id="email" required>
 
-      <button type="submit" class="btn naranja">Enviar mensaje</button>
-    </form>
-  </section>
+    <label>Mensaje</label>
+    <textarea id="mensaje" rows="5" required></textarea>
 
-  <section class="info">
-    <h2>Nuestra Información</h2>
-    <p><strong> Dirección:</strong> Av. Diseño Interior 123</p>
-    <p><strong> Teléfono:</strong> +34 600 123 456</p>
-    <p><strong>Email:</strong> contacto@decoraciones.com</p>
+    <button type="submit" class="btn naranja" id="btnEnviar">
+      Enviar mensaje
+    </button>
 
-    <button class="btn morado">Solicitar Cotización</button>
-  </section>
+    <p id="respuesta"></p>
+
+  </form>
+
+</section>
+
+<section class="info">
+
+  <h2>📍 Información</h2>
+
+  <p>📌 Dirección: Av. Diseño Interior 123</p>
+  <p>📞 Teléfono: +57 3153529606</p>
+  <p>📧 Email: contacto@decoraciones.com</p>
+
+  <button class="btn morado">Solicitar Cotización</button>
+
+</section>
+
+<!-- 💬 WHATSAPP -->
+<a href="https://wa.me/34600123456" class="whatsapp" target="_blank">
+  💬
+</a>
+
+<!-- AJAX -->
+<script>
+document.getElementById("formContacto").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    let formData = new FormData();
+    formData.append("nombre", document.getElementById("nombre").value);
+    formData.append("email", document.getElementById("email").value);
+    formData.append("mensaje", document.getElementById("mensaje").value);
+
+    fetch("enviar_contacto.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.text())
+    .then(data => {
+
+        let r = document.getElementById("respuesta");
+
+        if(data.trim() === "ok"){
+            r.innerHTML = "✅ Mensaje enviado correctamente";
+            r.style.color = "green";
+            document.getElementById("formContacto").reset();
+        } else {
+            r.innerHTML = "❌ Error al enviar";
+            r.style.color = "red";
+        }
+    });
+});
+</script>
 
 </body>
 </html>

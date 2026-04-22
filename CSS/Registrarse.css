@@ -5,7 +5,7 @@ body{
     justify-items: center;
     background-color: #1b1f3b;
 }
-div{
+.cont{
     width: 30%;
     height: 300px;
     flex-direction: column;

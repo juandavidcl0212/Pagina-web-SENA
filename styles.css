@@ -43,6 +43,7 @@
     padding: 10px;
   }
   button{
+    font-family: Bahnschrift Condensed;
     border-radius: 10px;
     padding: 10px;
     margin: 10px;
@@ -62,14 +63,21 @@
   }
   table { 
     border-collapse: collapse; 
-    border: 10px;
     margin-top: 20px; 
-    background-color: #9067c6;
   }
   th, td { 
     border: 1px solid #111; 
     padding: 8px; 
     text-align: left; 
+  }
+  input, select {
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: bahnschrift condensed;
   }
 
   /* ENCABEZADO */
