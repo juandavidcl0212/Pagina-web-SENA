@@ -77,11 +77,7 @@ if (isset($_SESSION['id_usuario']) && isset($_SESSION['ultima_pagina'])) {
   <nav class="content">
     <div class="info">
       <h2>¿DE QUÉ TRATA?</h2>
-      <p>
-        El motivo principal del proyecto Nook brinda a los usuarios una interfaz de diseñador 
-        que permite organizar preparativos de una habitación, sala, etc. para cualquier tipo de evento, 
-        o incluso si solo se trata de mejorar la estética del lugar.
-      </p>
+      
     </div>
 
     <div class="botones">
