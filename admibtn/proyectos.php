@@ -5,6 +5,7 @@
 <title>Proyectos - Admin</title>
 
 <link rel="stylesheet" href="../CSS/proyectos.css">
+<link rel="stylesheet" href="../styles.css">
 
 <style>
 :root{

@@ -60,11 +60,11 @@
         <aside class="sidebar">
             <h2>Menú</h2>
             <ul>
-                <a href="../php/mis_proyectos.php" class="btn-menu"><li>Mis Proyectos</li></a>
-                <a href="../html/inspiracion.html" class="btn-menu"><li>Inspiración</li></a>
-                <a href="../html/modelos_3d.html" class="btn-menu"><li>Modelos 3D</li></a>
-                <a href="../html/materiales.html" class="btn-menu"><li>Materiales</li></a>
-                <a href="../html/cuenta.html" class="btn-menu"><li>Cuenta</li></a>
+                <li><a href="../php/mis_proyectos.php" class="btn-menu">Mis Proyectos</a></li>
+                <li><a href="../html/inspiracion.html" class="btn-menu">Inspiración</a></li>
+                <li><a href="../html/modelos_3d.html" class="btn-menu">Modelos 3D</a></li>
+                <li><a href="../html/materiales.html" class="btn-menu">Materiales</a></li>
+                <li><a href="../html/cuenta.html" class="btn-menu">Cuenta</a></li>
             </ul>
         </aside>
 

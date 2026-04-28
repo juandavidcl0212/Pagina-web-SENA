@@ -8,10 +8,9 @@ if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
 }
 
-// Consulta de planes ordenados por id
+// Consulta de planes
 $result = $conn->query("SELECT * FROM membresias ORDER BY id ASC");
 
-// Guardar en array asociativo por ID
 $planes = [];
 while($row = $result->fetch_assoc()){
     $planes[$row['id']] = $row;
@@ -42,12 +41,8 @@ $conn->close();
 
     <nav class="cuenta">
         <?php if(!isset($_SESSION['id_usuario'])): ?>
-            <nav class="cuentas">
-                <a href="../phpPaginas/Registrarse.php" class="btn-menu">¡Crear una cuenta!</a>
-            </nav>
-            <nav>
-                <a href="../phpPaginas/inSesion.php" class="btn-menu">¿Ya tienes cuenta? Inicia sesión</a>
-            </nav>
+            <a href="../phpPaginas/Registrarse.php" class="btn-menu">¡Crear una cuenta!</a>
+            <a href="../phpPaginas/inSesion.php" class="btn-menu">Iniciar sesión</a>
         <?php else: ?>
             <img src="<?php echo isset($_SESSION['foto']) && $_SESSION['foto'] !== '' 
                 ? '../uploads/' . $_SESSION['foto'] 
@@ -55,13 +50,11 @@ $conn->close();
                 alt="Perfil" class="avatar" onclick="toggleMenu()">
 
             <div id="menuPopup" class="menu-popup">
-                <?php if(isset($_SESSION['rol'])): ?>
-                    <?php if($_SESSION['rol'] === 'admin'): ?>
-                        <button onclick="location.href='../phpPaginas/planes copy.php'">Regresar a planes (Administrador)</button>
-                        <button onclick="location.href='../phpPaginas/bibliotecaAdmin.php'">Volver a Biblioteca Administrador</button>
-                    <?php else: ?>
-                        <button onclick="location.href='../phpPaginas/biblioteca.php'">Volver a Biblioteca</button>
-                    <?php endif; ?>
+                <?php if(isset($_SESSION['rol']) && $_SESSION['rol'] === 'admin'): ?>
+                    <button onclick="location.href='../phpPaginas/planes copy.php'">Modo Admin</button>
+                    <button onclick="location.href='../phpPaginas/bibliotecaAdmin.php'">Biblioteca Admin</button>
+                <?php else: ?>
+                    <button onclick="location.href='../phpPaginas/biblioteca.php'">Mi Biblioteca</button>
                 <?php endif; ?>
 
                 <button onclick="location.href='../phpPaginas/editar_perfil.php'">Editar Perfil</button>
@@ -87,7 +80,11 @@ $conn->close();
             <li>1 habitación/sala decorada</li>
             <li>Soporte por e-mail</li>
         </ul>
-        <button class="plan1B">COMPRAR</button>
+
+        <form method="POST" action="../phpFunciones/comprar_plan.php">
+            <input type="hidden" name="plan" value="Personal">
+            <button type="submit" class="plan1B">COMPRAR</button>
+        </form>
     </div>
 
     <!-- PLAN FAMILIAR -->
@@ -102,7 +99,11 @@ $conn->close();
             <li>3 habitaciones/salas decoradas</li>
             <li>Soporte diario</li>
         </ul>
-        <button class="plan2B">COMPRAR</button>
+
+        <form method="POST" action="../phpFunciones/comprar_plan.php">
+            <input type="hidden" name="plan" value="Familiar">
+            <button type="submit" class="plan2B">COMPRAR</button>
+        </form>
     </div>
 
     <!-- PLAN INSTITUCIONAL -->
@@ -117,11 +118,22 @@ $conn->close();
             <li>12 habitaciones/salas decoradas</li>
             <li>Soporte dedicado</li>
         </ul>
-        <button class="plan3B">COMPRAR</button>
+
+        <form method="POST" action="../phpFunciones/comprar_plan.php">
+            <input type="hidden" name="plan" value="Institucional">
+            <button type="submit" class="plan3B">COMPRAR</button>
+        </form>
     </div>
 
 </div>
 
-<script src="../script.js"></script>
+<script>
+// menú perfil
+function toggleMenu() {
+    const menu = document.getElementById("menuPopup");
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+</script>
+
 </body>
 </html>

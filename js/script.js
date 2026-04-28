@@ -1,9 +1,44 @@
 <script>
 // =========================
+// FUNCIONES GENERALES (DISEÑO)
+// =========================
+
+// Ir a diseño 2D o 3D
+function irDiseno(tipo) {
+
+    // Verificar si hay sesión (lo guardas al iniciar sesión)
+    const usuario = sessionStorage.getItem("usuario");
+
+    if (!usuario) {
+        alert("Debes iniciar sesión primero");
+        window.location.href = "phpPaginas/inSesion.php";
+        return;
+    }
+
+    if (tipo === "3d") {
+        window.location.href = "diseño/pagina3d.php";
+    } else {
+        window.location.href = "html/DISEÑO2D.html";
+    }
+}
+
+// Redirigir a login
+function redirigirLogin() {
+    alert("Debes iniciar sesión primero");
+    window.location.href = "phpPaginas/inSesion.php";
+}
+
+// Menú de perfil
+function toggleMenu() {
+    const menu = document.getElementById("menuPopup");
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+
+// =========================
 // SCRIPT PARA ADMINISTRADORES
 // =========================
 
-// Espera a que la página cargue
 window.addEventListener("load", function() {
     const rol = sessionStorage.getItem("rol"); // Rol guardado al iniciar sesión
     
@@ -22,6 +57,8 @@ window.addEventListener("load", function() {
 // Función para crear inputs de admin dinámicamente
 function mostrarAdmin(botonId, planNombre, precioActual) {
     const boton = document.getElementById(botonId);
+
+    if(!boton) return;
 
     // Ocultar botón COMPRAR normal
     boton.style.display = "none";
@@ -50,12 +87,13 @@ function mostrarAdmin(botonId, planNombre, precioActual) {
     const btnActualizar = document.createElement("button");
     btnActualizar.textContent = "Actualizar precio";
     btnActualizar.onclick = function() {
+
         if(!input.value || input.value <= 0){
             alert("Ingresa un precio válido");
             return;
         }
 
-        // Crear formulario dinámico para enviar POST
+        // Formulario dinámico
         const form = document.createElement("form");
         form.method = "POST";
         form.action = "../php/cambiar_plan.php";
@@ -75,10 +113,10 @@ function mostrarAdmin(botonId, planNombre, precioActual) {
         document.body.appendChild(form);
         form.submit();
     };
+
     adminDiv.appendChild(btnActualizar);
 
     // Insertar después del botón original
     boton.parentNode.appendChild(adminDiv);
 }
 </script>
-  

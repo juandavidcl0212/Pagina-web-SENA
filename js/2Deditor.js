@@ -186,3 +186,21 @@ function toggleDropdown() {
 
 /* ===================== INIT ===================== */
 mostrarObjetos();
+// =========================
+// CONTROL DE ACCESO (PRUEBA GRATIS)
+// =========================
+
+const usuario = sessionStorage.getItem("usuario");
+const pruebaUsada = sessionStorage.getItem("prueba_usada");
+
+// Si no está logueado
+if (!usuario) {
+  alert("Debes iniciar sesión");
+  window.location.href = "../phpPaginas/inSesion.php";
+}
+
+// Si ya usó la prueba
+if (pruebaUsada === "1") {
+  alert("Ya usaste tu prueba gratuita");
+  window.location.href = "../phpPaginas/planes.php";
+}
