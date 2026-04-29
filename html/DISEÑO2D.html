@@ -4,55 +4,53 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Decorador 2D</title>
+
+  <!-- Fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
   <link rel="stylesheet" href="../CSS/styleEditor.css">
-  <style>
-    
-  </style>
 </head>
-<body>
-  <h1>🎨 Decorador de Interiores 2D</h1>
 
-  <!-- Barra superior -->
-  <nav class="barra-superior">
-    <button onclick="toggleGrid()">🟦 Activar / Desactivar Cuadrícula</button>
-    <button onclick="guardarProyecto()">💾 Guardar Diseño</button>
-    <button onclick="cargarProyecto()">📂 Cargar Diseño</button>
-    <button onclick="traerAlFrente()">⬆ Traer al Frente</button>
-    <button onclick="enviarAlFondo()">⬇ Enviar al Fondo</button>
-  </nav>
+<h1>🎨 Decorador de Interiores 2D</h1>
 
-  <!-- Selección de espacio y temática -->
-  <div class="selecciones">
-    <label for="espacioSelect">Escoge el espacio:</label>
-    <select id="espacioSelect">
-      <option value="salon">Salón</option>
-      <option value="sala">Sala</option>
-      <option value="oficina">Oficina</option>
-      <option value="comedor">Comedor</option>
-    </select>
+<!-- ================= HEADER ================= -->
+<nav class="barra-superior">
+  <button id="btnGrid">🟦 Cuadrícula</button>
+  <button id="btnGuardar">💾 Guardar</button>
+  <button id="btnCargar">📂 Cargar</button>
+  <button id="btnFrente">⬆ Frente</button>
+  <button id="btnFondo">⬇ Fondo</button>
+  <button onclick="exportarPDF()">📄 Exportar PDF</button>
+  <button onclick="exportarImagen()">🖼 PNG</button>
+</nav>
 
-    <label for="tematicaSelect">Escoge la temática:</label>
+<!-- ================= CONTENIDO ================= -->
+<div class="workspace">
+
+  <!-- PANEL IZQUIERDO -->
+  <aside class="panel-lateral">
+    <h3>🎭 Temática</h3>
+
     <select id="tematicaSelect" onchange="mostrarObjetos()">
-      <option value="navidad">Navideña</option>
+      <option value="navidad">Navidad</option>
       <option value="halloween">Halloween</option>
       <option value="cumple">Cumpleaños</option>
       <option value="sanvalentin">San Valentín</option>
-      <option value="otros">Personalizado</option>
+      <option value="otros">Otros</option>
     </select>
-  </div>
 
-  <nav class="contenedor">
-    <!-- Área de diseño -->
-    <div id="espacio" class="espacio">
-      <p class="texto">Haz clic en un objeto y colócalo aquí</p>
-    </div>
+    <h3>🧱 Objetos</h3>
+    <div id="listaObjetos"></div>
+  </aside>
 
-    <!-- Panel desplegable de objetos -->
-    <div class="panel">
-      <button onclick="toggleDropdown()">Objetos ▼</button>
-      <div id="listaObjetos" class="dropdown-content"></div>
-    </div>
-  </nav>
-  <script src="../js/2DEditor.js"></script>
-</body>
+  <!-- AREA DE DISEÑO -->
+  <main id="espacio" class="espacio"></main>
+
+</div>
+
+<!-- JS -->
+<script src="../js/2DEditor.js"></script>
 </html>

@@ -1,140 +1,36 @@
+document.addEventListener("DOMContentLoaded", () => {
+
 const espacio = document.getElementById("espacio");
 
-let gridActivo = false;
 let elementoSeleccionado = null;
-let zIndexGlobal = 1;
+let isDragging = false;
+let offsetX = 0;
+let offsetY = 0;
+let zIndex = 1;
+let gridActivo = false;
+const gridSize = 25;
 
-/* ===================== ARRASTRAR ===================== */
-function hacerArrastrable(elemento) {
-  let isDragging = false;
-  let offsetX = 0;
-  let offsetY = 0;
-
-  elemento.addEventListener("mousedown", (e) => {
-    if (e.target.classList.contains("resize-handle") || e.target.classList.contains("rotate-handle")) return;
-
-    elementoSeleccionado = elemento;
-    elemento.style.zIndex = zIndexGlobal++;
-    elemento.classList.add("activo");
-
-    offsetX = e.offsetX;
-    offsetY = e.offsetY;
-
-    isDragging = true;
-  });
-
-  document.addEventListener("mousemove", (e) => {
-    if (!isDragging) return;
-
-    const rect = espacio.getBoundingClientRect();
-
-    let x = e.clientX - rect.left - offsetX;
-    let y = e.clientY - rect.top - offsetY;
-
-    if (gridActivo) {
-      const grid = 25;
-      x = Math.round(x / grid) * grid;
-      y = Math.round(y / grid) * grid;
-    }
-
-    elemento.style.left = x + "px";
-    elemento.style.top = y + "px";
-  });
-
-  document.addEventListener("mouseup", () => {
-    isDragging = false;
-  });
-}
-
-/* ===================== REDIMENSIONAR ===================== */
-function agregarResize(elemento) {
-  const handle = document.createElement("div");
-  handle.classList.add("resize-handle");
-  elemento.appendChild(handle);
-
-  let isResizing = false;
-
-  handle.addEventListener("mousedown", (e) => {
-    e.stopPropagation();
-    isResizing = true;
-  });
-
-  document.addEventListener("mousemove", (e) => {
-    if (!isResizing) return;
-
-    let width = e.offsetX;
-    let height = e.offsetY;
-
-    elemento.style.width = width + "px";
-    elemento.style.height = height + "px";
-  });
-
-  document.addEventListener("mouseup", () => {
-    isResizing = false;
-  });
-}
-
-/* ===================== ROTAR ===================== */
-function agregarRotacion(elemento) {
-  const handle = document.createElement("div");
-  handle.classList.add("rotate-handle");
-  elemento.appendChild(handle);
-
-  let rotando = false;
-
-  handle.addEventListener("mousedown", (e) => {
-    e.stopPropagation();
-    rotando = true;
-  });
-
-  document.addEventListener("mousemove", (e) => {
-    if (!rotando) return;
-
-    const rect = elemento.getBoundingClientRect();
-    const centroX = rect.left + rect.width / 2;
-    const centroY = rect.top + rect.height / 2;
-
-    const angulo = Math.atan2(e.clientY - centroY, e.clientX - centroX);
-    const grados = angulo * (180 / Math.PI);
-
-    elemento.style.transform = `rotate(${grados}deg)`;
-  });
-
-  document.addEventListener("mouseup", () => {
-    rotando = false;
-  });
-}
-
-/* ===================== GRID ===================== */
-function toggleGrid() {
-  gridActivo = !gridActivo;
-  espacio.classList.toggle("grid-activa");
-}
-
-/* ===================== CAPAS ===================== */
-function traerAlFrente() {
-  if (elementoSeleccionado) {
-    elementoSeleccionado.style.zIndex = zIndexGlobal++;
-  }
-}
-
-function enviarAlFondo() {
-  if (elementoSeleccionado) {
-    elementoSeleccionado.style.zIndex = 1;
-  }
-}
+/* ===================== BOTONES ===================== */
+document.getElementById("btnGrid").onclick = toggleGrid;
+document.getElementById("btnGuardar").onclick = guardarProyecto;
+document.getElementById("btnCargar").onclick = cargarDiseno;
+document.getElementById("btnFrente").onclick = traerAlFrente;
+document.getElementById("btnFondo").onclick = enviarAlFondo;
 
 /* ===================== OBJETOS ===================== */
-const objetosPorTematica = {
+const objetos = {
   navidad: [
     { nombre: "Árbol", img: "../assets/objetos/arbol-navidad.png" },
-    { nombre: "Regalo", img: "../assets/objetos/regalo.png" }
+    { nombre: "Regalo", img: "../assets/objetos/regalo.png" },
+    { nombre: "Muñeco nieve", img: "../assets/objetos/muñeco-nieve.png" }
   ],
   halloween: [
-    { nombre: "Calabaza", img: "../assets/objetos/calabaza.png" }
+    { nombre: "Calabaza", img: "../assets/objetos/calabaza.png" },
+    { nombre: "Fantasma", img: "../assets/objetos/fantasma.png" }
   ],
   cumple: [
-    { nombre: "Pastel", img: "../assets/objetos/pastel.png" }
+    { nombre: "Pastel", img: "../assets/objetos/pastel.png" },
+    { nombre: "Globos", img: "../assets/objetos/globos.png" }
   ],
   sanvalentin: [
     { nombre: "Corazón", img: "../assets/objetos/corazon.png" }
@@ -144,63 +40,202 @@ const objetosPorTematica = {
   ]
 };
 
-function mostrarObjetos() {
-  const tematica = document.getElementById("tematicaSelect").value;
+/* ===================== MOSTRAR OBJETOS ===================== */
+window.mostrarObjetos = () => {
+  const tipo = document.getElementById("tematicaSelect").value;
   const lista = document.getElementById("listaObjetos");
   lista.innerHTML = "";
 
-  objetosPorTematica[tematica].forEach(obj => {
+  objetos[tipo].forEach(obj => {
     const btn = document.createElement("button");
     btn.textContent = obj.nombre;
-    btn.onclick = () => colocarObjeto(obj.img);
+    btn.onclick = () => crearObjeto(obj.img);
     lista.appendChild(btn);
+  });
+};
+
+/* ===================== CREAR OBJETO ===================== */
+function crearObjeto(src) {
+  if (!src) return alert("Objeto sin imagen");
+
+  const cont = document.createElement("div");
+  cont.classList.add("objeto");
+
+  cont.style.left = "50px";
+  cont.style.top = "50px";
+  cont.style.width = "100px";
+  cont.style.zIndex = zIndex++;
+
+  const img = document.createElement("img");
+  img.src = src;
+
+  const btnEliminar = document.createElement("button");
+  btnEliminar.className = "btn-eliminar";
+  btnEliminar.textContent = "×";
+  btnEliminar.onclick = () => cont.remove();
+
+  const resize = document.createElement("div");
+  resize.className = "resize-handle";
+
+  cont.appendChild(img);
+  cont.appendChild(btnEliminar);
+  cont.appendChild(resize);
+
+  espacio.appendChild(cont);
+
+  activarEventos(cont, resize);
+}
+
+/* ===================== EVENTOS ===================== */
+function activarEventos(el, resize) {
+
+  el.addEventListener("mousedown", (e) => {
+    elementoSeleccionado = el;
+    el.style.zIndex = zIndex++;
+    isDragging = true;
+
+    offsetX = e.offsetX;
+    offsetY = e.offsetY;
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDragging || !elementoSeleccionado) return;
+
+    let x = e.clientX - espacio.offsetLeft - offsetX;
+    let y = e.clientY - espacio.offsetTop - offsetY;
+
+    if (gridActivo) {
+      x = Math.round(x / gridSize) * gridSize;
+      y = Math.round(y / gridSize) * gridSize;
+    }
+
+    elementoSeleccionado.style.left = x + "px";
+    elementoSeleccionado.style.top = y + "px";
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDragging = false;
+  });
+
+  el.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    let rot = el.dataset.rot || 0;
+    rot = parseInt(rot) + (e.deltaY > 0 ? 10 : -10);
+    el.style.transform = `rotate(${rot}deg)`;
+    el.dataset.rot = rot;
+  });
+
+  resize.addEventListener("mousedown", (e) => {
+    e.stopPropagation();
+
+    const startX = e.clientX;
+    const startWidth = el.offsetWidth;
+
+    function mover(e2) {
+      let size = startWidth + (e2.clientX - startX);
+      el.style.width = size + "px";
+    }
+
+    function stop() {
+      document.removeEventListener("mousemove", mover);
+      document.removeEventListener("mouseup", stop);
+    }
+
+    document.addEventListener("mousemove", mover);
+    document.addEventListener("mouseup", stop);
   });
 }
 
-/* ===================== CREAR OBJETO ===================== */
-function colocarObjeto(imgSrc) {
-  if (!imgSrc) return alert("Objeto sin imagen");
-
-  const contenedor = document.createElement("div");
-  contenedor.style.position = "absolute";
-  contenedor.style.left = "50px";
-  contenedor.style.top = "50px";
-
-  const img = document.createElement("img");
-  img.src = imgSrc;
-  img.style.width = "100px";
-  img.style.display = "block";
-
-  contenedor.appendChild(img);
-  espacio.appendChild(contenedor);
-
-  hacerArrastrable(contenedor);
-  agregarResize(contenedor);
-  agregarRotacion(contenedor);
+/* ===================== FUNCIONES ===================== */
+function toggleGrid() {
+  gridActivo = !gridActivo;
+  espacio.classList.toggle("grid-activa");
 }
 
-/* ===================== DROPDOWN ===================== */
-function toggleDropdown() {
-  document.getElementById("listaObjetos").classList.toggle("show");
+function traerAlFrente() {
+  if (elementoSeleccionado) elementoSeleccionado.style.zIndex = zIndex++;
 }
 
-/* ===================== INIT ===================== */
+function enviarAlFondo() {
+  if (elementoSeleccionado) elementoSeleccionado.style.zIndex = 1;
+}
+
+/* ===================== GUARDAR (DB REAL) ===================== */
+function guardarProyecto() {
+  const nombre = prompt("Nombre del proyecto:");
+  if (!nombre) return;
+
+  const objetos = [];
+
+  document.querySelectorAll(".objeto").forEach(el => {
+    objetos.push({
+      img: el.querySelector("img").src,
+      x: el.style.left,
+      y: el.style.top,
+      w: el.style.width,
+      rot: el.dataset.rot || 0
+    });
+  });
+
+  fetch("../php/guardar_proyecto.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      nombre,
+      objetos,
+      tipo: "2D"
+    })
+  })
+  .then(res => res.text())
+  .then(msg => alert(msg));
+}
+
+/* ===================== CARGAR ===================== */
+function cargarDiseno() {
+  fetch("../php/cargar_proyectos.php")
+    .then(res => res.json())
+    .then(data => {
+
+      if (data.length === 0) return alert("No hay proyectos");
+
+      const lista = data.map(p => `${p.id} - ${p.nombre} (${p.tipo})`).join("\n");
+      const id = prompt("Elige ID:\n" + lista);
+
+      const proyecto = data.find(p => p.id == id);
+      if (!proyecto) return;
+
+      espacio.innerHTML = "";
+
+      const objetos = JSON.parse(proyecto.datos);
+
+      objetos.forEach(obj => {
+        const cont = document.createElement("div");
+        cont.classList.add("objeto");
+
+        cont.style.left = obj.x;
+        cont.style.top = obj.y;
+        cont.style.width = obj.w;
+        cont.style.transform = `rotate(${obj.rot}deg)`;
+        cont.dataset.rot = obj.rot;
+
+        const img = document.createElement("img");
+        img.src = obj.img;
+
+        const resize = document.createElement("div");
+        resize.className = "resize-handle";
+
+        cont.appendChild(img);
+        cont.appendChild(resize);
+
+        espacio.appendChild(cont);
+
+        activarEventos(cont, resize);
+      });
+
+    });
+}
+
+/* INIT */
 mostrarObjetos();
-// =========================
-// CONTROL DE ACCESO (PRUEBA GRATIS)
-// =========================
 
-const usuario = sessionStorage.getItem("usuario");
-const pruebaUsada = sessionStorage.getItem("prueba_usada");
-
-// Si no está logueado
-if (!usuario) {
-  alert("Debes iniciar sesión");
-  window.location.href = "../phpPaginas/inSesion.php";
-}
-
-// Si ya usó la prueba
-if (pruebaUsada === "1") {
-  alert("Ya usaste tu prueba gratuita");
-  window.location.href = "../phpPaginas/planes.php";
-}
+});

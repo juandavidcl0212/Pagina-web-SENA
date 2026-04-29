@@ -1,4 +1,5 @@
 body{
+    background-image: url('../assets/background.jpeg'), linear-gradient(135deg, #1b1f3b, #2c3e50);
     font-family: Bahnschrift Condensed;
     margin: 0px;
     padding: 0px;

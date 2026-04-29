@@ -45,6 +45,12 @@ if ($usuario['plan'] == 'gratis' && $usuario['prueba_usada'] == 0) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/DragControls.js"></script>
+    
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="../CSS/3d.css">
     <link rel="stylesheet" href="../styles.css">
 </head>
@@ -57,6 +63,12 @@ if ($usuario['plan'] == 'gratis' && $usuario['prueba_usada'] == 0) {
         <nav class="categoria"><h3 onclick="toggleCategoria(this)">Cumpleaños</h3><nav class="objetos" id="cumple"></nav></nav>
         <nav class="categoria"><h3 onclick="toggleCategoria(this)">San Valentín</h3><nav class="objetos" id="sanvalentin"></nav></nav>
         <nav class="categoria"><h3 onclick="toggleCategoria(this)">Otros</h3><nav class="objetos" id="otros"></nav></nav>
+        
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
+        <div style="text-align: center;">
+            <label for="inputPlano" class="btn" style="display: block; cursor: pointer; background: #5e72e4; padding: 10px; border-radius: 8px;">📷 Subir Plano (Piso)</label>
+            <input type="file" id="inputPlano" accept="image/*" style="display: none;">
+        </div>
 </nav>
 
     <!-- Área 3D -->

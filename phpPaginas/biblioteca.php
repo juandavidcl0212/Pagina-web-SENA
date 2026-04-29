@@ -7,7 +7,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Nook Studio - Panel</title>
+    <title>Nooke Studio - Panel</title>
     <link rel="stylesheet" href="../CSS/dashboard.css">
     <link rel="stylesheet" href="../styles.css">
 </head>
@@ -60,11 +60,11 @@
         <aside class="sidebar">
             <h2>Menú</h2>
             <ul>
-                <li><a href="../php/mis_proyectos.php" class="btn-menu">Mis Proyectos</a></li>
+                <li><a href="../phpPaginas/mis_proyectos.php" class="btn-menu">Mis Proyectos</a></li>
                 <li><a href="../html/inspiracion.html" class="btn-menu">Inspiración</a></li>
                 <li><a href="../html/modelos_3d.html" class="btn-menu">Modelos 3D</a></li>
                 <li><a href="../html/materiales.html" class="btn-menu">Materiales</a></li>
-                <li><a href="../html/cuenta.html" class="btn-menu">Cuenta</a></li>
+                <li><a href="../phpPaginas/cuenta.php" class="btn-menu">Cuenta</a></li>
             </ul>
         </aside>
 

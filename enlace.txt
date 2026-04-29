@@ -1,4 +1,8 @@
 http://localhost/Pagina-web-SENA-main/
 
+http://localhost/copia+edicion-SENA/
+
 https://copilot.microsoft.com/conversations/join/MbzmpjgoykjwPn84JRvqe
 
+Codigo para vincular el repositorio: 
+git remote add origin https://github.com/juandavidcl0212/Pagina-web-SENA

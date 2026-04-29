@@ -29,40 +29,56 @@ $conn->close();
 
 <body>
 
-<header class="encabezado">
+<!-- ENCABEZADO -->
+  <header class="encabezado">
+    <!-- Logo a la izquierda -->
     <img src="../assets/fb p.png" alt="Logo fantasy box" class="fantasy box">
 
+    <!-- Menú o enlaces al centro -->
     <nav class="menu">
-        <a href="../index.php" class="btn-menu">Inicio</a>
-        <a href="../phpPaginas/servicios.php" class="btn-menu">Servicios</a>
-        <a href="../phpPaginas/planes.php" class="btn-menu">Planes</a>
-        <a href="../phpPaginas/contacto.php" class="btn-menu">Contacto</a>
+      <a href="../index.php" class="btn-menu">Inicio</a>
+      <a href="../phpPaginas/servicios.php" class="btn-menu">Servicios</a>
+      <a href="../phpPaginas/planes.php" class="btn-menu">Planes</a>
+      <a href="../phpPaginas/contacto.php" class="btn-menu">Contacto</a>
     </nav>
 
     <nav class="cuenta">
-        <?php if(!isset($_SESSION['id_usuario'])): ?>
-            <a href="../phpPaginas/Registrarse.php" class="btn-menu">¡Crear una cuenta!</a>
-            <a href="../phpPaginas/inSesion.php" class="btn-menu">Iniciar sesión</a>
-        <?php else: ?>
-            <img src="<?php echo isset($_SESSION['foto']) && $_SESSION['foto'] !== '' 
-                ? '../uploads/' . $_SESSION['foto'] 
-                : '../assets/default.png'; ?>" 
-                alt="Perfil" class="avatar" onclick="toggleMenu()">
+      <?php if(!isset($_SESSION['id_usuario'])): ?>
+        <!-- Usuario NO ha iniciado sesión -->
+        <nav class="cuentas">
+          <a href="../phpPaginas/Registrarse.php" class="btn-menu">¡Crear una cuenta!</a>
+        </nav>
+        <nav>
+          <a href="../phpPaginas/inSesion.php" class="btn-menu">¿Ya tienes cuenta? Inicia sesión</a>
+        </nav>
+      <?php else: ?>
+        <!-- Usuario SÍ ha iniciado sesión -->
+        <img src="<?php echo isset($_SESSION['foto']) && $_SESSION['foto'] !== '' 
+              ? '../uploads/' . $_SESSION['foto'] 
+              : '../assets/default.png'; ?>" 
+             alt="Perfil" class="avatar" onclick="toggleMenu()">
 
-            <div id="menuPopup" class="menu-popup">
-                <?php if(isset($_SESSION['rol']) && $_SESSION['rol'] === 'admin'): ?>
-                    <button onclick="location.href='../phpPaginas/planes copy.php'">Modo Admin</button>
-                    <button onclick="location.href='../phpPaginas/bibliotecaAdmin.php'">Biblioteca Admin</button>
-                <?php else: ?>
-                    <button onclick="location.href='../phpPaginas/biblioteca.php'">Mi Biblioteca</button>
-                <?php endif; ?>
 
-                <button onclick="location.href='../phpPaginas/editar_perfil.php'">Editar Perfil</button>
-                <button onclick="location.href='../phpFunciones/logout.php'">Cerrar Sesión</button>
-            </div>
-        <?php endif; ?>
+        <!-- Ventana emergente -->
+        <div id="menuPopup" class="menu-popup">
+          
+        <!-- Botón para volver a la última página -->
+        <?php if(isset($_SESSION['rol'])): ?>
+  <?php if($_SESSION['rol'] === 'admin'): ?>
+    <button onclick="location.href='../phpPaginas/bibliotecaAdmin.php'">Volver a la Biblioteca de Administrador</button>
+  <?php else: ?>
+    <button onclick="location.href='../phpPaginas/biblioteca.php'">Volver a la Biblioteca</button>
+  <?php endif; ?>
+<?php endif; ?>
+
+          <button onclick="location.href='../phpPaginas/editar_perfil.php'">Editar Perfil</button>
+          <button onclick="location.href='../phpFunciones/logout.php'">Cerrar Sesión</button>
+        </div>
+      <?php endif; ?>
     </nav>
-</header>
+
+    <script src="../script.js"></script>
+  </header>
 
 <h1 style="text-align:center;">PLANES</h1>
 
@@ -126,14 +142,6 @@ $conn->close();
     </div>
 
 </div>
-
-<script>
-// menú perfil
-function toggleMenu() {
-    const menu = document.getElementById("menuPopup");
-    menu.style.display = menu.style.display === "block" ? "none" : "block";
-}
-</script>
 
 </body>
 </html>

@@ -20,50 +20,56 @@ if (isset($_SESSION['id_usuario']) && isset($_SESSION['ultima_pagina'])) {
 </head>
 <body>
 
-<header class="encabezado">
 
-  <!-- Logo -->
-  <img src="assets/fb p.png" alt="Logo fantasy box" class="fantasy box">
+  <header class="encabezado">
+    <!-- Logo a la izquierda -->
+    <img src="assets/fb p.png" alt="Logo fantasy box" class="fantasy box">
 
-  <!-- Menú -->
-  <nav class="menu">
-    <a href="index.php" class="btn-menu">Inicio</a>
-    <a href="phpPaginas/servicios.php" class="btn-menu">Servicios</a>
-    <a href="phpPaginas/planes.php" class="btn-menu">Planes</a>
-    <a href="phpPaginas/contacto.php" class="btn-menu">Contacto</a>
+    <!-- Menú o enlaces al centro -->
+    <nav class="menu">
+      <a href="index.php" class="btn-menu">Inicio</a>
+      <a href="phpPaginas/servicios.php" class="btn-menu">Servicios</a>
+      <a href="phpPaginas/planes.php" class="btn-menu">Planes</a>
+      <a href="phpPaginas/contacto.php" class="btn-menu">Contacto</a>
+    </nav>
+
+    <nav class="cuenta">
+      <?php if(!isset($_SESSION['id_usuario'])): ?>
+        <!-- Usuario NO ha iniciado sesión -->
+        <nav class="cuentas">
+          <a href="phpPaginas/Registrarse.php" class="btn-menu">¡Crear una cuenta!</a>
+        </nav>
+        <nav>
+          <a href="phpPaginas/inSesion.php" class="btn-menu">¿Ya tienes cuenta? Inicia sesión</a>
+        </nav>
+      <?php else: ?>
+        <!-- Usuario SÍ ha iniciado sesión -->
+        <img src="<?php echo isset($_SESSION['foto']) && $_SESSION['foto'] !== '' 
+              ? 'uploads/' . $_SESSION['foto'] 
+              : 'assets/default.png'; ?>" 
+             alt="Perfil" class="avatar" onclick="toggleMenu()">
+
+
+        <!-- Ventana emergente -->
+        <nav id="menuPopup" class="menu-popup">
+          
+        <!-- Botón para volver a la última página -->
+        <?php if(isset($_SESSION['rol'])): ?>
+  <?php if($_SESSION['rol'] === 'admin'): ?>
+    <button onclick="location.href='phpPaginas/bibliotecaAdmin.php'">Volver a la Biblioteca de Administrador</button>
+  <?php else: ?>
+    <button onclick="location.href='phpPaginas/biblioteca.php'">Volver a la Biblioteca</button>
+  <?php endif; ?>
+<?php endif; ?>
+
+          <button onclick="location.href='phpPaginas/editar_perfil.php'">Editar Perfil</button>
+          <button onclick="location.href='phpFunciones/logout.php'">Cerrar Sesión</button>
   </nav>
+      <?php endif; ?>
+    </div>
 
-  <!-- Cuenta -->
-  <nav class="cuenta">
-    <?php if(!isset($_SESSION['id_usuario'])): ?>
-
-      <a href="phpPaginas/Registrarse.php" class="btn-menu">¡Crear una cuenta!</a>
-      <a href="phpPaginas/inSesion.php" class="btn-menu">Iniciar sesión</a>
-
-    <?php else: ?>
-
-      <img src="<?php echo isset($_SESSION['foto']) && $_SESSION['foto'] !== '' 
-            ? 'uploads/' . $_SESSION['foto'] 
-            : 'assets/default.png'; ?>" 
-           alt="Perfil" class="avatar" onclick="toggleMenu()">
-
-      <nav id="menuPopup" class="menu-popup">
-
-        <?php if(isset($_SESSION['rol']) && $_SESSION['rol'] === 'admin'): ?>
-          <button onclick="location.href='phpPaginas/bibliotecaAdmin.php'">Biblioteca Admin</button>
-        <?php else: ?>
-          <button onclick="location.href='phpPaginas/biblioteca.php'">Mi Biblioteca</button>
-        <?php endif; ?>
-
-        <button onclick="location.href='phpPaginas/editar_perfil.php'">Editar Perfil</button>
-        <button onclick="location.href='phpFunciones/logout.php'">Cerrar Sesión</button>
-
-      </nav>
-
-    <?php endif; ?>
-  </nav>
-
-</header>
+    <script src="script.js"></script>
+  </header>
 
 <!-- Logo central -->
 <img src="assets/nooke g.png" class="nooke-logo">
@@ -104,28 +110,6 @@ if (isset($_SESSION['id_usuario']) && isset($_SESSION['ultima_pagina'])) {
     <a href="#" class="icon"><i class="fab fa-facebook-f"></i></a>
   </nav>
 </footer>
-
-<!-- SCRIPTS -->
-<script>
-function irDiseno(tipo) {
-  if (tipo === "3d") {
-    window.location.href = "diseño/pagina3d.php";
-  } else {
-    window.location.href = "html/DISEÑO2D.html";
-  }
-}
-
-function redirigirLogin() {
-  alert("Debes iniciar sesión primero");
-  window.location.href = "phpPaginas/inSesion.php";
-}
-
-// menú perfil
-function toggleMenu() {
-  const menu = document.getElementById("menuPopup");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
-}
-</script>
 
 </body>
 </html>

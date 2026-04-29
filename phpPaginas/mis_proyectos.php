@@ -27,24 +27,57 @@ while($row = $result->fetch_assoc()) {
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-        <header class="top">
-        <h1>Nooke Studio</h1>
-        <p>Decoración · Interiores · Diseños 3D</p>
-        <nav>
-            <a href="../index.php" class="btn-menu">Volver al Inicio</a>
+        <header class="encabezado">
+    <!-- Logo a la izquierda -->
+    <img src="../assets/fb p.png" alt="Logo fantasy box" class="fantasy box">
+
+    <!-- Menú o enlaces al centro -->
+    <nav class="menu">
+      <a href="../index.php" class="btn-menu">Inicio</a>
+      <a href="../phpPaginas/servicios.php" class="btn-menu">Servicios</a>
+      <a href="../phpPaginas/planes.php" class="btn-menu">Planes</a>
+      <a href="../phpPaginas/contacto.php" class="btn-menu">Contacto</a>
+    </nav>
+
+    <nav class="cuenta">
+      <?php if(!isset($_SESSION['id_usuario'])): ?>
+        <!-- Usuario NO ha iniciado sesión -->
+        <nav class="cuentas">
+          <a href="../phpPaginas/Registrarse.php" class="btn-menu">¡Crear una cuenta!</a>
         </nav>
-    </header>
+        <nav>
+          <a href="../phpPaginas/inSesion.php" class="btn-menu">¿Ya tienes cuenta? Inicia sesión</a>
+        </nav>
+      <?php else: ?>
+        <!-- Usuario SÍ ha iniciado sesión -->
+        <img src="<?php echo isset($_SESSION['foto']) && $_SESSION['foto'] !== '' 
+              ? '../uploads/' . $_SESSION['foto'] 
+              : '../assets/default.png'; ?>" 
+             alt="Perfil" class="avatar" onclick="toggleMenu()">
+
+
+        <!-- Ventana emergente -->
+        <div id="menuPopup" class="menu-popup">
+
+          <button onclick="location.href='../phpPaginas/editar_perfil.php'">Editar Perfil</button>
+          <button onclick="location.href='../phpFunciones/logout.php'">Cerrar Sesión</button>
+        </div>
+      <?php endif; ?>
+    </nav>
+
+    <script src="../script.js"></script>
+  </header>
 
     <nav class="layout">
 
         <aside class="sidebar">
             <h2>Menú</h2>
             <ul>
-                <a href="../html/biblioteca.html" class="btn-menu"><li>General</li></a>
-                <a href="../html/inspiracion.html" class="btn-menu"><li>Inspiración</li></a>
-                <a href="../html/modelos_3d.html" class="btn-menu"><li>Modelos 3D</li></a>
-                <a href="../html/materiales.html" class="btn-menu"><li>Materiales</li></a>
-                <a href="../html/cuenta.html" class="btn-menu"><li>Cuenta</li></a>
+                <li><a href="../phpPaginas/biblioteca.php" class="btn-menu">Volver a la biblioteca</a></li>
+                <li><a href="../html/inspiracion.html" class="btn-menu">Inspiración</a></li>
+                <li><a href="../html/modelos_3d.html" class="btn-menu">Modelos 3D</a></li>
+                <li><a href="../html/materiales.html" class="btn-menu">Materiales</a></li>
+                <li><a href="../phpPaginas/cuenta.php" class="btn-menu">Cuenta</a></li>
             </ul>
         </aside>
 

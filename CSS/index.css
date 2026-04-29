@@ -1,15 +1,25 @@
 /* Fondo general con gradiente */
 body {
-  background: linear-gradient(135deg, #7aecdd, #717dd7);
+  background-image: url('../assets/background.jpeg'), linear-gradient(135deg, #1b1f3b, #2c3e50);
   background-size: cover;
   background-position: center;
   color: white;
 }
 
-/* Logo centrado */
-img {
+/* Logo Nooke gigante */
+.nooke-logo {
   display: block;
-  margin: 0 auto;
+  margin: 50px auto 20px;
+  max-width: 400px;
+  width: 80%;
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
 }
 
 .info, .botones{
