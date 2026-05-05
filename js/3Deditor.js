@@ -48,6 +48,60 @@ floor.receiveShadow = true;
 floor.position.y = -0.01; // Just below the grid
 scene.add(floor);
 
+const animatedWalls = [];
+let wallAnimationActive = false;
+
+function crearParedesAnimadas(ancho, largo) {
+    animatedWalls.forEach(w => scene.remove(w.mesh));
+    animatedWalls.length = 0;
+
+    const grosor = 0.15;
+    const alturaMeta = 3;
+    const medioAncho = ancho / 2;
+    const medioLargo = largo / 2;
+
+    const paredes = [
+        { x: 0, z: -medioLargo + grosor / 2, w: ancho, d: grosor },
+        { x: 0, z: medioLargo - grosor / 2, w: ancho, d: grosor },
+        { x: -medioAncho + grosor / 2, z: 0, w: grosor, d: largo },
+        { x: medioAncho - grosor / 2, z: 0, w: grosor, d: largo }
+    ];
+
+    paredes.forEach(conf => {
+        const geo = new THREE.BoxGeometry(conf.w, 1, conf.d);
+        const material = new THREE.MeshStandardMaterial({ color: 0xffffff, opacity: 0.85, transparent: true });
+        const muro = new THREE.Mesh(geo, material);
+        muro.castShadow = true;
+        muro.receiveShadow = true;
+        muro.position.set(conf.x, 0.01, conf.z);
+        muro.scale.y = 0.01;
+        muro.position.y = muro.scale.y / 2;
+        scene.add(muro);
+        animatedWalls.push({ mesh: muro, targetHeight: alturaMeta });
+    });
+
+    wallAnimationActive = true;
+}
+
+function animarParedes() {
+    if (!wallAnimationActive) return;
+
+    let terminado = true;
+    animatedWalls.forEach(w => {
+        const actual = w.mesh.scale.y;
+        if (actual < w.targetHeight) {
+            const siguiente = Math.min(w.targetHeight, actual + 0.04);
+            w.mesh.scale.y = siguiente;
+            w.mesh.position.y = siguiente / 2;
+            terminado = false;
+        }
+    });
+
+    if (terminado) {
+        wallAnimationActive = false;
+    }
+}
+
 // Objetos por temática
 const objetosPorTematica = {
     navidad: [
@@ -114,6 +168,7 @@ cargarObjetos();
 
 function animate() {
     requestAnimationFrame(animate);
+    animarParedes();
     controls.update();
     renderer.render(scene, camera);
 }
@@ -156,11 +211,7 @@ document.getElementById('inputPlano').addEventListener('change', function(e) {
             floor.material.map = tex;
             floor.material.color.setHex(0xffffff); // remove dark tint to show plan clearly
             floor.material.needsUpdate = true;
-            
+
             // hide grid so it doesn't obstruct the plan
             gridHelper.visible = false;
-        };
-        img.src = event.target.result;
-    };
-    reader.readAsDataURL(file);
-});
+            crearParedesAnimadas(newGeo.parameters.width, newGeo.parameters.height);

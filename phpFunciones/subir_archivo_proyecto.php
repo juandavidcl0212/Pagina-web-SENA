@@ -1,65 +1,83 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
 
-$conn = new mysqli('localhost', 'root', '', 'prueba_db');
+// 🔹 CONEXIÓN (⚠️ CAMBIA EL NOMBRE SI NO ES prueba_db)
+$conn = new mysqli("localhost", "root", "", "prueba_db");
+
 if ($conn->connect_error) {
-    die('Error de conexión: ' . $conn->connect_error);
+    die("Error de conexión: " . $conn->connect_error);
 }
 
-if (!isset($_SESSION['id_usuario'])) {
-    die('No autorizado');
+// 🔹 DATOS
+$proyecto_id = $_POST['project_id'] ?? null;
+$mensaje = trim($_POST['comentario'] ?? '');
+$usuario_id = $_SESSION['id_usuario'] ?? null;
+
+// 🔹 VALIDACIÓN
+if (!$proyecto_id || !$mensaje || !$usuario_id) {
+    die("Faltan datos obligatorios");
 }
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    die('Método no permitido');
+// 🔹 ARCHIVO
+$nombreArchivo = null;
+
+if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] === 0) {
+
+    $nombreOriginal = basename($_FILES['archivo']['name']);
+    $nombreArchivo = time() . "_" . $nombreOriginal;
+
+    $rutaDestino = "../uploads/" . $nombreArchivo;
+
+    // Crear carpeta si no existe
+    if (!is_dir("../uploads")) {
+        mkdir("../uploads", 0777, true);
+    }
+
+    if (!move_uploaded_file($_FILES['archivo']['tmp_name'], $rutaDestino)) {
+        die("Error al subir el archivo");
+    }
 }
 
-$usuario_id = intval($_SESSION['id_usuario']);
-$project_id = isset($_POST['project_id']) ? intval($_POST['project_id']) : 0;
-$comentario = trim($_POST['comentario'] ?? '');
+// 🔹 AUTOR
+$autor = "usuario";
 
-if ($project_id <= 0 || $comentario === '') {
-    die('Proyecto o comentario inválido.');
+// 🔥 VERIFICAR SI EXISTE LA COLUMNA 'visto'
+$check = $conn->query("SHOW COLUMNS FROM project_messages LIKE 'visto'");
+$tieneVisto = ($check && $check->num_rows > 0);
+
+// 🔹 SQL DINÁMICO (NO FALLA NUNCA)
+if ($tieneVisto) {
+
+    $sql = "INSERT INTO project_messages 
+    (proyecto_id, autor, archivo, mensaje, usuario_id, eliminado, visto) 
+    VALUES (?, ?, ?, ?, ?, 0, 0)";
+
+} else {
+
+    $sql = "INSERT INTO project_messages 
+    (proyecto_id, autor, archivo, mensaje, usuario_id, eliminado) 
+    VALUES (?, ?, ?, ?, ?, 0)";
 }
 
-$stmt = $conn->prepare('SELECT id FROM proyectos WHERE id = ? AND usuario_id = ? AND tipo = "2D" LIMIT 1');
-$stmt->bind_param('ii', $project_id, $usuario_id);
-$stmt->execute();
-$stmt->store_result();
-if ($stmt->num_rows === 0) {
-    $stmt->close();
-    die('Proyecto no encontrado o no es tu proyecto 2D.');
+$stmt = $conn->prepare($sql);
+
+if (!$stmt) {
+    die("Error en la consulta SQL: " . $conn->error);
 }
+
+$stmt->bind_param("isssi", $proyecto_id, $autor, $nombreArchivo, $mensaje, $usuario_id);
+
+// 🔹 EJECUTAR
+if ($stmt->execute()) {
+    header("Location: ../phpPaginas/mis_proyectos.php?ok=1");
+    exit;
+} else {
+    echo "Error al guardar: " . $stmt->error;
+}
+
 $stmt->close();
-
-if (!isset($_FILES['archivo']) || $_FILES['archivo']['error'] !== UPLOAD_ERR_OK) {
-    die('No se seleccionó ningún archivo o hubo un error en la subida.');
-}
-
-$archivo = $_FILES['archivo'];
-$nombreArchivo = basename($archivo['name']);
-$rutaCarpeta = dirname(__DIR__) . '/uploads/project_files';
-if (!is_dir($rutaCarpeta)) {
-    mkdir($rutaCarpeta, 0777, true);
-}
-
-$nombreUnico = time() . '_' . preg_replace('/[^a-zA-Z0-9_\.-]/', '_', $nombreArchivo);
-$rutaDestino = $rutaCarpeta . '/' . $nombreUnico;
-
-if (!move_uploaded_file($archivo['tmp_name'], $rutaDestino)) {
-    die('Error al mover el archivo subido.');
-}
-
-$rutaRelativa = 'uploads/project_files/' . $nombreUnico;
-$comentarioLimpio = $conn->real_escape_string($comentario);
-$mensaje = $comentarioLimpio . "\nArchivo: " . $rutaRelativa;
-
-$stmt = $conn->prepare('INSERT INTO project_messages (proyecto_id, usuario_id, autor, mensaje, creado) VALUES (?, ?, "cliente", ?, NOW())');
-$stmt->bind_param('iis', $project_id, $usuario_id, $mensaje);
-if (!$stmt->execute()) {
-    die('Error al guardar el mensaje: ' . $stmt->error);
-}
-$stmt->close();
-
-header('Location: ../phpPaginas/mis_proyectos.php?success=1');
-exit;
+$conn->close();
+?>

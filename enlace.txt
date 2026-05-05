@@ -1,4 +1,4 @@
-http://localhost/Pagina-web-SENA-main/
+http://localhost/Pagina-web-SENA-main-2/
 
 http://localhost/copia+edicion-SENA/
 

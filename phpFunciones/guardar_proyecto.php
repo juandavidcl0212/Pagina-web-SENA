@@ -16,18 +16,34 @@ $usuario_id = intval($_SESSION['id_usuario']);
 /* RECIBIR JSON */
 $data = json_decode(file_get_contents("php://input"), true);
 
-if (!$data) {
+if (!$data || !isset($data['nombre'])) {
     die("Datos inválidos");
 }
 
 /* LIMPIAR DATOS */
 $nombre = $conn->real_escape_string($data['nombre']);
-$datos = $conn->real_escape_string(json_encode($data['objetos']));
-$tipo = $conn->real_escape_string($data['tipo']); // 2D o 3D
+
+$payload = null;
+if (isset($data['data'])) {
+    $payload = $data['data'];
+} elseif (isset($data['objetos'])) {
+    $payload = [
+        'tipo' => isset($data['tipo']) ? $data['tipo'] : '2D',
+        'objetos' => $data['objetos']
+    ];
+} else {
+    $payload = [
+        'tipo' => isset($data['tipo']) ? $data['tipo'] : '2D',
+        'objetos' => []
+    ];
+}
+
+$contenido = json_encode($payload);
+$datos = $conn->real_escape_string($contenido);
 
 /* INSERTAR */
-$sql = "INSERT INTO proyectos (nombre, datos, usuario_id, tipo, fecha) 
-        VALUES ('$nombre', '$datos', '$usuario_id', '$tipo', NOW())";
+$sql = "INSERT INTO proyectos (nombre, data, usuario_id, fecha) 
+        VALUES ('$nombre', '$datos', '$usuario_id', NOW())";
 
 if ($conn->query($sql)) {
     echo "Proyecto guardado correctamente";

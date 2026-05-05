@@ -15,19 +15,25 @@ if (isset($_GET['id'])) {
     $id = intval($_GET['id']);
 
     $result = $conn->query("
-        SELECT * FROM proyectos 
+        SELECT id, nombre, data FROM proyectos 
         WHERE id = $id AND usuario_id = $usuario_id
         LIMIT 1
     ");
 
-    echo json_encode($result->fetch_assoc());
+    $row = $result->fetch_assoc();
+    if ($row && isset($row['data'])) {
+        $parsed = json_decode($row['data'], true);
+        if (is_array($parsed) && isset($parsed['tipo'])) {
+            $row['tipo'] = $parsed['tipo'];
+        }
+    }
+    echo json_encode($row);
     exit();
 }
 
 /* 🔥 SI NO, DEVUELVE TODOS */
 $result = $conn->query("
-    SELECT id, nombre, datos, tipo 
-    FROM proyectos 
+    SELECT id, nombre, data FROM proyectos 
     WHERE usuario_id = $usuario_id
     ORDER BY fecha DESC
 ");
@@ -35,6 +41,12 @@ $result = $conn->query("
 $proyectos = [];
 
 while ($row = $result->fetch_assoc()) {
+    if (isset($row['data'])) {
+        $parsed = json_decode($row['data'], true);
+        if (is_array($parsed) && isset($parsed['tipo'])) {
+            $row['tipo'] = $parsed['tipo'];
+        }
+    }
     $proyectos[] = $row;
 }
 

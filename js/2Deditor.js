@@ -19,12 +19,70 @@ document.getElementById("btnGuardar").onclick = guardarProyecto;
 document.getElementById("btnFrente").onclick = traerAlFrente;
 document.getElementById("btnFondo").onclick = enviarAlFondo;
 
-/* 🔥 BOTÓN CARGAR (REDIRECCIÓN) */
+/* 🔥 BOTÓN CARGAR (ARCHIVO LOCAL) */
 const btnCargar = document.getElementById("btnCargar");
-if(btnCargar){
-  btnCargar.onclick = () => {
-    window.location.href = rootPath + "/phpPaginas/mis_proyectos.php";
-  };
+const fileInput2D = document.getElementById("fileInput2D");
+if(btnCargar && fileInput2D){
+  btnCargar.addEventListener('click', function(e){
+    e.preventDefault();
+    fileInput2D.click();
+  });
+}
+if(fileInput2D){
+  fileInput2D.addEventListener('change', function(e){
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('archivo', file);
+
+    fetch(rootPath + '/phpFunciones/subir_archivo_editor.php', {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (!data.success) {
+        throw new Error(data.message || 'Error al subir archivo');
+      }
+      if (file.type.startsWith('image/')) {
+        insertarArchivoEnEscenario(data.url);
+      }
+      alert('Archivo subido correctamente.');
+    })
+    .catch(err => {
+      alert(err.message || 'Error al subir archivo');
+    })
+    .finally(() => {
+      fileInput2D.value = "";
+    });
+  });
+}
+
+function insertarArchivoEnEscenario(url) {
+  const cont = document.createElement("div");
+  cont.classList.add("objeto");
+  cont.style.left = "50px";
+  cont.style.top = "50px";
+  cont.style.width = "120px";
+  cont.style.zIndex = zIndex++;
+
+  const img = document.createElement("img");
+  img.src = url;
+
+  const btnEliminar = document.createElement("button");
+  btnEliminar.textContent = "×";
+  btnEliminar.onclick = () => cont.remove();
+
+  const resize = document.createElement("div");
+  resize.className = "resize-handle";
+
+  cont.appendChild(img);
+  cont.appendChild(btnEliminar);
+  cont.appendChild(resize);
+
+  espacio.appendChild(cont);
+  activarEventos(cont, resize);
 }
 
 /* ===================== OBJETOS ===================== */
@@ -171,20 +229,38 @@ function guardarProyecto() {
     });
   });
 
+  const proyectoGuardar = {
+    tipo: "2D",
+    objetos: objetosGuardar
+  };
+
   fetch(rootPath + "/phpFunciones/guardar_proyecto.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       nombre,
-      objetos: objetosGuardar,
-      tipo: "2D"
+      data: proyectoGuardar
     })
   })
-  .then(res => res.text())
+  .then(res => res.text().then(text => {
+    if (!res.ok || /error|no autorizado/i.test(text)) {
+      throw new Error(text || 'Error al guardar en la base de datos');
+    }
+    return text;
+  }))
   .then(() => {
     alert("Proyecto guardado ✔");
+    const blob = new Blob([JSON.stringify(proyectoGuardar, null, 2)], { type: "application/json" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = nombre.trim().replace(/[^a-z0-9]/gi, '_').toLowerCase() + ".json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+    window.location.href = rootPath + "/phpPaginas/mis_proyectos.php";
   })
-  .catch(() => alert("Error al guardar"));
+  .catch((err) => alert(err.message || "Error al guardar en la base de datos"));
 }
 
 /* ===================== CARGAR DESDE URL ===================== */
@@ -202,7 +278,10 @@ function cargarDesdeURL() {
 
       espacio.innerHTML = "";
 
-      const objetos = JSON.parse(proyecto.datos);
+      const proyectoData = JSON.parse(proyecto.data || proyecto.datos || "{}") || {};
+      const objetos = proyectoData.objetos || proyectoData;
+
+      if (!Array.isArray(objetos)) return;
 
       objetos.forEach(obj => {
         const cont = document.createElement("div");
