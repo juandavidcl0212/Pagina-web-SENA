@@ -49,6 +49,19 @@ body {
     background: #263159;
 }
 
+.sidebar li a {
+    display: block;
+    width: 100%;
+    color: white;
+    text-decoration: none;
+    padding: 10px 12px;
+    border-radius: 6px;
+}
+
+.sidebar li a:hover {
+    background: #263159;
+}
+
 /* MAIN */
 .main {
     padding: 40px;

@@ -97,7 +97,8 @@ $conn->close();
             <li>Soporte por e-mail</li>
         </ul>
 
-        <form method="POST" action="../phpFunciones/comprar_plan.php">
+        <form method="POST" action="../phpPaginas/checkout.php">
+            <input type="hidden" name="plan_id" value="1">
             <input type="hidden" name="plan" value="Personal">
             <button type="submit" class="plan1B">COMPRAR</button>
         </form>
@@ -116,7 +117,8 @@ $conn->close();
             <li>Soporte diario</li>
         </ul>
 
-        <form method="POST" action="../phpFunciones/comprar_plan.php">
+        <form method="POST" action="../phpPaginas/checkout.php">
+            <input type="hidden" name="plan_id" value="2">
             <input type="hidden" name="plan" value="Familiar">
             <button type="submit" class="plan2B">COMPRAR</button>
         </form>
@@ -135,7 +137,8 @@ $conn->close();
             <li>Soporte dedicado</li>
         </ul>
 
-        <form method="POST" action="../phpFunciones/comprar_plan.php">
+        <form method="POST" action="../phpPaginas/checkout.php">
+            <input type="hidden" name="plan_id" value="3">
             <input type="hidden" name="plan" value="Institucional">
             <button type="submit" class="plan3B">COMPRAR</button>
         </form>

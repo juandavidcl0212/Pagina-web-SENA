@@ -12,6 +12,8 @@
 
   <!-- CSS -->
   <link rel="stylesheet" href="../CSS/styleEditor.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
 <h1>🎨 Decorador de Interiores 2D</h1>
@@ -23,8 +25,8 @@
   <button id="btnCargar">📂 Cargar</button>
   <button id="btnFrente">⬆ Frente</button>
   <button id="btnFondo">⬇ Fondo</button>
-  <button onclick="exportarPDF()">📄 Exportar PDF</button>
-  <button onclick="exportarImagen()">🖼 PNG</button>
+  <button id="btnPDF">📄 Exportar PDF</button>
+  <button id="btnPNG">🖼 PNG</button>
 </nav>
 
 <!-- ================= CONTENIDO ================= -->

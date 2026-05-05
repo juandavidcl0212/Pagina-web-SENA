@@ -1,6 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
 
 const espacio = document.getElementById("espacio");
+const currentPath = window.location.pathname;
+const rootPathIndex = currentPath.lastIndexOf('/html');
+const rootPath = rootPathIndex !== -1 ? currentPath.substring(0, rootPathIndex) : '';
 
 let elementoSeleccionado = null;
 let isDragging = false;
@@ -13,27 +16,22 @@ const gridSize = 25;
 /* ===================== BOTONES ===================== */
 document.getElementById("btnGrid").onclick = toggleGrid;
 document.getElementById("btnGuardar").onclick = guardarProyecto;
-document.getElementById("btnCargar").onclick = cargarDiseno;
 document.getElementById("btnFrente").onclick = traerAlFrente;
 document.getElementById("btnFondo").onclick = enviarAlFondo;
+
+/* 🔥 BOTÓN CARGAR (REDIRECCIÓN) */
+const btnCargar = document.getElementById("btnCargar");
+if(btnCargar){
+  btnCargar.onclick = () => {
+    window.location.href = rootPath + "/phpPaginas/mis_proyectos.php";
+  };
+}
 
 /* ===================== OBJETOS ===================== */
 const objetos = {
   navidad: [
     { nombre: "Árbol", img: "../assets/objetos/arbol-navidad.png" },
-    { nombre: "Regalo", img: "../assets/objetos/regalo.png" },
-    { nombre: "Muñeco nieve", img: "../assets/objetos/muñeco-nieve.png" }
-  ],
-  halloween: [
-    { nombre: "Calabaza", img: "../assets/objetos/calabaza.png" },
-    { nombre: "Fantasma", img: "../assets/objetos/fantasma.png" }
-  ],
-  cumple: [
-    { nombre: "Pastel", img: "../assets/objetos/pastel.png" },
-    { nombre: "Globos", img: "../assets/objetos/globos.png" }
-  ],
-  sanvalentin: [
-    { nombre: "Corazón", img: "../assets/objetos/corazon.png" }
+    { nombre: "Regalo", img: "../assets/objetos/regalo.png" }
   ],
   otros: [
     { nombre: "Planta", img: "../assets/objetos/planta.png" }
@@ -56,8 +54,6 @@ window.mostrarObjetos = () => {
 
 /* ===================== CREAR OBJETO ===================== */
 function crearObjeto(src) {
-  if (!src) return alert("Objeto sin imagen");
-
   const cont = document.createElement("div");
   cont.classList.add("objeto");
 
@@ -70,7 +66,6 @@ function crearObjeto(src) {
   img.src = src;
 
   const btnEliminar = document.createElement("button");
-  btnEliminar.className = "btn-eliminar";
   btnEliminar.textContent = "×";
   btnEliminar.onclick = () => cont.remove();
 
@@ -93,7 +88,6 @@ function activarEventos(el, resize) {
     elementoSeleccionado = el;
     el.style.zIndex = zIndex++;
     isDragging = true;
-
     offsetX = e.offsetX;
     offsetY = e.offsetY;
   });
@@ -160,48 +154,50 @@ function enviarAlFondo() {
   if (elementoSeleccionado) elementoSeleccionado.style.zIndex = 1;
 }
 
-/* ===================== GUARDAR (DB REAL) ===================== */
+/* ===================== GUARDAR ===================== */
 function guardarProyecto() {
   const nombre = prompt("Nombre del proyecto:");
   if (!nombre) return;
 
-  const objetos = [];
+  const objetosGuardar = [];
 
   document.querySelectorAll(".objeto").forEach(el => {
-    objetos.push({
+    objetosGuardar.push({
       img: el.querySelector("img").src,
       x: el.style.left,
       y: el.style.top,
       w: el.style.width,
-      rot: el.dataset.rot || 0
+      rot: el.dataset?.rot || 0
     });
   });
 
-  fetch("../php/guardar_proyecto.php", {
+  fetch(rootPath + "/phpFunciones/guardar_proyecto.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       nombre,
-      objetos,
+      objetos: objetosGuardar,
       tipo: "2D"
     })
   })
   .then(res => res.text())
-  .then(msg => alert(msg));
+  .then(() => {
+    alert("Proyecto guardado ✔");
+  })
+  .catch(() => alert("Error al guardar"));
 }
 
-/* ===================== CARGAR ===================== */
-function cargarDiseno() {
-  fetch("../php/cargar_proyectos.php")
+/* ===================== CARGAR DESDE URL ===================== */
+function cargarDesdeURL() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  if (!id) return;
+
+  fetch(rootPath + "/phpFunciones/cargar_proyectos.php?id=" + id)
     .then(res => res.json())
-    .then(data => {
+    .then(proyecto => {
 
-      if (data.length === 0) return alert("No hay proyectos");
-
-      const lista = data.map(p => `${p.id} - ${p.nombre} (${p.tipo})`).join("\n");
-      const id = prompt("Elige ID:\n" + lista);
-
-      const proyecto = data.find(p => p.id == id);
       if (!proyecto) return;
 
       espacio.innerHTML = "";
@@ -221,10 +217,15 @@ function cargarDiseno() {
         const img = document.createElement("img");
         img.src = obj.img;
 
+        const btnEliminar = document.createElement("button");
+        btnEliminar.textContent = "×";
+        btnEliminar.onclick = () => cont.remove();
+
         const resize = document.createElement("div");
         resize.className = "resize-handle";
 
         cont.appendChild(img);
+        cont.appendChild(btnEliminar);
         cont.appendChild(resize);
 
         espacio.appendChild(cont);
@@ -232,10 +233,39 @@ function cargarDiseno() {
         activarEventos(cont, resize);
       });
 
-    });
+    })
+    .catch(() => alert("Error al cargar"));
 }
+
+/* ===================== EXPORTAR PNG ===================== */
+function exportarPNG() {
+  html2canvas(espacio).then(canvas => {
+    const link = document.createElement("a");
+    link.download = "proyecto.png";
+    link.href = canvas.toDataURL();
+    link.click();
+  });
+}
+
+/* ===================== EXPORTAR PDF ===================== */
+function exportarPDF() {
+  html2canvas(espacio).then(canvas => {
+    const img = canvas.toDataURL("image/png");
+    const pdf = new jspdf.jsPDF();
+    pdf.addImage(img, 'PNG', 10, 10, 180, 100);
+    pdf.save("proyecto.pdf");
+  });
+}
+
+/* ===================== BOTONES EXPORT ===================== */
+const btnPNG = document.getElementById("btnPNG");
+if(btnPNG) btnPNG.onclick = exportarPNG;
+
+const btnPDF = document.getElementById("btnPDF");
+if(btnPDF) btnPDF.onclick = exportarPDF;
 
 /* INIT */
 mostrarObjetos();
+cargarDesdeURL();
 
 });

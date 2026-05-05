@@ -8,23 +8,46 @@ if (!isset($_SESSION['id_usuario'])) {
 }
 
 $id_usuario = $_SESSION['id_usuario'];
-$plan = $_POST['plan'] ?? '';
+$planId = isset($_POST['plan_id']) ? intval($_POST['plan_id']) : null;
+$banco = $_POST['banco'] ?? '';
 
-// Validar planes
-$planes_validos = ['Personal', 'Familiar', 'Institucional'];
+$bancos_validos = ['Bancolombia', 'Davivienda', 'BBVA', 'Banco de Bogotá'];
 
-if (!in_array($plan, $planes_validos)) {
+if ($planId === null || $planId <= 0) {
     die("Plan inválido");
 }
 
-// Guardar en BD
-$sql = "UPDATE usuarios SET plan = '$plan' WHERE id = '$id_usuario'";
-mysqli_query($conn, $sql);
+if ($banco !== '' && !in_array($banco, $bancos_validos)) {
+    die("Banco inválido");
+}
 
-// Guardar en sesión
+$stmt = $conn->prepare("SELECT nombre, precio FROM membresias WHERE id = ? LIMIT 1");
+$stmt->bind_param('i', $planId);
+$stmt->execute();
+$result = $stmt->get_result();
+$planInfo = $result->fetch_assoc();
+$stmt->close();
+
+if (!$planInfo) {
+    die("Plan no encontrado");
+}
+
+$plan = $planInfo['nombre'];
+$precio = $planInfo['precio'];
+
+// Aquí puedes integrar el pago real con la pasarela que elijas.
+// Por ahora se simula que el pago se completó correctamente.
+
+$stmt = $conn->prepare("UPDATE usuarios SET plan = ? WHERE id = ?");
+$stmt->bind_param('si', $plan, $id_usuario);
+$stmt->execute();
+$stmt->close();
+
 $_SESSION['plan'] = $plan;
+if ($banco !== '') {
+    $_SESSION['banco_pago'] = $banco;
+}
 
-// Redirigir
 header("Location: ../diseño/pagina3d.php");
 exit;
 ?>

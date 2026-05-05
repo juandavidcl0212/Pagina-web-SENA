@@ -11,7 +11,7 @@ if (!isset($_SESSION['id_usuario'])) {
 $id = $_SESSION['id_usuario'];
 
 // 🔎 2. Obtener datos del usuario
-$sql = "SELECT prueba_usada, plan FROM usuarios WHERE id = '$id'";
+$sql = "SELECT prueba_usada, plan, trial_inicio, trial_expiracion FROM usuarios WHERE id = '$id'";
 $resultado = mysqli_query($conn, $sql);
 
 if (!$resultado) {
@@ -21,19 +21,32 @@ if (!$resultado) {
 $usuario = mysqli_fetch_assoc($resultado);
 
 // 🔒 3. Lógica de acceso
-// Si NO tiene plan premium y YA usó la prueba → bloqueado
-if ($usuario['plan'] != 'Personal' && 
-    $usuario['plan'] != 'Familiar' && 
-    $usuario['plan'] != 'Institucional' && 
-    $usuario['prueba_usada'] == 1) {
+$plan_valido = in_array($usuario['plan'], ['Personal', 'Familiar', 'Institucional']);
+$hoy = new DateTime('now');
+$trial_activo = false;
 
-    header("Location: ../phpPaginas/planes.php");
-    exit;
+if (!$plan_valido) {
+    if (!empty($usuario['trial_expiracion'])) {
+        $expiracion = new DateTime($usuario['trial_expiracion']);
+        if ($hoy <= $expiracion) {
+            $trial_activo = true;
+        }
+    }
 }
 
-// 🎯 4. Marcar prueba como usada (solo si no tiene plan)
-if ($usuario['plan'] == 'gratis' && $usuario['prueba_usada'] == 0) {
-    mysqli_query($conn, "UPDATE usuarios SET prueba_usada = 1 WHERE id = '$id'");
+if (!$plan_valido && !$trial_activo) {
+    if ($usuario['prueba_usada'] == 0) {
+        // Iniciar prueba gratuita de 15 días
+        $inicio = $hoy->format('Y-m-d H:i:s');
+        $expiracion = $hoy->modify('+15 days')->format('Y-m-d H:i:s');
+        mysqli_query($conn, "UPDATE usuarios SET prueba_usada = 1, trial_inicio = '$inicio', trial_expiracion = '$expiracion' WHERE id = '$id'");
+        $trial_activo = true;
+    }
+}
+
+if (!$plan_valido && !$trial_activo) {
+    header("Location: ../phpPaginas/planes.php");
+    exit;
 }
 ?>
 <!DOCTYPE html>

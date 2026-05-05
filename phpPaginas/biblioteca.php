@@ -61,16 +61,16 @@
             <h2>Menú</h2>
             <ul>
                 <li><a href="../phpPaginas/mis_proyectos.php" class="btn-menu">Mis Proyectos</a></li>
-                <li><a href="../html/inspiracion.html" class="btn-menu">Inspiración</a></li>
-                <li><a href="../html/modelos_3d.html" class="btn-menu">Modelos 3D</a></li>
-                <li><a href="../html/materiales.html" class="btn-menu">Materiales</a></li>
+                <li><a href="../php/inspiracion.php" class="btn-menu">Inspiración</a></li>
+                <li><a href="../phpPaginas/modelos_3d.php" class="btn-menu">Modelos 3D</a></li>
+                <li><a href="../phpPaginas/materiales.php" class="btn-menu">Materiales</a></li>
                 <li><a href="../phpPaginas/cuenta.php" class="btn-menu">Cuenta</a></li>
             </ul>
         </aside>
 
         <main class="main">
               
-            <h2>Bienvenido a tu panel</h2>
+            <h2>Bienvenido </h2>
             <p>Explora ideas, diseña ambientes y administra tus proyectos.</p>
 
             <nav class="cards-container">

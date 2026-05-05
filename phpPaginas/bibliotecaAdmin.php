@@ -56,7 +56,7 @@ if ($conn->connect_error) {
             <aside class="sidebar">
             <h2>Nook Studio</h2>
                 <ul>
-                    <li><a href="../phpPaginas/planes copy.php" class="btn-menu">📖Administrar Planes</a></li>
+                    <li><a href="../phpPaginas/planes copy.php" class="btn-menu">📖 Administrar Planes</a></li>
                     <li><a href="../admibtn/usuario.php" class="btn-menu">👥 Usuarios</a></li>
                     <li><a href="../admibtn/proyectos.php" class="btn-menu">📁 Proyectos</a></li>
                     <li><a href="../admibtn/materiales.php" class="btn-menu">🛋 Materiales</a></li>
