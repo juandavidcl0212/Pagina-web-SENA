@@ -15,10 +15,14 @@ controls.enableDamping = true;
 controls.maxPolarAngle = Math.PI / 2 - 0.05; // Prevent camera from going below floor
 
 // Iluminación
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
 scene.add(ambientLight);
 
-const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.8);
+hemiLight.position.set(0, 20, 0);
+scene.add(hemiLight);
+
+const dirLight = new THREE.DirectionalLight(0xffffff, 1.6);
 dirLight.position.set(10, 20, 10);
 dirLight.castShadow = true;
 dirLight.shadow.mapSize.width = 2048;
@@ -33,145 +37,387 @@ scene.add(dirLight);
 
 const textureLoader = new THREE.TextureLoader();
 
-// Piso y Cuadrícula
+const gltfLoader = new THREE.GLTFLoader();
+
+// Piso y cuadricula base
 const gridHelper = new THREE.GridHelper(30, 30, 0x5e72e4, 0x444444);
 scene.add(gridHelper);
 
 const floorGeometry = new THREE.PlaneGeometry(30, 30);
-const floorMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0x222222, 
-    roughness: 0.8 
+const floorMaterial = new THREE.MeshStandardMaterial({
+    color: 0x222222,
+    roughness: 0.8
 });
+
 const floor = new THREE.Mesh(floorGeometry, floorMaterial);
 floor.rotation.x = -Math.PI / 2;
 floor.receiveShadow = true;
-floor.position.y = -0.01; // Just below the grid
+floor.position.y = -0.01;
 scene.add(floor);
 
-const animatedWalls = [];
-let wallAnimationActive = false;
-
-function crearParedesAnimadas(ancho, largo) {
-    animatedWalls.forEach(w => scene.remove(w.mesh));
-    animatedWalls.length = 0;
-
-    const grosor = 0.15;
-    const alturaMeta = 3;
-    const medioAncho = ancho / 2;
-    const medioLargo = largo / 2;
-
-    const paredes = [
-        { x: 0, z: -medioLargo + grosor / 2, w: ancho, d: grosor },
-        { x: 0, z: medioLargo - grosor / 2, w: ancho, d: grosor },
-        { x: -medioAncho + grosor / 2, z: 0, w: grosor, d: largo },
-        { x: medioAncho - grosor / 2, z: 0, w: grosor, d: largo }
-    ];
-
-    paredes.forEach(conf => {
-        const geo = new THREE.BoxGeometry(conf.w, 1, conf.d);
-        const material = new THREE.MeshStandardMaterial({ color: 0xffffff, opacity: 0.85, transparent: true });
-        const muro = new THREE.Mesh(geo, material);
-        muro.castShadow = true;
-        muro.receiveShadow = true;
-        muro.position.set(conf.x, 0.01, conf.z);
-        muro.scale.y = 0.01;
-        muro.position.y = muro.scale.y / 2;
-        scene.add(muro);
-        animatedWalls.push({ mesh: muro, targetHeight: alturaMeta });
-    });
-
-    wallAnimationActive = true;
-}
-
-function animarParedes() {
-    if (!wallAnimationActive) return;
-
-    let terminado = true;
-    animatedWalls.forEach(w => {
-        const actual = w.mesh.scale.y;
-        if (actual < w.targetHeight) {
-            const siguiente = Math.min(w.targetHeight, actual + 0.04);
-            w.mesh.scale.y = siguiente;
-            w.mesh.position.y = siguiente / 2;
-            terminado = false;
-        }
-    });
-
-    if (terminado) {
-        wallAnimationActive = false;
+// Escenarios 3D
+const escenarios = {
+    sala: {
+        nombre: "Sala",
+        modelo: "../assets/objetos/escenarios/sala.glb",
+        escala: 12
+    },
+    oficina: {
+        nombre: "Oficina",
+        modelo: "../assets/objetos/escenarios/oficina.glb",
+        escala: 12
+    },
+    salon: {
+        nombre: "Salon de clases",
+        modelo: "../assets/objetos/escenarios/salon-clases.glb",
+        escala: 12
     }
-}
+};
 
-// Objetos por temática
-const objetosPorTematica = {
+let escenarioActual = null;
+
+// Objetos por tematica
+const objetos = {
     navidad: [
-        { id:"arbol", nombre: "Árbol", img: "../assets/objetos/arbol-navidad.png", ancho: 2, alto: 4, posX: -5, posY: 0 },
-        { id:"regalo", nombre: "Regalo", img: "../assets/objetos/regalo.png", ancho: 1, alto: 1, posX: 2, posY: 0 }
+        {
+            id: "arbol-navidad",
+            nombre: "Arbol",
+            modelo: "../assets/objetos/elementos/arbol-navidad.glb",
+            preview: "../assets/objetos/arbol-navidad.png",
+            escala: 6,
+            posX: -3,
+            posY: 0
+        },
+        {
+            id: "regalo",
+            nombre: "Regalo",
+            modelo: "../assets/objetos/elementos/regalo.glb",
+            preview: "../assets/objetos/regalo.png",
+            escala: 1,
+            posX: 2,
+            posY: 0
+        },
+        {
+            id: "esfera-nieve",
+            nombre: "Esfera de nieve",
+            modelo: "../assets/objetos/elementos/esfera-nieve.glb",
+            preview: "../assets/objetos/esfera-nieve.png",
+            escala: 0.5,
+            posX: 4,
+            posY: 0
+        },
+        {
+            id: "muneco-nieve",
+            nombre: "Muneco de nieve",
+            modelo: "../assets/objetos/elementos/muñeco-nieve.glb",
+            preview: "../assets/objetos/muñeco-nieve.png",
+            escala: 6,
+            posX: 0,
+            posY: 3
+        }
     ],
+
     halloween: [
-        { id:"calabaza", nombre: "Calabaza", img: "../assets/objetos/calabaza.png", ancho: 1, alto: 1, posX: -2, posY: 0 },
-        { id:"fantasma", nombre: "Fantasma", img: "../assets/objetos/fantasma.png", ancho: 1.5, alto: 2, posX: 4, posY: 0 }
+        {
+            id: "fantasma",
+            nombre: "Fantasma",
+            modelo: "../assets/objetos/elementos/fantasma.glb",
+            escala: 2,
+            posX: -3,
+            posY: 0
+        },
+        {
+            id: "murcielago",
+            nombre: "Murcielago",
+            modelo: "../assets/objetos/elementos/murcielago.glb",
+            escala: 1.5,
+            posX: 2,
+            posY: 0
+        },
+        {
+            id: "arana",
+            nombre: "Arana",
+            modelo: "../assets/objetos/elementos/araña.glb",
+            escala: 1.5,
+            posX: 4,
+            posY: 0
+        }
     ],
+
     cumple: [
-        { id:"pastel", nombre: "Pastel", img: "../assets/objetos/pastel.png", ancho: 2, alto: 1.5, posX: 0, posY: 0 },
-        { id:"globos", nombre: "Globos", img: "../assets/objetos/globos.png", ancho: 1, alto: 3, posX: 6, posY: 0 }
+        {
+            id: "globos",
+            nombre: "Globos",
+            modelo: "../assets/objetos/elementos/globos.glb",
+            escala: 6,
+            posX: -3,
+            posY: 0
+        },
+        {
+            id: "decoracion-cumple",
+            nombre: "Decoracion",
+            modelo: "../assets/objetos/elementos/decoracion-cumpleaños.glb",
+            escala: 2,
+            posX: 2,
+            posY: 0
+        }
     ],
+
     sanvalentin: [
-        { id:"corazon", nombre: "Corazón", img: "../assets/objetos/globo-corazon.png", ancho: 1, alto: 2, posX: -3, posY: 0 }
+        {
+            id: "corazon-flores",
+            nombre: "Corazon de flores",
+            modelo: "../assets/objetos/elementos/corazon-flores.glb",
+            escala: 4,
+            posX: -2,
+            posY: 0
+        },
+        {
+            id: "rosa",
+            nombre: "Rosa",
+            modelo: "../assets/objetos/elementos/rosa.glb",
+            escala: 1.5,
+            posX: 2,
+            posY: 0
+        }
     ],
+
     otros: [
-        { id:"cama", nombre: "Cama", img: "../assets/objetos/cama.png", ancho: 3, alto: 1, posX: 0, posY: 3 },
-        { id:"tocador", nombre: "Tocador", img: "../assets/objetos/tocador.png", ancho: 2, alto: 2, posX: 5, posY: -2 }
+        {
+            id: "mesa",
+            nombre: "Mesa",
+            modelo: "../assets/objetos/elementos/mesa.glb",
+            escala: 4.5,
+            posX: -3,
+            posY: 0
+        },
+        {
+            id: "lampara",
+            nombre: "Lampara",
+            modelo: "../assets/objetos/elementos/lampara.glb",
+            escala: 2,
+            posX: 2,
+            posY: 0
+        },
+        {
+            id: "planta",
+            nombre: "Planta",
+            modelo: "../assets/objetos/elementos/planta.glb",
+            escala: 2,
+            posX: 4,
+            posY: 0
+        },
+        {
+            id: "tapete",
+            nombre: "Tapete",
+            modelo: "../assets/objetos/elementos/tapete.glb",
+            escala: 4,
+            posX: 0,
+            posY: 3
+        },
+        {
+            id: "reloj",
+            nombre: "Reloj",
+            modelo: "../assets/objetos/elementos/reloj.glb",
+            escala: 1.5,
+            posX: -4,
+            posY: 3
+        },
+        {
+            id: "cuadro",
+            nombre: "Cuadro",
+            modelo: "../assets/objetos/elementos/cuadro.glb",
+            escala: 3,
+            posX: 4,
+            posY: 3
+        },
+        {
+            id: "adornos-escritorio",
+            nombre: "Adornos",
+            modelo: "../assets/objetos/elementos/adornos-escritorio.glb",
+            escala: 1.5,
+            posX: 0,
+            posY: -3
+        },
+        {
+            id: "guirnalda",
+            nombre: "Guirnalda",
+            modelo: "../assets/objetos/elementos/guirnalda.glb",
+            escala: 4,
+            posX: -2,
+            posY: -3
+        }
     ]
 };
 
 const objetosInteractivos = [];
 let dragControls;
+let objetoSeleccionado = null;
+const pasoVertical = 0.25;
+
+
+function prepararModelo(modelo) {
+    modelo.traverse((child) => {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+        }
+    });
+}
+
+function ajustarModeloAlTamano(modelo, tamanoObjetivo) {
+    const caja = new THREE.Box3().setFromObject(modelo);
+    const medidas = new THREE.Vector3();
+    caja.getSize(medidas);
+
+    const dimensionMayor = Math.max(medidas.x, medidas.y, medidas.z);
+
+    if (dimensionMayor > 0) {
+        const factor = tamanoObjetivo / dimensionMayor;
+        modelo.scale.multiplyScalar(factor);
+    }
+
+    const cajaAjustada = new THREE.Box3().setFromObject(modelo);
+    modelo.position.y -= cajaAjustada.min.y;
+}
+
+function actualizarDragControls() {
+    if (dragControls) {
+        dragControls.dispose();
+    }
+
+    dragControls = new THREE.DragControls(objetosInteractivos, camera, renderer.domElement);
+
+    dragControls.addEventListener("dragstart", (event) => {
+        controls.enabled = false;
+        objetoSeleccionado = event.object;
+    });
+
+    dragControls.addEventListener("drag", (event) => {
+        const alturaMinima = event.object.userData.alturaMinima || 0;
+
+        if (event.object.position.y < alturaMinima) {
+            event.object.position.y = alturaMinima;
+        }
+    });
+
+    dragControls.addEventListener("dragend", (event) => {
+        controls.enabled = true;
+        objetoSeleccionado = event.object;
+    });
+}
+
 
 function colocarObjeto(obj) {
-    if (scene.getObjectByName(obj.id)) return;
-    const tex = textureLoader.load(obj.img);
-    const material = new THREE.MeshStandardMaterial({ 
-        map: tex,
-        transparent: true, // Use transparency if PNG has alpha
-        alphaTest: 0.1 
-    });
-    const geometry = new THREE.BoxGeometry(obj.ancho, obj.alto, obj.ancho);
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.set(obj.posX, obj.alto/2, obj.posY);
-    mesh.name = obj.id;
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-    scene.add(mesh);
-    objetosInteractivos.push(mesh);
-    
-    if(dragControls) dragControls.dispose();
-    dragControls = new THREE.DragControls(objetosInteractivos, camera, renderer.domElement);
-    dragControls.addEventListener('dragstart', function () { controls.enabled = false; });
-    dragControls.addEventListener('dragend', function () { controls.enabled = true; });
+    gltfLoader.load(
+        obj.modelo,
+        (gltf) => {
+            const modelo = gltf.scene;
+
+            modelo.name = `${obj.id}-${Date.now()}`;
+            modelo.position.set(obj.posX || 0, 0, obj.posY || 0);
+
+            prepararModelo(modelo);
+            ajustarModeloAlTamano(modelo, obj.escala || 2);
+
+            modelo.userData.alturaBase = modelo.position.y;
+            modelo.userData.alturaMinima = modelo.position.y;
+
+
+            scene.add(modelo);
+            objetosInteractivos.push(modelo);
+            actualizarDragControls();
+        },
+        undefined,
+        (error) => {
+            console.error("Error cargando modelo:", obj.modelo, error);
+            alert("No se pudo cargar el modelo: " + obj.nombre);
+        }
+    );
 }
 
 function cargarObjetos() {
-    for (const categoria in objetosPorTematica) {
+    for (const categoria in objetos) {
         const contenedor = document.getElementById(categoria);
-        if(!contenedor) continue;
-        objetosPorTematica[categoria].forEach(obj => {
+        if (!contenedor) continue;
+
+        contenedor.innerHTML = "";
+
+        objetos[categoria].forEach((obj) => {
             const div = document.createElement("div");
             div.className = "objeto";
-            div.innerHTML = `<img src="${obj.img}"><span>${obj.nombre}</span>`;
+
+            if (obj.preview) {
+                div.innerHTML = `<img src="${obj.preview}" alt="${obj.nombre}"><span>${obj.nombre}</span>`;
+            } else {
+                div.innerHTML = `<span>${obj.nombre}</span>`;
+            }
+
             div.onclick = () => colocarObjeto(obj);
             contenedor.appendChild(div);
         });
     }
 }
+
+function cargarEscenario(id) {
+    if (!id || !escenarios[id]) return;
+
+    if (escenarioActual) {
+        scene.remove(escenarioActual);
+        escenarioActual.traverse((child) => {
+            if (child.geometry) child.geometry.dispose();
+            if (child.material) {
+                if (Array.isArray(child.material)) {
+                    child.material.forEach((mat) => mat.dispose());
+                } else {
+                    child.material.dispose();
+                }
+            }
+        });
+        escenarioActual = null;
+    }
+
+    gltfLoader.load(
+        escenarios[id].modelo,
+        (gltf) => {
+            escenarioActual = gltf.scene;
+            escenarioActual.name = "escenario-actual";
+
+            prepararModelo(escenarioActual);
+            ajustarModeloAlTamano(escenarioActual, escenarios[id].escala || 12);
+
+            scene.add(escenarioActual);
+
+            floor.visible = false;
+            gridHelper.visible = false;
+
+            camera.position.set(0, 8, 14);
+            controls.target.set(0, 1, 0);
+            controls.update();
+        },
+        undefined,
+        (error) => {
+            console.error("Error cargando escenario:", escenarios[id].modelo, error);
+            alert("No se pudo cargar el escenario seleccionado.");
+        }
+    );
+}
+
 cargarObjetos();
+
+const escenarioSelect = document.getElementById("escenarioSelect");
+if (escenarioSelect) {
+    escenarioSelect.addEventListener("change", (e) => {
+        cargarEscenario(e.target.value);
+    });
+}
 
 function animate() {
     requestAnimationFrame(animate);
-    animarParedes();
     controls.update();
     renderer.render(scene, camera);
 }
+
 animate();
 
 window.addEventListener("resize", () => {
@@ -182,36 +428,67 @@ window.addEventListener("resize", () => {
 
 window.toggleCategoria = function(elemento) {
     const lista = elemento.nextElementSibling;
-    if(lista.style.display === "block") {
+
+    if (lista.style.display === "block") {
         lista.style.display = "none";
-        elemento.parentElement.classList.remove('abierta');
+        elemento.parentElement.classList.remove("abierta");
     } else {
         lista.style.display = "block";
-        elemento.parentElement.classList.add('abierta');
+        elemento.parentElement.classList.add("abierta");
     }
 };
 
-/* ================== CARGAR PLANO COMO PISO ================== */
-document.getElementById('inputPlano').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
+window.addEventListener("keydown", (event) => {
+    if (!objetoSeleccionado) return;
 
-    const reader = new FileReader();
-    reader.onload = function(event) {
-        const img = new Image();
-        img.onload = function() {
-            // Adjust the plane geometry based on image aspect ratio
-            const aspect = img.width / img.height;
-            const newGeo = new THREE.PlaneGeometry(30 * aspect, 30);
-            floor.geometry.dispose();
-            floor.geometry = newGeo;
+    const alturaMinima = objetoSeleccionado.userData.alturaMinima || 0;
 
-            const tex = new THREE.Texture(img);
-            tex.needsUpdate = true;
-            floor.material.map = tex;
-            floor.material.color.setHex(0xffffff); // remove dark tint to show plan clearly
-            floor.material.needsUpdate = true;
+    if (event.key === "q" || event.key === "Q") {
+        objetoSeleccionado.position.y += pasoVertical;
+    }
 
-            // hide grid so it doesn't obstruct the plan
-            gridHelper.visible = false;
-            crearParedesAnimadas(newGeo.parameters.width, newGeo.parameters.height);
+    if (event.key === "e" || event.key === "E") {
+        objetoSeleccionado.position.y = Math.max(
+            alturaMinima,
+            objetoSeleccionado.position.y - pasoVertical
+        );
+    }
+});
+function eliminarObjetoSeleccionado() {
+    if (!objetoSeleccionado) {
+        alert("Selecciona un objeto primero.");
+        return;
+    }
+
+    scene.remove(objetoSeleccionado);
+
+    const index = objetosInteractivos.indexOf(objetoSeleccionado);
+    if (index !== -1) {
+        objetosInteractivos.splice(index, 1);
+    }
+
+    objetoSeleccionado.traverse((child) => {
+        if (child.geometry) child.geometry.dispose();
+
+        if (child.material) {
+            if (Array.isArray(child.material)) {
+                child.material.forEach((mat) => mat.dispose());
+            } else {
+                child.material.dispose();
+            }
+        }
+    });
+
+    objetoSeleccionado = null;
+    actualizarDragControls();
+}
+
+const btnEliminarObjeto = document.getElementById("btnEliminarObjeto");
+
+if (btnEliminarObjeto) {
+    btnEliminarObjeto.addEventListener("click", eliminarObjetoSeleccionado);
+
+    if (event.key === "Delete" || event.key === "Backspace") {
+    eliminarObjetoSeleccionado();
+}
+}

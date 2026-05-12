@@ -1,6 +1,4 @@
-http://localhost/Pagina-web-SENA-main-2/
-
-http://localhost/copia+edicion-SENA/
+http://localhost/Pagina-web-SENA-main/
 
 https://copilot.microsoft.com/conversations/join/MbzmpjgoykjwPn84JRvqe
 

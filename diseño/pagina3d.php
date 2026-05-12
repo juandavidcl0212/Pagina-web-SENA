@@ -58,6 +58,7 @@ if (!$plan_valido && !$trial_activo) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/DragControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     
     <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -71,6 +72,9 @@ if (!$plan_valido && !$trial_activo) {
     <!-- Barra lateral -->
     <nav class="sidebar">
         <h2>Festividades</h2>
+        <button id="btnEliminarObjeto" class="btn" style="width:100%; margin-top:10px; padding:10px; border-radius:8px; background:#c0392b; color:white; border:none;">
+    Eliminar seleccionado
+</button>
         <nav class="categoria"><h3 onclick="toggleCategoria(this)">Navidad</h3><nav class="objetos" id="navidad"></nav></nav>
         <nav class="categoria"><h3 onclick="toggleCategoria(this)">Halloween</h3><nav class="objetos" id="halloween"></nav></nav>
         <nav class="categoria"><h3 onclick="toggleCategoria(this)">Cumpleaños</h3><nav class="objetos" id="cumple"></nav></nav>
@@ -79,9 +83,18 @@ if (!$plan_valido && !$trial_activo) {
         
         <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
         <div style="text-align: center;">
-            <label for="inputPlano" class="btn" style="display: block; cursor: pointer; background: #5e72e4; padding: 10px; border-radius: 8px;">📷 Subir Plano (Piso)</label>
-            <input type="file" id="inputPlano" accept="image/*" style="display: none;">
-        </div>
+    <label for="escenarioSelect" class="btn" style="display:block; background:#5e72e4; padding:10px; border-radius:8px;">
+        Escenario
+    </label>
+
+    <select id="escenarioSelect" style="width:100%; margin-top:10px; padding:10px; border-radius:8px;">
+        <option value="">Selecciona un escenario</option>
+        <option value="sala">Sala</option>
+        <option value="oficina">Oficina</option>
+        <option value="salon">Salon de clases</option>
+    </select>
+</div>
+
 </nav>
 
     <!-- Área 3D -->

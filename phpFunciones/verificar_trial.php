@@ -14,7 +14,7 @@ $id = $_SESSION['id_usuario'];
 
 // 2. Consultar si ya usó la prueba
 $sql = "SELECT prueba_usada FROM usuarios WHERE id = '$id'";
-$resultado = mysqli_query($conexion, $sql);
+$resultado = mysqli_query($conn, $sql);
 $usuario = mysqli_fetch_assoc($resultado);
 
 if ($usuario['prueba_usada'] == 1) {
