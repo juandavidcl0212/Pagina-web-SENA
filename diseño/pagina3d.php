@@ -75,13 +75,15 @@ if (!$plan_valido && !$trial_activo) {
         <button id="btnEliminarObjeto" class="btn" style="width:100%; margin-top:10px; padding:10px; border-radius:8px; background:#c0392b; color:white; border:none;">
     Eliminar seleccionado
 </button>
+        <nav class="categoria"><h3 onclick="toggleCategoria(this)">General</h3><nav class="objetos" id="otros"></nav></nav>
         <nav class="categoria"><h3 onclick="toggleCategoria(this)">Navidad</h3><nav class="objetos" id="navidad"></nav></nav>
         <nav class="categoria"><h3 onclick="toggleCategoria(this)">Halloween</h3><nav class="objetos" id="halloween"></nav></nav>
         <nav class="categoria"><h3 onclick="toggleCategoria(this)">Cumpleaños</h3><nav class="objetos" id="cumple"></nav></nav>
         <nav class="categoria"><h3 onclick="toggleCategoria(this)">San Valentín</h3><nav class="objetos" id="sanvalentin"></nav></nav>
-        <nav class="categoria"><h3 onclick="toggleCategoria(this)">Otros</h3><nav class="objetos" id="otros"></nav></nav>
         
         <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
+
+
         <div style="text-align: center;">
     <label for="escenarioSelect" class="btn" style="display:block; background:#5e72e4; padding:10px; border-radius:8px;">
         Escenario

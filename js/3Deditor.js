@@ -110,11 +110,20 @@ const objetos = {
             id: "muneco-nieve",
             nombre: "Muneco de nieve",
             modelo: "../assets/objetos/elementos/muñeco-nieve.glb",
-            preview: "../assets/objetos/muñeco-nieve.png",
+            preview: "../assets/objetos/monigote-de-nieve.png",
             escala: 6,
             posX: 0,
             posY: 3
-        }
+        },
+        {
+            id: "guirnalda",
+            nombre: "Guirnalda",
+            modelo: "../assets/objetos/elementos/guirnalda.glb",
+            preview: "../assets/objetos/guirnalda.png",
+            escala: 5,
+            posX: 0,
+            posY: 3
+        }   
     ],
 
     halloween: [
@@ -122,6 +131,7 @@ const objetos = {
             id: "fantasma",
             nombre: "Fantasma",
             modelo: "../assets/objetos/elementos/fantasma.glb",
+            preview: "../assets/objetos/fantasma.png",
             escala: 2,
             posX: -3,
             posY: 0
@@ -130,14 +140,16 @@ const objetos = {
             id: "murcielago",
             nombre: "Murcielago",
             modelo: "../assets/objetos/elementos/murcielago.glb",
+            preview: "../assets/objetos/murcielago.png",
             escala: 1.5,
             posX: 2,
             posY: 0
         },
         {
             id: "arana",
-            nombre: "Arana",
+            nombre: "Araña",
             modelo: "../assets/objetos/elementos/araña.glb",
+            preview: "../assets/objetos/araña.png",
             escala: 1.5,
             posX: 4,
             posY: 0
@@ -149,6 +161,7 @@ const objetos = {
             id: "globos",
             nombre: "Globos",
             modelo: "../assets/objetos/elementos/globos.glb",
+            preview: "../assets/objetos/globos.png",
             escala: 6,
             posX: -3,
             posY: 0
@@ -157,7 +170,8 @@ const objetos = {
             id: "decoracion-cumple",
             nombre: "Decoracion",
             modelo: "../assets/objetos/elementos/decoracion-cumpleaños.glb",
-            escala: 2,
+            preview: "../assets/objetos/decoracion-cumpleaños.png",
+            escala: 4.5,
             posX: 2,
             posY: 0
         }
@@ -168,6 +182,7 @@ const objetos = {
             id: "corazon-flores",
             nombre: "Corazon de flores",
             modelo: "../assets/objetos/elementos/corazon-flores.glb",
+            preview: "../assets/objetos/corazon-flores.png",
             escala: 4,
             posX: -2,
             posY: 0
@@ -176,6 +191,7 @@ const objetos = {
             id: "rosa",
             nombre: "Rosa",
             modelo: "../assets/objetos/elementos/rosa.glb",
+            preview: "../assets/objetos/rosa.png", 
             escala: 1.5,
             posX: 2,
             posY: 0
@@ -187,6 +203,7 @@ const objetos = {
             id: "mesa",
             nombre: "Mesa",
             modelo: "../assets/objetos/elementos/mesa.glb",
+            preview: "../assets/objetos/mesa.png",
             escala: 4.5,
             posX: -3,
             posY: 0
@@ -195,7 +212,8 @@ const objetos = {
             id: "lampara",
             nombre: "Lampara",
             modelo: "../assets/objetos/elementos/lampara.glb",
-            escala: 2,
+            preview: "../assets/objetos/lampara.png",
+            escala: 4,
             posX: 2,
             posY: 0
         },
@@ -203,6 +221,7 @@ const objetos = {
             id: "planta",
             nombre: "Planta",
             modelo: "../assets/objetos/elementos/planta.glb",
+            preview: "../assets/objetos/planta.png",
             escala: 2,
             posX: 4,
             posY: 0
@@ -211,6 +230,7 @@ const objetos = {
             id: "tapete",
             nombre: "Tapete",
             modelo: "../assets/objetos/elementos/tapete.glb",
+            preview: "../assets/objetos/tapete.png",   
             escala: 4,
             posX: 0,
             posY: 3
@@ -219,6 +239,7 @@ const objetos = {
             id: "reloj",
             nombre: "Reloj",
             modelo: "../assets/objetos/elementos/reloj.glb",
+            preview: "../assets/objetos/reloj.png",
             escala: 1.5,
             posX: -4,
             posY: 3
@@ -227,6 +248,7 @@ const objetos = {
             id: "cuadro",
             nombre: "Cuadro",
             modelo: "../assets/objetos/elementos/cuadro.glb",
+            preview: "../assets/objetos/cuadro.jpg",
             escala: 3,
             posX: 4,
             posY: 3
@@ -235,16 +257,9 @@ const objetos = {
             id: "adornos-escritorio",
             nombre: "Adornos",
             modelo: "../assets/objetos/elementos/adornos-escritorio.glb",
+            preview: "../assets/objetos/adornos-escritorio.png",
             escala: 1.5,
             posX: 0,
-            posY: -3
-        },
-        {
-            id: "guirnalda",
-            nombre: "Guirnalda",
-            modelo: "../assets/objetos/elementos/guirnalda.glb",
-            escala: 4,
-            posX: -2,
             posY: -3
         }
     ]

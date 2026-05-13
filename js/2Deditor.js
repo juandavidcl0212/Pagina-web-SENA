@@ -89,10 +89,32 @@ function insertarArchivoEnEscenario(url) {
 const objetos = {
   navidad: [
     { nombre: "Árbol", img: "../assets/objetos/arbol-navidad.png" },
-    { nombre: "Regalo", img: "../assets/objetos/regalo.png" }
+    { nombre: "Regalo", img: "../assets/objetos/regalo.png" },
+    { nombre: "Esfera de Nieve", img: "../assets/objetos/esfera.png" },
+    { nombre: "Muñeco de nieve", img: "../assets/objetos/monigote-de-nieve.png" },
+    { nombre: "Guirnalda", img: "../assets/objetos/guirnalda.png" }
+  ],
+  halloween: [
+    { nombre: "Araña", img: "../assets/objetos/araña.png" },
+    { nombre: "Fantasma", img: "../assets/objetos/fantasma.png" },
+    { nombre: "Murciélago", img: "../assets/objetos/murcielago.png" }
+  ],
+  cumple: [
+    { nombre: "Globos", img: "../assets/objetos/globos.png" },
+    { nombre: "Decoración", img: "../assets/objetos/decoracion-cumpleaños.png" },
+  ],
+  sanvalentin: [
+    { nombre: "Corazon de flores", img: "../assets/objetos/corazon-flores.png" },
+    { nombre: "Rosa", img: "../assets/objetos/rosa.png" }
   ],
   otros: [
-    { nombre: "Planta", img: "../assets/objetos/planta.png" }
+    { nombre: "Planta", img: "../assets/objetos/planta.png" },
+    { nombre: "Mesa", img: "../assets/objetos/mesa.png" },
+    { nombre: "Lampara", img: "../assets/objetos/lampara.png" },
+    { nombre: "Tapete", img: "../assets/objetos/tapete.png" },
+    { nombre: "Planta", img: "../assets/objetos/planta.png" },
+    { nombre: "Cuadro", img: "../assets/objetos/cuadro.jpg" },
+    { nombre: "Decoracion de escritorio", img: "../assets/objetos/adornos-escritorio.png" }
   ]
 };
 
