@@ -72,9 +72,15 @@ if (!$plan_valido && !$trial_activo) {
     <!-- Barra lateral -->
     <nav class="sidebar">
         <h2>Festividades</h2>
+
         <button id="btnEliminarObjeto" class="btn" style="width:100%; margin-top:10px; padding:10px; border-radius:8px; background:#c0392b; color:white; border:none;">
-    Eliminar seleccionado
-</button>
+            Eliminar seleccionado
+        </button>
+
+        <button id="btnResetEscenario" class="btn" style="width:100%; margin-top:10px; padding:10px; border-radius:8px; background:#7f8c8d; color:white; border:none; cursor:pointer;">
+            Resetear escenario
+        </button>
+
         <nav class="categoria"><h3 onclick="toggleCategoria(this)">General</h3><nav class="objetos" id="otros"></nav></nav>
         <nav class="categoria"><h3 onclick="toggleCategoria(this)">Navidad</h3><nav class="objetos" id="navidad"></nav></nav>
         <nav class="categoria"><h3 onclick="toggleCategoria(this)">Halloween</h3><nav class="objetos" id="halloween"></nav></nav>
@@ -83,21 +89,42 @@ if (!$plan_valido && !$trial_activo) {
         
         <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
 
-
         <div style="text-align: center;">
-    <label for="escenarioSelect" class="btn" style="display:block; background:#5e72e4; padding:10px; border-radius:8px;">
-        Escenario
-    </label>
+            <label for="escenarioSelect" class="btn" style="display:block; background:#5e72e4; padding:10px; border-radius:8px;">
+                Escenario
+            </label>
 
-    <select id="escenarioSelect" style="width:100%; margin-top:10px; padding:10px; border-radius:8px;">
-        <option value="">Selecciona un escenario</option>
-        <option value="sala">Sala</option>
-        <option value="oficina">Oficina</option>
-        <option value="salon">Salon de clases</option>
-    </select>
-</div>
+            <select id="escenarioSelect" style="width:100%; margin-top:10px; padding:10px; border-radius:8px;">
+                <option value="">Selecciona un escenario</option>
+                <option value="sala">Sala</option>
+                <option value="oficina">Oficina</option>
+                <option value="salon">Salon de clases</option>
+            </select>
+        </div>
 
-</nav>
+        <nav class="categoria">
+            <h3 onclick="toggleCategoria(this)">Importar escenario</h3>
+
+            <nav class="objetos">
+                <p style="font-size:13px; line-height:1.4; color:#d1d5db; margin:8px 0 12px;">
+                    Importa 4 paredes y 1 techo (Procura seleccionar las 5 fotos de una vez)<br>
+                    Imagen 1 -> pared frontal<br>
+                    Imagen 2 -> pared trasera<br>
+                    Imagen 3 -> pared izquierda<br>
+                    Imagen 4 -> pared derecha<br>
+                    Imagen 5 -> techo
+                </p>
+
+                <label class="objeto" for="inputEscenarioImagenes">
+                    <span>Cargar imagenes</span>
+                </label>
+
+                <input type="file" id="inputEscenarioImagenes" accept="image/*" multiple style="display:none;">
+            </nav>
+        </nav>
+
+
+    </nav>
 
     <!-- Área 3D -->
     <nav id="espacio3D"></nav>

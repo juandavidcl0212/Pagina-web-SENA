@@ -269,6 +269,8 @@ const objetosInteractivos = [];
 let dragControls;
 let objetoSeleccionado = null;
 const pasoVertical = 0.25;
+let escenarioImportado = null;
+
 
 
 function prepararModelo(modelo) {
@@ -417,6 +419,157 @@ function cargarEscenario(id) {
         }
     );
 }
+function limpiarEscenarioImportado() {
+    if (!escenarioImportado) return;
+
+    scene.remove(escenarioImportado);
+
+    escenarioImportado.traverse((child) => {
+        if (child.geometry) child.geometry.dispose();
+
+        if (child.material) {
+            if (Array.isArray(child.material)) {
+                child.material.forEach((mat) => {
+                    if (mat.map) mat.map.dispose();
+                    mat.dispose();
+                });
+            } else {
+                if (child.material.map) child.material.map.dispose();
+                child.material.dispose();
+            }
+        }
+    });
+
+    escenarioImportado = null;
+}
+
+function crearPlanoConImagen(file, ancho, alto) {
+    const url = URL.createObjectURL(file);
+
+    const texture = new THREE.TextureLoader().load(
+        url,
+        () => {
+            texture.needsUpdate = true;
+            URL.revokeObjectURL(url);
+        },
+        undefined,
+        (error) => {
+            console.error("Error cargando textura:", file.name, error);
+        }
+    );
+
+    texture.encoding = THREE.sRGBEncoding;
+
+    const material = new THREE.MeshStandardMaterial({
+        map: texture,
+        side: THREE.DoubleSide,
+        roughness: 0.65
+    });
+
+    const geometry = new THREE.PlaneGeometry(ancho, alto);
+    return new THREE.Mesh(geometry, material);
+}
+
+
+
+function importarEscenarioDesdeImagenes(files) {
+    if (!files || files.length !== 5) {
+        alert("Debes seleccionar exactamente 5 imagenes: 4 paredes y 1 techo.");
+        return;
+    }
+
+    limpiarEscenarioImportado();
+
+    if (escenarioActual) {
+        scene.remove(escenarioActual);
+        escenarioActual = null;
+    }
+
+    floor.visible = true;
+    gridHelper.visible = false;
+
+    const urls = Array.from(files).map((file) => URL.createObjectURL(file));
+
+    const grupo = new THREE.Group();
+    grupo.name = "escenario-importado";
+
+    const ancho = 14;
+    const fondo = 14;
+    const alto = 6;
+
+    const paredFrontal = crearPlanoConImagen(files[0], ancho, alto);
+    paredFrontal.position.set(0, alto / 2, -fondo / 2);
+    grupo.add(paredFrontal);
+
+    const paredTrasera = crearPlanoConImagen(files[1], ancho, alto);
+    paredTrasera.position.set(0, alto / 2, fondo / 2);
+    paredTrasera.rotation.y = Math.PI;
+    grupo.add(paredTrasera);
+
+    const paredIzquierda = crearPlanoConImagen(files[2], fondo, alto);
+    paredIzquierda.position.set(-ancho / 2, alto / 2, 0);
+    paredIzquierda.rotation.y = Math.PI / 2;
+    grupo.add(paredIzquierda);
+
+    const paredDerecha = crearPlanoConImagen(files[3], fondo, alto);
+    paredDerecha.position.set(ancho / 2, alto / 2, 0);
+    paredDerecha.rotation.y = -Math.PI / 2;
+    grupo.add(paredDerecha);
+
+    const techo = crearPlanoConImagen(files[4], ancho, fondo);
+    techo.position.set(0, alto, 0);
+    techo.rotation.x = Math.PI / 2;
+    grupo.add(techo);
+
+    grupo.traverse((child) => {
+        if (child.isMesh) {
+            child.receiveShadow = true;
+        }
+    });
+
+    escenarioImportado = grupo;
+    scene.add(escenarioImportado);
+
+    camera.position.set(0, 7, 14);
+    controls.target.set(0, 2.5, 0);
+    controls.update();
+}
+
+function resetearEscenario() {
+    if (escenarioActual) {
+        scene.remove(escenarioActual);
+
+        escenarioActual.traverse((child) => {
+            if (child.geometry) child.geometry.dispose();
+
+            if (child.material) {
+                if (Array.isArray(child.material)) {
+                    child.material.forEach((mat) => {
+                        if (mat.map) mat.map.dispose();
+                        mat.dispose();
+                    });
+                } else {
+                    if (child.material.map) child.material.map.dispose();
+                    child.material.dispose();
+                }
+            }
+        });
+
+        escenarioActual = null;
+    }
+
+    if (escenarioImportado) {
+        limpiarEscenarioImportado();
+    }
+
+    floor.visible = true;
+    gridHelper.visible = true;
+
+    camera.position.set(0, 10, 15);
+    controls.target.set(0, 0, 0);
+    controls.update();
+}
+
 
 cargarObjetos();
 
@@ -468,6 +621,10 @@ window.addEventListener("keydown", (event) => {
             objetoSeleccionado.position.y - pasoVertical
         );
     }
+
+    if (event.key === "Delete" || event.key === "Backspace") {
+        eliminarObjetoSeleccionado();
+    }
 });
 function eliminarObjetoSeleccionado() {
     if (!objetoSeleccionado) {
@@ -502,8 +659,30 @@ const btnEliminarObjeto = document.getElementById("btnEliminarObjeto");
 
 if (btnEliminarObjeto) {
     btnEliminarObjeto.addEventListener("click", eliminarObjetoSeleccionado);
-
-    if (event.key === "Delete" || event.key === "Backspace") {
-    eliminarObjetoSeleccionado();
 }
+
+const inputEscenarioImagenes = document.getElementById("inputEscenarioImagenes");
+
+if (inputEscenarioImagenes) {
+    inputEscenarioImagenes.addEventListener("change", (event) => {
+        const files = Array.from(event.target.files);
+
+        console.log("Imagenes seleccionadas:", files.length, files);
+
+        if (files.length !== 5) {
+            alert("Debes seleccionar exactamente 5 imagenes: 4 paredes y 1 techo.");
+            return;
+        }
+
+        importarEscenarioDesdeImagenes(files);
+        inputEscenarioImagenes.value = "";
+    });
+} else {
+    console.error("No se encontro el input #inputEscenarioImagenes");
+}
+
+const btnResetEscenario = document.getElementById("btnResetEscenario");
+
+if (btnResetEscenario) {
+    btnResetEscenario.addEventListener("click", resetearEscenario);
 }
