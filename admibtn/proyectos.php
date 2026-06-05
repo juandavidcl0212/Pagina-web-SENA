@@ -1,28 +1,15 @@
-﻿<?php
-
+<?php
 session_start();
 
-/* =========================
-   CONEXIÓN
-========================= */
 $conn = new mysqli('localhost', 'root', '', 'prueba_db');
-
 if ($conn->connect_error) {
-    die('Error de conexión: ' . $conn->connect_error);
+    die('Error de conexion: ' . $conn->connect_error);
 }
 
-/* =========================
-   SOLO ADMIN
-========================= */
-if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'admin') {
+if (!isset($_SESSION['id_usuario']) || ($_SESSION['rol'] ?? '') !== 'admin') {
     die('Acceso denegado');
 }
 
-$usuario_id = $_SESSION['id_usuario'];
-
-/* =========================
-   ELIMINAR MENSAJE
-========================= */
 if (isset($_GET['delete'])) {
     $id = intval($_GET['delete']);
     $project_id_del = isset($_GET['project_id']) ? intval($_GET['project_id']) : 0;
@@ -33,31 +20,27 @@ if (isset($_GET['delete'])) {
     $stmt->close();
 
     header("Location: proyectos.php?project_id=" . $project_id_del);
-    exit();
+    exit;
 }
 
-/* =========================
-   VARIABLES
-========================= */
 $project_id = isset($_GET['project_id']) ? intval($_GET['project_id']) : 0;
+$tipo_filtro = strtoupper($_GET['tipo'] ?? 'TODOS');
+if (!in_array($tipo_filtro, ['TODOS', '2D', '3D'], true)) {
+    $tipo_filtro = 'TODOS';
+}
+
 $message_sent = false;
 $error = '';
-
 $selected_project = null;
 $messages = [];
 
-/* =========================
-   ENVIAR MENSAJE ADMIN
-========================= */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['project_id'], $_POST['mensaje'])) {
-
     $project_id_post = intval($_POST['project_id']);
     $mensaje = trim($_POST['mensaje']);
 
     if ($project_id_post <= 0 || $mensaje === '') {
         $error = "Debes seleccionar proyecto y escribir mensaje.";
     } else {
-
         $stmt = $conn->prepare("SELECT id, usuario_id FROM proyectos WHERE id = ?");
         $stmt->bind_param("i", $project_id_post);
         $stmt->execute();
@@ -65,284 +48,327 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['project_id'], $_POST[
         $stmt->close();
 
         if ($project) {
-
             $autor = "admin";
 
             $stmt = $conn->prepare("
                 INSERT INTO project_messages (proyecto_id, usuario_id, autor, mensaje, creado)
                 VALUES (?, ?, ?, ?, NOW())
             ");
-
             $stmt->bind_param("iiss", $project_id_post, $project['usuario_id'], $autor, $mensaje);
             $stmt->execute();
             $stmt->close();
 
             $message_sent = true;
+            $project_id = $project_id_post;
         } else {
             $error = "Proyecto no encontrado";
         }
     }
 }
 
-/* =========================
-   LISTA PROYECTOS
-========================= */
-$projects = $conn->query("
-    SELECT p.id, p.nombre, u.nombre AS usuario
+$result = $conn->query("
+    SELECT p.id, p.nombre, p.data, p.fecha, u.nombre AS usuario, u.apellido
     FROM proyectos p
     JOIN usuarios u ON u.id = p.usuario_id
     ORDER BY p.fecha DESC
 ");
 
-/* =========================
-   PROYECTO SELECCIONADO (CORREGIDO)
-========================= */
-if ($project_id > 0) {
+$projects = [];
+while ($row = $result->fetch_assoc()) {
+    $data = json_decode($row['data'] ?? '{}', true);
+    $row['tipo'] = strtoupper($data['tipo'] ?? '2D');
+    $row['thumbnail'] = $data['thumbnail'] ?? '';
 
-    $stmt = $conn->prepare("SELECT id, nombre, usuario_id FROM proyectos WHERE id = ?");
+    if ($tipo_filtro !== 'TODOS' && $row['tipo'] !== $tipo_filtro) {
+        continue;
+    }
+
+    $projects[] = $row;
+}
+
+if ($project_id > 0) {
+    $stmt = $conn->prepare("
+        SELECT p.id, p.nombre, p.usuario_id, p.data, u.nombre AS usuario, u.apellido
+        FROM proyectos p
+        JOIN usuarios u ON u.id = p.usuario_id
+        WHERE p.id = ?
+    ");
     $stmt->bind_param("i", $project_id);
     $stmt->execute();
     $selected_project = $stmt->get_result()->fetch_assoc();
     $stmt->close();
 
     if ($selected_project) {
+        $data = json_decode($selected_project['data'] ?? '{}', true);
+        $selected_project['tipo'] = strtoupper($data['tipo'] ?? '2D');
 
         $stmt = $conn->prepare("
-            SELECT id, autor, mensaje, archivo, creado
+            SELECT id, autor, mensaje, creado
             FROM project_messages
-            WHERE proyecto_id = ? AND eliminado = 0
+            WHERE proyecto_id = ?
             ORDER BY creado ASC
         ");
-
         $stmt->bind_param("i", $project_id);
         $stmt->execute();
+        $message_result = $stmt->get_result();
 
-        $result = $stmt->get_result();
-
-        while ($row = $result->fetch_assoc()) {
+        while ($row = $message_result->fetch_assoc()) {
             $messages[] = $row;
         }
 
         $stmt->close();
     }
-    INSERT INTO project_messages 
-(proyecto_id, usuario_id, autor, mensaje, creado, visto)
-VALUES (?, ?, ?, ?, NOW(), 0)
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Admin Proyectos PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Proyectos</title>
 
 <style>
+:root{
+  --dark:#1B1F3B;
+  --panel:#11152a;
+  --surface:#141a33;
+  --green:#136F63;
+  --purple:#9067C6;
+  --orange:#FF9F1C;
+  --light:#EDF7F6;
+}
+
+*{box-sizing:border-box}
 body{
   margin:0;
-  font-family:'Segoe UI', sans-serif;
-  background:#1B1F3B;
-  color:#EDF7F6;
+  font-family:'Segoe UI', Arial, sans-serif;
+  background:var(--dark);
+  color:var(--light);
 }
 
 header{
-  background:#11152a;
-  padding:18px;
-  text-align:center;
-  font-size:20px;
-  font-weight:bold;
-  border-bottom:2px solid rgba(255,255,255,0.05);
+  background:var(--panel);
+  padding:18px 22px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:18px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+
+header h1{
+  margin:0;
+  font-size:22px;
+}
+
+.back{
+  color:var(--light);
+  text-decoration:none;
+  background:#2a305c;
+  padding:10px 14px;
+  border-radius:8px;
+  font-weight:700;
 }
 
 .container{
   display:grid;
-  grid-template-columns:280px 1fr;
+  grid-template-columns:340px 1fr;
   gap:16px;
   padding:16px;
 }
 
 .panel{
-  background:#11152a;
-  border-radius:16px;
+  background:var(--panel);
+  border-radius:8px;
   padding:16px;
-  border:1px solid rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
 }
 
-button{
-  background:#FF9F1C;
-  color:#1B1F3B;
-  border:none;
-  padding:10px 14px;
-  border-radius:10px;
-  font-weight:bold;
-  cursor:pointer;
+.filters{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  margin-bottom:14px;
+}
+
+.filters a{
+  text-align:center;
+  text-decoration:none;
+  color:var(--light);
+  background:#1E2448;
+  padding:9px;
+  border-radius:7px;
+  font-weight:700;
+  font-size:13px;
+}
+
+.filters a.active{
+  background:var(--orange);
+  color:#11152a;
+}
+
+.project{
+  background:var(--surface);
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:10px;
+  border:1px solid rgba(255,255,255,0.06);
+}
+
+.project strong{display:block;margin-bottom:4px}
+.project small{color:#b9c4d0}
+
+.badge{
+  display:inline-block;
+  margin-top:8px;
+  margin-right:6px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:var(--purple);
+  font-size:12px;
+  font-weight:700;
+}
+
+.project a{
+  display:inline-block;
+  margin-top:10px;
+  padding:7px 12px;
+  border-radius:7px;
+  background:var(--orange);
+  color:#11152a;
+  text-decoration:none;
+  font-weight:700;
 }
 
 .chat-area{
-  height:520px;
+  min-height:360px;
+  max-height:520px;
   overflow-y:auto;
   padding:12px;
-  border-radius:16px;
-  background:#141a33;
-  border:1px solid rgba(255,255,255,0.05);
+  border-radius:8px;
+  background:var(--surface);
+  border:1px solid rgba(255,255,255,0.06);
   display:flex;
   flex-direction:column;
   gap:12px;
 }
 
 .msg{
-  max-width:70%;
+  max-width:72%;
   padding:12px;
-  border-radius:14px;
-}
-
-.msg.cliente{background:#136F63; align-self:flex-end;}
-.msg.admin{background:#9067C6; align-self:flex-start;}
-
-.msg-actions{
-  margin-top:8px;
-  text-align:right;
-}
-
-.msg-actions a{
-  color:#ff5c5c;
-  font-size:11px;
-  text-decoration:none;
-}
-
-.project{
-  background:#141a33;
-  padding:12px;
-  border-radius:12px;
-  margin-bottom:10px;
-}
-
-.project a{
-  display:inline-block;
-  margin-top:8px;
-  padding:6px 12px;
   border-radius:8px;
-  background:#FF9F1C;
-  color:#1B1F3B;
-  text-decoration:none;
-}
-.chat-area{
-  height:520px;
-  display:flex;
-  flex-direction:column;
+  line-height:1.4;
 }
 
-form{
-  margin-top:auto;
+.msg.cliente,.msg.usuario{background:var(--green); align-self:flex-end;}
+.msg.admin{background:var(--purple); align-self:flex-start;}
+.msg small{display:block;margin-top:8px;color:rgba(255,255,255,0.72);font-size:11px}
+
+form{margin-top:12px}
+textarea{
+  width:100%;
+  min-height:150px;
+  padding:14px;
+  border-radius:8px;
+  background:#1E2448;
+  color:var(--light);
+  border:1px solid rgba(255,255,255,0.08);
+  resize:vertical;
+  outline:none;
+  font-size:14px;
 }
 
+button{
+  margin-top:8px;
+  background:var(--orange);
+  color:#11152a;
+  border:none;
+  padding:10px 14px;
+  border-radius:8px;
+  font-weight:700;
+  cursor:pointer;
+}
 
+.status{font-weight:700}
+.success{color:#7ee0c1}
+.error{color:var(--orange)}
+
+@media(max-width:860px){
+  header{align-items:flex-start;flex-direction:column}
+  .container{grid-template-columns:1fr}
+}
 </style>
 </head>
 
 <body>
+<header>
+  <h1>Panel admin - Proyectos</h1>
+  <a class="back" href="../phpPaginas/bibliotecaAdmin.php">Volver a Biblioteca</a>
+</header>
 
-<header>🛠️ Panel PRO - Asesoría de Proyectos</header>
+<main class="container">
+  <aside class="panel">
+    <h2>Proyectos</h2>
 
-<div class="container">
+    <div class="filters">
+      <a class="<?php echo $tipo_filtro === 'TODOS' ? 'active' : ''; ?>" href="proyectos.php">Todos</a>
+      <a class="<?php echo $tipo_filtro === '2D' ? 'active' : ''; ?>" href="proyectos.php?tipo=2D">Proyecto 2D</a>
+      <a class="<?php echo $tipo_filtro === '3D' ? 'active' : ''; ?>" href="proyectos.php?tipo=3D">Proyecto 3D</a>
+    </div>
 
-<!-- PROYECTOS -->
-<div class="panel">
-<h3>Proyectos</h3>
+    <?php if (empty($projects)): ?>
+      <p>No hay proyectos en esta categoria.</p>
+    <?php endif; ?>
 
-<?php while ($p = $projects->fetch_assoc()): ?>
-<div class="project">
+    <?php foreach ($projects as $p): ?>
+      <div class="project">
+        <strong><?php echo htmlspecialchars($p['nombre']); ?></strong>
+        <small>Cliente: <?php echo htmlspecialchars(trim($p['usuario'] . ' ' . $p['apellido'])); ?></small><br>
+        <span class="badge">Proyecto <?php echo htmlspecialchars($p['tipo']); ?></span>
+        <a href="proyectos.php?project_id=<?php echo intval($p['id']); ?>&tipo=<?php echo urlencode($tipo_filtro); ?>">Abrir</a>
+      </div>
+    <?php endforeach; ?>
+  </aside>
 
-<strong><?php echo htmlspecialchars($p['nombre']); ?></strong><br>
-Cliente: <?php echo htmlspecialchars($p['usuario']); ?><br>
+  <section class="panel">
+    <h2>Conversacion</h2>
 
-<a href="proyectos.php?project_id=<?php echo $p['id']; ?>">
-Abrir
-</a>
+    <?php if ($message_sent): ?>
+      <p class="status success">Mensaje enviado.</p>
+    <?php endif; ?>
 
-</div>
-<?php endwhile; ?>
+    <?php if ($error): ?>
+      <p class="status error"><?php echo htmlspecialchars($error); ?></p>
+    <?php endif; ?>
 
-</div>
+    <?php if (!$selected_project): ?>
+      <p>Selecciona un proyecto para revisar sus mensajes y responder al cliente.</p>
+    <?php else: ?>
+      <h3>
+        <?php echo htmlspecialchars($selected_project['nombre']); ?>
+        <span class="badge">Proyecto <?php echo htmlspecialchars($selected_project['tipo']); ?></span>
+      </h3>
 
-<!-- CHAT -->
-<div class="panel">
+      <div class="chat-area">
+        <?php if (empty($messages)): ?>
+          <p>No hay mensajes todavia.</p>
+        <?php else: ?>
+          <?php foreach ($messages as $m): ?>
+            <div class="msg <?php echo htmlspecialchars($m['autor']); ?>">
+              <?php echo nl2br(htmlspecialchars($m['mensaje'])); ?>
+              <small><?php echo htmlspecialchars($m['autor']); ?> · <?php echo htmlspecialchars($m['creado']); ?></small>
+            </div>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </div>
 
-<h3>Conversación</h3>
-
-<?php if ($message_sent): ?>
-<p style="color:#136F63;">✔ Mensaje enviado</p>
-<?php endif; ?>
-
-<?php if ($error): ?>
-<p style="color:#FF9F1C;"><?php echo $error; ?></p>
-<?php endif; ?>
-
-<?php if (!$selected_project): ?>
-
-<p>Selecciona un proyecto</p>
-
-<?php else: ?>
-
-<h4>
-<?php echo htmlspecialchars($selected_project['nombre'] ?? 'Sin nombre'); ?>
-</h4>
-
-<div class="chat-area">
-
-<?php if (empty($messages)): ?>
-<p>No hay mensajes</p>
-<?php else: ?>
-
-<?php foreach ($messages as $m): ?>
-
-<div class="msg <?php echo $m['autor']; ?>">
-
-<?php echo nl2br(htmlspecialchars($m['mensaje'])); ?>
-
-<small><?php echo $m['autor']; ?> · <?php echo $m['creado']; ?></small>
-
-<div class="msg-actions">
-    <a href="proyectos.php?delete=<?php echo $m['id']; ?>&project_id=<?php echo $selected_project['id']; ?>"
-       onclick="return confirm('¿Eliminar este mensaje?')">
-        🗑 Eliminar
-    </a>
-</div>
-
-</div>
-
-<?php endforeach; ?>
-
-<?php endif; ?>
-
-</div>
-
-<form method="POST">
-<input type="hidden" name="project_id" value="<?php echo $selected_project['id']; ?>">
-<textarea name="mensaje" required
-style="
-width:100%;
-min-height:180px;
-max-height:300px;
-padding:14px;
-border-radius:12px;
-background:#1E2448;
-color:#EDF7F6;
-border:1px solid rgba(255,255,255,0.05);
-resize:vertical;
-outline:none;
-font-size:14px;
-line-height:1.4;
-"
-placeholder="Escribe tu respuesta..."></textarea>
-<button type="submit">Enviar</button>
-</form>
-
-<?php endif; ?>
-
-</div>
-
-</div>
-
+      <form method="POST">
+        <input type="hidden" name="project_id" value="<?php echo intval($selected_project['id']); ?>">
+        <textarea name="mensaje" placeholder="Escribe tu respuesta..." required></textarea>
+        <button type="submit">Enviar respuesta</button>
+      </form>
+    <?php endif; ?>
+  </section>
+</main>
 </body>
 </html>

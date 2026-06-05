@@ -21,6 +21,19 @@ if (!$proyecto_id || !$mensaje || !$usuario_id) {
     die("Faltan datos obligatorios");
 }
 
+$stmtProyecto = $conn->prepare("SELECT data FROM proyectos WHERE id = ? AND usuario_id = ? LIMIT 1");
+$stmtProyecto->bind_param("ii", $proyecto_id, $usuario_id);
+$stmtProyecto->execute();
+$proyectoRow = $stmtProyecto->get_result()->fetch_assoc();
+$stmtProyecto->close();
+
+if (!$proyectoRow) {
+    die("Proyecto no encontrado");
+}
+
+$proyectoData = json_decode($proyectoRow['data'] ?? '{}', true);
+$tipoProyecto = strtoupper($proyectoData['tipo'] ?? '2D');
+
 // 🔹 ARCHIVO
 $nombreArchivo = null;
 
@@ -72,7 +85,8 @@ $stmt->bind_param("isssi", $proyecto_id, $autor, $nombreArchivo, $mensaje, $usua
 
 // 🔹 EJECUTAR
 if ($stmt->execute()) {
-    header("Location: ../phpPaginas/mis_proyectos.php?ok=1");
+    $destino = $tipoProyecto === "3D" ? "../phpPaginas/modelos_3d.php?ok=1" : "../phpPaginas/mis_proyectos.php?ok=1";
+    header("Location: " . $destino);
     exit;
 } else {
     echo "Error al guardar: " . $stmt->error;

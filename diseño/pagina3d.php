@@ -58,6 +58,7 @@ if (!$plan_valido && !$trial_activo) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/DragControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     
     <!-- Fuentes -->
@@ -79,6 +80,14 @@ if (!$plan_valido && !$trial_activo) {
 
         <button id="btnResetEscenario" class="btn" style="width:100%; margin-top:10px; padding:10px; border-radius:8px; background:#7f8c8d; color:white; border:none; cursor:pointer;">
             Resetear escenario
+        </button>
+
+        <button id="btnAbrirPlanoPared" class="btn btn-primary-3d">
+            Crear plano-pared 2D
+        </button>
+
+        <button id="btnGuardarProyecto3D" class="btn btn-success-3d">
+            Guardar proyecto 3D
         </button>
 
         <nav class="categoria"><h3 onclick="toggleCategoria(this)">General</h3><nav class="objetos" id="otros"></nav></nav>
@@ -128,6 +137,61 @@ if (!$plan_valido && !$trial_activo) {
 
     <!-- Área 3D -->
     <nav id="espacio3D"></nav>
+
+    <section id="panelPlanoPared" class="wall-planner" aria-label="Constructor de paredes 2D">
+        <div class="wall-planner__header">
+            <div>
+                <strong>Plano-pared 2D</strong>
+                <span>Dibuja la casa y conviertela en paredes 3D</span>
+            </div>
+            <button id="btnCerrarPlanoPared" type="button" aria-label="Cerrar panel">x</button>
+        </div>
+
+        <div id="wallEditor" class="wall-editor" aria-live="polite">
+            <div class="wall-editor__actions">
+                <button id="btnMoveWall" type="button">Mover</button>
+                <button id="btnAddDoor" type="button">Puerta</button>
+                <button id="btnAddWindow" type="button">Ventana</button>
+                <button id="btnDeleteWall" type="button">Eliminar</button>
+            </div>
+        </div>
+
+        <div class="wall-planner__tools">
+            <label>
+                Largo (m)
+                <input id="wallLength" type="text" inputmode="decimal" value="3">
+            </label>
+            <label>
+                Alto (m)
+                <input id="wallHeight" type="text" inputmode="decimal" value="2,70">
+            </label>
+            <label>
+                Color
+                <input id="wallColor" type="color" value="#edf7f6">
+            </label>
+            <label>
+                Grosor (m)
+                <input id="wallThickness" type="text" inputmode="decimal" value="0,18">
+            </label>
+        </div>
+
+        <div class="wall-planner__actions">
+            <button id="btnWallHorizontal" type="button">Pared horizontal</button>
+            <button id="btnWallVertical" type="button">Pared vertical</button>
+            <button id="btnAutoRoom" type="button">Cuarto</button>
+            <button id="btnClearWalls" type="button">Limpiar paredes</button>
+        </div>
+
+        <div id="wallCanvas" class="wall-canvas">
+            <div class="wall-canvas__hint">Haz clic en el plano para ubicar una pared</div>
+        </div>
+
+        <p class="wall-planner__note">
+            Cada cuadro equivale a 1 metro. Las paredes se reflejan en el escenario 3D con volumen, sombra y color.
+        </p>
+    </section>
+
+    <div id="saveToast3D" class="save-toast-3d" role="status"></div>
     <a href="../phpPaginas/biblioteca.php" class="btn-volver">Volver</a>
 
     <script src="../js/3Deditor.js"></script>

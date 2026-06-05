@@ -23,8 +23,9 @@ if (isset($_GET['id'])) {
     $row = $result->fetch_assoc();
     if ($row && isset($row['data'])) {
         $parsed = json_decode($row['data'], true);
-        if (is_array($parsed) && isset($parsed['tipo'])) {
-            $row['tipo'] = $parsed['tipo'];
+        if (is_array($parsed)) {
+            $row['tipo'] = strtoupper($parsed['tipo'] ?? '2D');
+            $row['thumbnail'] = $parsed['thumbnail'] ?? null;
         }
     }
     echo json_encode($row);
@@ -43,8 +44,9 @@ $proyectos = [];
 while ($row = $result->fetch_assoc()) {
     if (isset($row['data'])) {
         $parsed = json_decode($row['data'], true);
-        if (is_array($parsed) && isset($parsed['tipo'])) {
-            $row['tipo'] = $parsed['tipo'];
+        if (is_array($parsed)) {
+            $row['tipo'] = strtoupper($parsed['tipo'] ?? '2D');
+            $row['thumbnail'] = $parsed['thumbnail'] ?? null;
         }
     }
     $proyectos[] = $row;

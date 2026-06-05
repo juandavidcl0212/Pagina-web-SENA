@@ -1,210 +1,115 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['id_usuario'])) {
+    header("Location: inSesion.php");
+    exit;
+}
+
+$conn = new mysqli("localhost", "root", "", "prueba_db");
+if ($conn->connect_error) {
+    die("Error de conexion: " . $conn->connect_error);
+}
+
+$usuario_id = intval($_SESSION['id_usuario']);
+
+if (isset($_GET['eliminar'])) {
+    $id = intval($_GET['eliminar']);
+    $stmt = $conn->prepare("DELETE FROM proyectos WHERE id = ? AND usuario_id = ?");
+    $stmt->bind_param("ii", $id, $usuario_id);
+    $stmt->execute();
+    $stmt->close();
+
+    header("Location: modelos_3d.php");
+    exit;
+}
+
+$stmt = $conn->prepare("SELECT id, nombre, data, fecha FROM proyectos WHERE usuario_id = ? ORDER BY fecha DESC");
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$proyectos = [];
+while ($row = $result->fetch_assoc()) {
+    $data = json_decode($row['data'] ?? '{}', true);
+    if (strtoupper($data['tipo'] ?? '') !== '3D') {
+        continue;
+    }
+
+    $row['thumbnail'] = $data['thumbnail'] ?? '';
+    $row['paredes'] = is_array($data['paredes'] ?? null) ? count($data['paredes']) : 0;
+    $row['objetos'] = is_array($data['objetos'] ?? null) ? count($data['objetos']) : 0;
+    $proyectos[] = $row;
+}
+
+$stmt->close();
+$conn->close();
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Proyectos 3D</title>
+<link rel="stylesheet" href="../CSS/modelos3d.css">
+<link rel="stylesheet" href="../styles.css">
 
-<style>
-:root{
-  --dark:#1B1F3B;
-  --green:#136F63;
-  --light:#EDF7F6;
-  --purple:#9067C6;
-  --orange:#FF9F1C;
-}
-
-/* BODY */
-body{
-  margin:0;
-  font-family:Segoe UI;
-  background:var(--dark);
-  color:white;
-}
-
-/* HEADER */
-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:20px;
-  background:#11153a;
-}
-
-/* BOTÓN VOLVER */
-.volver{
-  background:var(--orange);
-  border:none;
-  padding:10px 15px;
-  border-radius:10px;
-  color:white;
-  cursor:pointer;
-  font-weight:bold;
-}
-
-/* BUSCADOR */
-.search{
-  padding:10px;
-  border-radius:10px;
-  border:none;
-  width:250px;
-}
-
-/* GRID */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-  gap:20px;
-  padding:20px;
-}
-
-/* CARD */
-.card{
-  background:#151a4a;
-  border-radius:15px;
-  padding:15px;
-  transition:0.3s;
-  border:1px solid rgba(255,255,255,0.05);
-}
-
-.card:hover{
-  transform:translateY(-5px);
-  border:1px solid var(--orange);
-}
-
-/* PREVIEW 3D */
-.preview{
-  width:100%;
-  height:180px;
-  background:#0f1230;
-  border-radius:10px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  overflow:hidden;
-}
-
-/* IMG */
-.preview img{
-  width:100%;
-  object-fit:cover;
-}
-
-/* TITULO */
-.card h3{
-  margin:10px 0;
-}
-
-/* BOTONES */
-.btn{
-  padding:8px 10px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  font-size:12px;
-  margin:3px;
-}
-
-.ver{ background:var(--green); color:white;}
-.editar{ background:var(--purple); color:white;}
-.eliminar{ background:#ff4d4d; color:white;}
-
-.btn:hover{
-  opacity:0.8;
-}
-
-/* TEXTO VACÍO */
-.vacio{
-  text-align:center;
-  margin-top:50px;
-  opacity:0.6;
-}
-</style>
 </head>
 
 <body>
-
 <header>
-  <button class="volver" onclick="window.location='biblioteca.php'">
-    ⬅ Biblioteca
-  </button>
+  <div>
+    <h1>Proyectos 3D</h1>
+    <span class="meta">Tus ambientes guardados con paredes, colores y objetos.</span>
+  </div>
 
-  <h2>🧊 Proyectos 3D</h2>
-
-  <input type="text" id="buscar" class="search" placeholder="Buscar proyecto...">
+  <div class="header-actions">
+    <a class="volver" href="biblioteca.php">Biblioteca</a>
+    <a class="crear" href="../diseño/pagina3d.php">Nuevo 3D</a>
+    <input type="text" id="buscar" class="search" placeholder="Buscar proyecto...">
+  </div>
 </header>
 
-<div id="contenedor" class="grid"></div>
-
-<p id="vacio" class="vacio" style="display:none;">
-  No tienes proyectos 3D aún 🚀
-</p>
-
-<script>
-
-/* 🔥 CARGAR PROYECTOS 3D */
-fetch("/prueba_db/phpFunciones/cargar_proyectos.php")
-  .then(res => res.json())
-  .then(data => {
-
-    const cont = document.getElementById("contenedor");
-    const vacio = document.getElementById("vacio");
-
-    // filtrar solo 3D
-    const proyectos = data.filter(p => p.tipo === "3D");
-
-    if(proyectos.length === 0){
-      vacio.style.display = "block";
-      return;
-    }
-
-    proyectos.forEach(p => {
-
-      const card = document.createElement("div");
-      card.className = "card";
-      card.dataset.nombre = p.nombre.toLowerCase();
-
-      card.innerHTML = `
+<?php if (empty($proyectos)): ?>
+  <div class="vacio">
+    <h2>No tienes proyectos 3D todavia</h2>
+    <p>Crea un ambiente, dibuja sus paredes en 2D y guardalo para verlo aqui.</p>
+  </div>
+<?php else: ?>
+  <main class="grid">
+    <?php foreach ($proyectos as $p): ?>
+      <article class="card" data-nombre="<?php echo htmlspecialchars(strtolower($p['nombre']), ENT_QUOTES); ?>">
         <div class="preview">
-          <img src="../assets/preview3d.png">
+          <?php if (!empty($p['thumbnail'])): ?>
+            <img src="<?php echo htmlspecialchars($p['thumbnail'], ENT_QUOTES); ?>" alt="Vista previa de <?php echo htmlspecialchars($p['nombre']); ?>">
+          <?php else: ?>
+            <div class="preview-placeholder">Proyecto 3D</div>
+          <?php endif; ?>
         </div>
 
-        <h3>${p.nombre}</h3>
+        <h2><?php echo htmlspecialchars($p['nombre']); ?></h2>
+        <p class="meta">
+          <?php echo intval($p['paredes']); ?> paredes · <?php echo intval($p['objetos']); ?> objetos ·
+          <?php echo date('d/m/Y', strtotime($p['fecha'])); ?>
+        </p>
 
-        <button class="btn ver" onclick="ver(${p.id})">Ver</button>
-        <button class="btn editar" onclick="editar(${p.id})">Editar</button>
-        <button class="btn eliminar" onclick="eliminar(${p.id})">Eliminar</button>
-      `;
+        <div class="actions">
+          <a class="editar" href="../diseño/pagina3d.php?id=<?php echo intval($p['id']); ?>">Editar</a>
+          <a class="mensaje" href="proyectos.php?project_id=<?php echo intval($p['id']); ?>">Mensaje admin</a>
+          <a class="eliminar" href="modelos_3d.php?eliminar=<?php echo intval($p['id']); ?>" onclick="return confirm('¿Eliminar este proyecto 3D?')">Eliminar</a>
+        </div>
+      </article>
+    <?php endforeach; ?>
+  </main>
+<?php endif; ?>
 
-      cont.appendChild(card);
-    });
-
-  });
-
-/* 🔍 BUSCAR */
-document.getElementById("buscar").addEventListener("keyup", function(){
-  const filtro = this.value.toLowerCase();
-
-  document.querySelectorAll(".card").forEach(card=>{
+<script>
+document.getElementById("buscar").addEventListener("input", function(){
+  const filtro = this.value.toLowerCase().trim();
+  document.querySelectorAll(".card").forEach(card => {
     card.style.display = card.dataset.nombre.includes(filtro) ? "block" : "none";
   });
 });
-
-/* ACCIONES */
-function ver(id){
-  window.location = "editor3d.php?id=" + id;
-}
-
-function editar(id){
-  window.location = "editor3d.php?id=" + id;
-}
-
-function eliminar(id){
-  if(confirm("¿Eliminar proyecto?")){
-    window.location = "/prueba_db/phpPaginas/mis_proyectos.php?eliminar=" + id;
-  }
-}
-
 </script>
-
 </body>
 </html>

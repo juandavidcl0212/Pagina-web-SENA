@@ -55,14 +55,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['project_id'], $_POST[
 /* =========================
    LISTAR PROYECTOS
 ========================= */
-$projects = $conn->query("SELECT id, nombre FROM proyectos WHERE usuario_id = $usuario_id ORDER BY fecha DESC");
+$projects = $conn->query("SELECT id, nombre, data FROM proyectos WHERE usuario_id = $usuario_id ORDER BY fecha DESC");
 
 /* =========================
    PROYECTO SELECCIONADO + MENSAJES
 ========================= */
 if ($project_id > 0) {
 
-    $stmt = $conn->prepare('SELECT id, nombre FROM proyectos WHERE id = ? AND usuario_id = ?');
+    $stmt = $conn->prepare('SELECT id, nombre, data FROM proyectos WHERE id = ? AND usuario_id = ?');
     $stmt->bind_param('ii', $project_id, $usuario_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -70,6 +70,9 @@ if ($project_id > 0) {
     $stmt->close();
 
     if ($selected_project) {
+        $selected_data = json_decode($selected_project['data'] ?? '{}', true);
+        $selected_project['tipo'] = strtoupper($selected_data['tipo'] ?? '2D');
+        $selected_project['thumbnail'] = $selected_data['thumbnail'] ?? '';
 
         $stmt = $conn->prepare('SELECT autor, mensaje, creado FROM project_messages WHERE proyecto_id = ? ORDER BY creado ASC');
         $stmt->bind_param('i', $project_id);
@@ -83,6 +86,8 @@ if ($project_id > 0) {
         $stmt->close();
     }
 }
+
+$back_url = ($selected_project && ($selected_project['tipo'] ?? '') === '3D') ? 'modelos_3d.php' : 'mis_proyectos.php';
 ?>
 
 <!DOCTYPE html>
@@ -103,7 +108,7 @@ if ($project_id > 0) {
 
     <div style="display:flex; gap:10px; align-items:center;">
         
-        <a href="bibliotecaAdmin.php" class="button-secondary">← Volver a Biblioteca</a>
+        <a href="<?php echo htmlspecialchars($back_url); ?>" class="button-secondary">← Volver a Biblioteca</a>
     </div>
 </div>
 
@@ -115,8 +120,17 @@ if ($project_id > 0) {
 <!-- PROYECTOS -->
 <div class="project-list">
     <?php while ($row = $projects->fetch_assoc()): ?>
+        <?php
+            $project_data = json_decode($row['data'] ?? '{}', true);
+            $project_tipo = strtoupper($project_data['tipo'] ?? '2D');
+            $project_thumbnail = $project_data['thumbnail'] ?? '';
+        ?>
         <div class="project-card">
+            <?php if ($project_thumbnail): ?>
+                <img src="<?php echo htmlspecialchars($project_thumbnail, ENT_QUOTES); ?>" alt="Vista previa de <?php echo htmlspecialchars($row['nombre']); ?>" style="width:100%;height:130px;object-fit:cover;border-radius:8px;margin-bottom:10px;">
+            <?php endif; ?>
             <h2><?php echo htmlspecialchars($row['nombre']); ?></h2>
+            <small>Proyecto <?php echo htmlspecialchars($project_tipo); ?></small>
             <a href="proyectos.php?project_id=<?php echo intval($row['id']); ?>">
                 Seleccionar proyecto
             </a>
@@ -129,6 +143,10 @@ if ($project_id > 0) {
     <div class="chat-panel">
 
         <h2>Proyecto: <?php echo htmlspecialchars($selected_project['nombre']); ?></h2>
+
+        <?php if (!empty($selected_project['thumbnail'])): ?>
+            <img src="<?php echo htmlspecialchars($selected_project['thumbnail'], ENT_QUOTES); ?>" alt="Vista previa de <?php echo htmlspecialchars($selected_project['nombre']); ?>" style="width:100%;max-height:280px;object-fit:cover;border-radius:12px;margin:0 0 16px;border:1px solid rgba(255,255,255,0.12);">
+        <?php endif; ?>
 
         <?php if ($mensaje_enviado): ?>
             <div class="status success">Tu mensaje fue enviado al asesor.</div>

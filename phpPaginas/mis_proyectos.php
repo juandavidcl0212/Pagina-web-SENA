@@ -52,7 +52,7 @@ if(isset($_GET['eliminar'])){
 $proyectos = [];
 
 $stmt = $conn->prepare("
-    SELECT id, nombre, data 
+    SELECT id, nombre, data, fecha 
     FROM proyectos 
     WHERE usuario_id=? 
     ORDER BY fecha DESC
@@ -63,6 +63,9 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 while($row = $result->fetch_assoc()){
+    $parsed = json_decode($row['data'] ?? '{}', true);
+    $row['tipo'] = strtoupper($parsed['tipo'] ?? '2D');
+    $row['thumbnail'] = $parsed['thumbnail'] ?? '';
     $proyectos[] = $row;
 }
 
@@ -157,6 +160,18 @@ header{
   background:#11153a;
   margin-bottom:10px;
   border:1px dashed rgba(255,255,255,0.2);
+  overflow:hidden;
+  display:grid;
+  place-items:center;
+  color:rgba(255,255,255,0.72);
+  font-weight:700;
+}
+
+.preview img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
 }
 
 /* BOTONES */
@@ -301,6 +316,10 @@ function mostrarAsesoria(){
 /* CANVAS FIX */
 function renderThumbnails(){
     document.querySelectorAll('.preview').forEach(preview=>{
+        if (preview.dataset.thumbnail) {
+            preview.innerHTML = `<img src="${preview.dataset.thumbnail}" alt="Vista previa del proyecto">`;
+            return;
+        }
 
         let data=preview.dataset.preview;
         let proyecto;
@@ -312,7 +331,12 @@ function renderThumbnails(){
             return;
         }
 
-        let objetos=proyecto.objetos||[];
+        if ((proyecto.tipo || '').toUpperCase() === '3D') {
+            preview.textContent="Proyecto 3D";
+            return;
+        }
+
+        let objetos=Array.isArray(proyecto.objetos) ? proyecto.objetos : [];
 
         if(!Array.isArray(objetos)||objetos.length===0){
             preview.textContent="Sin preview";
@@ -331,11 +355,18 @@ function renderThumbnails(){
         let loaded=0;
 
         objetos.forEach(obj=>{
+            if (!obj || !obj.img) {
+                loaded++;
+                return;
+            }
             let img=new Image();
             img.src=obj.img;
 
             img.onload=()=>{
-                ctx.drawImage(img,obj.x*0.2,obj.y*0.2,obj.w*0.2,obj.w*0.2);
+                const x=parseFloat(obj.x)||0;
+                const y=parseFloat(obj.y)||0;
+                const w=parseFloat(obj.w)||100;
+                ctx.drawImage(img,x*0.2,y*0.2,w*0.2,w*0.2);
                 loaded++;
 
                 if(loaded===objetos.length){
@@ -453,12 +484,17 @@ Selecciona tu diseño, describe tus dudas y espera la respuesta del equipo.
 
 <div class="card">
 
-<div class="preview" data-preview='<?php echo htmlspecialchars($row['data'],ENT_QUOTES);?>'></div>
+<div class="preview" data-preview='<?php echo htmlspecialchars($row['data'],ENT_QUOTES);?>' data-thumbnail="<?php echo htmlspecialchars($row['thumbnail'] ?? '', ENT_QUOTES); ?>"></div>
 
-<h3><?php echo $row['nombre'];?></h3>
+<h3><?php echo htmlspecialchars($row['nombre']);?></h3>
+<p style="margin:0 0 10px;color:#cbd5e1;font-size:13px;">Proyecto <?php echo htmlspecialchars($row['tipo']); ?></p>
 
-<button class="btn ver">Ver</button>
-<button class="btn eliminar">Eliminar</button>
+<?php if ($row['tipo'] === '3D'): ?>
+<a class="btn ver" href="modelos_3d.php" style="text-decoration:none;display:inline-block;">Abrir 3D</a>
+<?php else: ?>
+<a class="btn ver" href="../html/DISEÑO2D.html?id=<?php echo intval($row['id']); ?>" style="text-decoration:none;display:inline-block;">Abrir 2D</a>
+<?php endif; ?>
+<a class="btn eliminar" href="mis_proyectos.php?eliminar=<?php echo intval($row['id']); ?>" onclick="return confirm('¿Eliminar este proyecto?')" style="text-decoration:none;display:inline-block;">Eliminar</a>
 
 </div>
 
