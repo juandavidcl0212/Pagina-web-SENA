@@ -378,6 +378,9 @@ let offsetArrastre2D = { x: 0, y: 0 };
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const transformControls = new THREE.TransformControls(camera, renderer.domElement);
+let helperParedSeleccionada = null;
+
+
 transformControls.setMode("translate");
 transformControls.setTranslationSnap(0.25);
 transformControls.showY = false;
@@ -1000,13 +1003,18 @@ function actualizarPanelParedSeleccionada() {
 }
 
 function marcarParedSeleccionada(grupo, activa) {
-    grupo.traverse((child) => {
-        if (child.isMesh && child.material) {
-            child.material.emissive = child.material.emissive || new THREE.Color(0x000000);
-            child.material.emissive.set(activa ? 0x1d4f49 : 0x000000);
-            child.material.emissiveIntensity = activa ? 0.18 : 0;
-        }
-    });
+    if (helperParedSeleccionada) {
+        scene.remove(helperParedSeleccionada);
+        helperParedSeleccionada.geometry.dispose();
+        helperParedSeleccionada.material.dispose();
+        helperParedSeleccionada = null;
+    }
+
+    if (!activa || !grupo) return;
+
+    helperParedSeleccionada = new THREE.BoxHelper(grupo, 0xff9f1c);
+    helperParedSeleccionada.userData.tipo = "helper-seleccion";
+    scene.add(helperParedSeleccionada);
 }
 
 function seleccionarPared(id, sincronizarFormulario = true) {
@@ -1538,9 +1546,13 @@ if (btnAutoRoom) {
     btnAutoRoom.addEventListener("click", crearCasaAutomatica);
 }
 
-[wallLengthInput, wallHeightInput, wallColorInput, wallThicknessInput].forEach((input) => {
-    if (input) input.addEventListener("input", aplicarFormularioAParedSeleccionada);
+[wallLengthInput, wallHeightInput, wallThicknessInput].forEach((input) => {
+    if (input) input.addEventListener("change", aplicarFormularioAParedSeleccionada);
 });
+
+if (wallColorInput) {
+    wallColorInput.addEventListener("input", aplicarFormularioAParedSeleccionada);
+}
 
 if (btnMoveWall) {
     btnMoveWall.addEventListener("click", () => {
@@ -1592,6 +1604,11 @@ function animate() {
     requestAnimationFrame(animate);
     actualizarAnimacionesParedes();
     controls.update();
+
+    if (helperParedSeleccionada) {
+    helperParedSeleccionada.update();
+}
+
     renderer.render(scene, camera);
 }
 
@@ -1616,6 +1633,18 @@ window.toggleCategoria = function(elemento) {
 };
 
 window.addEventListener("keydown", (event) => {
+    const elementoActivo = event.target;
+
+    const estaEditandoCampo =
+        elementoActivo instanceof HTMLInputElement ||
+        elementoActivo instanceof HTMLTextAreaElement ||
+        elementoActivo instanceof HTMLSelectElement ||
+        elementoActivo?.isContentEditable;
+
+    if (estaEditandoCampo) {
+        return;
+    }
+
     if ((event.key === "Delete" || event.key === "Backspace") && paredSeleccionada) {
         eliminarParedSeleccionada();
         return;
@@ -1640,6 +1669,7 @@ window.addEventListener("keydown", (event) => {
         eliminarObjetoSeleccionado();
     }
 });
+
 function eliminarObjetoSeleccionado() {
     if (!objetoSeleccionado) {
         alert("Selecciona un objeto primero.");

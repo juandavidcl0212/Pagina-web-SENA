@@ -1,4 +1,4 @@
-http://localhost/Pagina-web-SENA-main/
+http://localhost/Pagina-web-SENA/
 
 https://copilot.microsoft.com/conversations/join/MbzmpjgoykjwPn84JRvqe
 
